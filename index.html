@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KleySites — Crea y publica tu sitio web</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/src/styles/theme.css">
+  <link rel="stylesheet" href="/src/styles/layout.css">
+  <link rel="stylesheet" href="/src/styles/components.css">
+  <link rel="stylesheet" href="/src/styles/login.css">
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<div class="shell">
+
+  <div class="visual">
+    <div class="logo">
+      <img src="logo-kleysites.webp" alt="KleySites">
+      <div class="logo-text">Kley<span class="accent">Sites</span></div>
+    </div>
+
+    <div class="scene">
+      <div class="scene-inner" id="sceneInner">
+        <div class="win-main">
+          <div class="win-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <div class="win-body">
+            <div class="win-sidebar">
+              <div class="side-icon">▤</div>
+              <div class="side-icon">▢</div>
+              <div class="side-icon">▨</div>
+              <div class="side-icon">T</div>
+              <div class="side-icon">▦</div>
+              <div class="side-icon">⚙</div>
+              <div class="side-icon">☰</div>
+            </div>
+            <div class="win-canvas">
+              <div class="cell add">+</div>
+              <div class="cell img"><img src="/images/cell-img.webp" alt=""></div>
+              <div class="cell txt"><img src="/images/cell-txt.webp" alt=""></div>
+              <div class="cell card"><div class="bar"></div><div class="bar2"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="win-preview">
+          <div class="prev-topbar"><span></span><span></span><span></span></div>
+          <div class="prev-bar"></div>
+          <div class="swatches">
+            <div class="swatch s1"></div><div class="swatch s2"></div><div class="swatch s3"></div><div class="swatch s4"></div>
+          </div>
+          <div class="prev-row r1"><div class="prev-dot"></div><div class="prev-line"></div></div>
+          <div class="prev-row r2"><div class="prev-dot"></div><div class="prev-line"></div></div>
+          <div class="prev-cta"></div>
+          <div class="click-ripple"></div>
+        </div>
+
+        <div class="cursor"><img src="/images/cursor.webp" alt=""></div>
+      </div>
+    </div>
+
+    <div class="value-props">
+      <div class="prop">
+        <div class="prop-icon"><img src="/images/prop-icon-1.webp" alt=""></div>
+        <p class="prop-title">Crea</p>
+        <p class="prop-sub">Diseño sin límites</p>
+      </div>
+      <div class="prop">
+        <div class="prop-icon"><img src="/images/prop-icon-2.webp" alt=""></div>
+        <p class="prop-title">Publica</p>
+        <p class="prop-sub">En minutos</p>
+      </div>
+      <div class="prop">
+        <div class="prop-icon"><img src="/images/prop-icon-3.webp" alt=""></div>
+        <p class="prop-title">Comparte</p>
+        <p class="prop-sub">Con el mundo</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="logo logo-mobile">
+      <img src="logo-kleysites.webp" alt="KleySites">
+      <div class="logo-text">Kley<span class="accent">Sites</span></div>
+    </div>
+  <div class="access">
+    <h1>Dale vida a tus ideas</h1>
+    <p class="sub">Crea tu sitio web sin escribir una línea de código</p>
+
+    <div class="access-card">
+
+      <div class="step show" id="stepInicio">
+        <button class="btn btn-google" onclick="loginGoogle()">
+          <img src="google-icon.webp" alt="" style="width:18px;height:18px;display:inline-block;vertical-align:-4px;margin-right:6px"> Continuar con Google
+        </button>
+        <div class="btn-divider">O</div>
+        <button class="btn" onclick="irAEmail()">
+          <img src="/images/icon-email.webp" alt=""> Continuar con correo electrónico
+        </button>
+        <p class="legal">Al continuar, aceptas la <a href="#">Política de Privacidad</a> de KleyCloud.</p>
+      </div>
+
+      <div class="step" id="stepEmail">
+        <label>Correo electrónico</label>
+        <input type="email" id="email" placeholder="tucorreo@ejemplo.com">
+        <button class="submit" onclick="continuarConEmail()">Continuar</button>
+        <button class="back-link" onclick="volverAInicio()"><img src="/images/icon-back-1.webp" alt=""> <b>Volver</b></button>
+        <div class="msg" id="msgEmail"></div>
+      </div>
+
+      <div class="step" id="stepCode">
+        <p class="sub" style="margin-bottom:12px">Revisa tu correo para la verificación. Te enviamos un código de 6 dígitos.</p>
+        <label>Código de verificación</label>
+        <input type="text" id="codigo" maxlength="6" placeholder="000000">
+        <button class="submit" onclick="confirmarCodigo()">Confirmar</button>
+        <button class="back-link" onclick="volverAEmail()"><img src="/images/icon-back-2.webp" alt=""> <b>Volver</b></button>
+        <div class="msg" id="msgCodigo"></div>
+      </div>
+
+    </div>
+
+    <p class="footnote">Powered by <b>KleyCloud</b></p>
+  </div>
+
+</div>
+
+  <script type="module" src="/src/js/auth.js"></script>
+</body>
+</html>
