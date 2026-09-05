@@ -1,0 +1,28 @@
+/*
+  layout.css
+  Estructura general: contenedores, grillas, secciones.
+  No colores ni tipografías sueltas aquí — todo viene de theme.css.
+*/
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
