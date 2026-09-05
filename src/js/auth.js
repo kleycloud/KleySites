@@ -96,3 +96,10 @@ function loopEscena() {
   }, 400);
 }
 setInterval(loopEscena, 7600);
+
+document.getElementById('btnGoogle').addEventListener('click', loginGoogle);
+document.getElementById('btnIrAEmail').addEventListener('click', irAEmail);
+document.getElementById('btnContinuarEmail').addEventListener('click', continuarConEmail);
+document.getElementById('btnVolverInicio').addEventListener('click', volverAInicio);
+document.getElementById('btnConfirmarCodigo').addEventListener('click', confirmarCodigo);
+document.getElementById('btnVolverEmail').addEventListener('click', volverAEmail);
