@@ -1,0 +1,19 @@
+/*
+  shell.css
+  Esqueleto de la pantalla del editor: topbar + fila de trabajo
+  (riel + panel + lienzo + propiedades). Solo estructura y grid —
+  el detalle visual de cada zona vive en su propio archivo.
+*/
+
+.ed-shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+.ed-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}

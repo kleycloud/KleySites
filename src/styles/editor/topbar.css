@@ -1,0 +1,97 @@
+/*
+  topbar.css
+  Barra superior del editor: logo, nombre del sitio y acciones
+  (vista previa, publicar).
+*/
+
+.ed-topbar {
+  flex-shrink: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-panel);
+}
+
+.ed-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.ed-topbar-left img { height: 22px; width: auto; display: block; }
+
+.ed-site-name {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  font-size: 14px;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ed-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ed-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ed-btn--secondary {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: var(--fw-semibold);
+}
+.ed-btn--secondary:hover { background: var(--color-border-soft); }
+
+.ed-btn--primary {
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-bg);
+  font-weight: var(--fw-bold);
+}
+.ed-btn--primary:hover { background: var(--kley-ember); }
+
+.ed-icon-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+.ed-icon-btn:hover .icon-frame {
+  color: var(--icon-hover);
+  background: color-mix(in srgb, var(--icon-hover) 10%, transparent);
+}
+.ed-icon-btn:disabled {
+  cursor: not-allowed;
+}
+.ed-icon-btn:disabled .icon-frame {
+  opacity: 0.4;
+  background: var(--icon-bg);
+  color: var(--icon-rest);
+}
+
+.ed-topbar-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--color-border);
+  margin: 0 var(--space-1);
+}
