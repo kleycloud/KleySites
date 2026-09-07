@@ -35,40 +35,17 @@
   text-overflow: ellipsis;
 }
 
+.ed-save-status {
+  font-size: 12px;
+  color: var(--color-text-dim);
+  white-space: nowrap;
+}
+
 .ed-topbar-right {
   display: flex;
   align-items: center;
   gap: var(--space-2);
 }
-
-.ed-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 36px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-md);
-  font-family: var(--font-body);
-  font-size: 13px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.ed-btn--secondary {
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-weight: var(--fw-semibold);
-}
-.ed-btn--secondary:hover { background: var(--color-border-soft); }
-
-.ed-btn--primary {
-  border: none;
-  background: var(--color-primary);
-  color: var(--color-bg);
-  font-weight: var(--fw-bold);
-}
-.ed-btn--primary:hover { background: var(--kley-ember); }
 
 .ed-icon-btn {
   border: none;
@@ -87,6 +64,20 @@
   opacity: 0.4;
   background: var(--icon-bg);
   color: var(--icon-rest);
+}
+
+/* Botón "volver a Mis sitios": resaltado siempre, no solo en hover.
+   Usa --color-info (azul) en vez de --color-brand-ink (naranja) para no
+   confundirse con los íconos activos/seleccionados del riel lateral,
+   que ya usan ese naranja como color de estado. */
+#btnVolverDashboard .icon-frame {
+  color: var(--color-info);
+  background: color-mix(in srgb, var(--color-info) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-info) 35%, transparent);
+}
+#btnVolverDashboard:hover .icon-frame {
+  background: color-mix(in srgb, var(--color-info) 20%, transparent);
+  border-color: color-mix(in srgb, var(--color-info) 55%, transparent);
 }
 
 .ed-topbar-divider {

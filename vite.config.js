@@ -12,6 +12,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         privacidad: resolve(__dirname, 'privacidad.html'),
         editor: resolve(__dirname, 'editor.html'),
+        dashboard: resolve(__dirname, 'dashboard.html'),
       },
     },
   },

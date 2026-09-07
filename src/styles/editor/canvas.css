@@ -113,6 +113,15 @@
   border-radius: var(--radius-sm);
 }
 
+/* Edición directa (doble clic): el bloque se comporta como un documento */
+.ed-editable:hover { outline: 1px dashed color-mix(in srgb, var(--color-brand-ink) 40%, transparent); outline-offset: 2px; }
+.ed-editable.is-editing {
+  outline: 2px solid var(--color-brand-ink);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+  cursor: text;
+}
+
 .ed-preview-btn {
   display: inline-block;
   padding: 10px 18px;

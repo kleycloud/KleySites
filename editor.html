@@ -37,8 +37,15 @@
 
   <header class="ed-topbar">
     <div class="ed-topbar-left">
+      <button class="ed-icon-btn" id="btnVolverDashboard" title="Volver a Mis sitios">
+        <div class="icon-frame icon-frame--20">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </div>
+      </button>
+      <div class="ed-topbar-divider"></div>
       <img src="/logo-kleysites.webp" alt="KleySites">
-      <span class="ed-site-name">Mi sitio nuevo</span>
+      <span class="ed-site-name" id="siteName">Mi sitio nuevo</span>
+      <span class="ed-save-status" id="saveStatus"></span>
     </div>
     <div class="ed-topbar-right">
       <button class="ed-icon-btn" id="btnDeshacer" title="Deshacer (Ctrl+Z)" disabled>
@@ -106,9 +113,17 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
           </div>
         </div>
-        <button class="ed-rail-account" title="Kleyder · tu cuenta">
-          <div class="ed-avatar">K</div>
-        </button>
+        <div class="kley-account-wrap ed-account-wrap">
+          <button class="ed-rail-account" id="btnCuentaEditor" title="Kleyder · tu cuenta">
+            <div class="ed-avatar">K</div>
+          </button>
+          <div class="kley-menu kley-menu--up" id="menuCuentaEditor">
+            <button class="kley-menu-item" disabled>Perfil <span class="kley-menu-soon">Próximamente</span></button>
+            <button class="kley-menu-item" disabled>Configuración <span class="kley-menu-soon">Próximamente</span></button>
+            <div class="kley-menu-sep"></div>
+            <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
+          </div>
+        </div>
       </div>
     </nav>
 

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('kley-theme');
+        var theme = (saved === 'light' || saved === 'dark')
+          ? saved
+          : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      } catch (e) {}
+    })();
+  </script>
+  <title>Mis sitios — KleySites</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/src/styles/theme.css">
+  <link rel="stylesheet" href="/src/styles/layout.css">
+  <link rel="stylesheet" href="/src/styles/components.css">
+  <link rel="stylesheet" href="/src/styles/dashboard.css">
+</head>
+<body>
+
+<div class="db-shell">
+
+  <header class="db-topbar">
+    <div class="db-topbar-left">
+      <img src="/logo-kleysites.webp" alt="KleySites">
+      <span class="db-logo-text">Kley<span class="accent">Sites</span></span>
+    </div>
+    <div class="kley-account-wrap">
+      <button class="db-avatar-btn" id="btnCuenta" title="Tu cuenta">
+        <div class="db-avatar">K</div>
+      </button>
+      <div class="kley-menu" id="menuCuenta">
+        <button class="kley-menu-item" disabled>Perfil <span class="kley-menu-soon">Próximamente</span></button>
+        <button class="kley-menu-item" disabled>Configuración <span class="kley-menu-soon">Próximamente</span></button>
+        <div class="kley-menu-sep"></div>
+        <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="db-main">
+    <div class="db-header-row">
+      <h2 class="db-section-title">Empezar un sitio nuevo</h2>
+      <p class="db-section-hint">Elige un punto de partida — puedes cambiar todo después.</p>
+    </div>
+
+    <div class="db-tpl-grid" id="tplGrid">
+      <button class="db-tpl-card" data-nombre="Sitio en blanco" id="tplEnBlanco">
+        <div class="db-tpl-accent" data-accent="blanco"></div>
+        <div class="icon-frame icon-frame--24">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        </div>
+        <span class="db-tpl-nombre">Página en blanco</span>
+      </button>
+      <button class="db-tpl-card" data-nombre="Clínica">
+        <div class="db-tpl-accent" data-accent="header"></div>
+        <div class="icon-frame icon-frame--24">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v7M8.5 6.5h7"/><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M9 16h6"/></svg>
+        </div>
+        <span class="db-tpl-nombre">Clínica web</span>
+      </button>
+      <button class="db-tpl-card" data-nombre="Inmobiliaria">
+        <div class="db-tpl-accent" data-accent="content"></div>
+        <div class="icon-frame icon-frame--24">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+        </div>
+        <span class="db-tpl-nombre">Inmobiliaria</span>
+      </button>
+      <button class="db-tpl-card" data-nombre="Tienda online">
+        <div class="db-tpl-accent" data-accent="footer"></div>
+        <div class="icon-frame icon-frame--24">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 4M18 2l-1.5 4"/><path d="M3.5 6h17l-1.2 12.5a2 2 0 0 1-2 1.8H6.7a2 2 0 0 1-2-1.8L3.5 6z"/><path d="M8 10a4 4 0 0 0 8 0"/></svg>
+        </div>
+        <span class="db-tpl-nombre">Tienda online</span>
+      </button>
+      <button class="db-tpl-card" data-nombre="Portafolio">
+        <div class="db-tpl-accent" data-accent="brand"></div>
+        <div class="icon-frame icon-frame--24">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M4 17l5-5 4 4 3-2 4 4"/></svg>
+        </div>
+        <span class="db-tpl-nombre">Portafolio</span>
+      </button>
+    </div>
+
+    <div class="db-header-row db-header-row--sitios">
+      <h1>Mis sitios</h1>
+      <span class="db-section-hint" id="conteoSitios"></span>
+    </div>
+
+    <div class="db-grid" id="sitiosGrid">
+      <p class="db-cargando">Cargando tus sitios…</p>
+    </div>
+  </main>
+
+</div>
+
+<script type="module" src="/src/js/theme.js"></script>
+<script type="module" src="/src/js/dashboard.js"></script>
+</body>
+</html>

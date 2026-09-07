@@ -1,6 +1,12 @@
 const BASE = "https://kleyderproject.cloud/webhook";
 let emailActual = "";
 
+// Ya hay una sesión guardada (login previo, token vigente 7 días) —
+// no tiene sentido pedir login de nuevo hasta que el usuario cierre sesión.
+if (localStorage.getItem('kleysites_token')) {
+  window.location.href = '/dashboard.html';
+}
+
 function mostrarPaso(id) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('show'));
   document.getElementById(id).classList.add('show');
@@ -50,6 +56,7 @@ async function confirmarCodigo() {
     if (res.ok) {
       localStorage.setItem('kleysites_token', data.token);
       msg('msgCodigo', '¡Listo! Sesión iniciada.', 'ok');
+      window.location.href = '/dashboard.html';
     } else {
       msg('msgCodigo', data.error || 'Código incorrecto.', 'err');
     }
