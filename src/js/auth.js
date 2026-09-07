@@ -76,12 +76,20 @@ function handleGoogleSignIn(response) {
   .catch(err => console.error('Error:', err));
 }
 
-function loginGoogle() {
+function initGoogleButton() {
+  const contenedor = document.getElementById('googleBtn');
+  if (!contenedor) return;
+
   google.accounts.id.initialize({
     client_id: '26646131722-r6qdviik8qm17cn5smt0b2gqh47qjb30.apps.googleusercontent.com',
     callback: handleGoogleSignIn
   });
-  google.accounts.id.prompt();
+  google.accounts.id.renderButton(contenedor, {
+    theme: 'outline',
+    size: 'large',
+    shape: 'rectangular',
+    width: contenedor.clientWidth || 300
+  });
 }
 
 function loopEscena() {
@@ -97,7 +105,7 @@ function loopEscena() {
 }
 setInterval(loopEscena, 7600);
 
-document.getElementById('btnGoogle').addEventListener('click', loginGoogle);
+initGoogleButton();
 document.getElementById('btnIrAEmail').addEventListener('click', irAEmail);
 document.getElementById('btnContinuarEmail').addEventListener('click', continuarConEmail);
 document.getElementById('btnVolverInicio').addEventListener('click', volverAInicio);

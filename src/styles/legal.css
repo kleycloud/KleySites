@@ -29,7 +29,7 @@ body.legal-page {
   font-weight: var(--fw-bold);
   font-size: 18px;
 }
-.legal-header .logo-text .accent { color: var(--color-primary); }
+.legal-header .logo-text .accent { color: var(--color-brand-ink); }
 
 .legal-main {
   max-width: 760px;
@@ -72,20 +72,24 @@ body.legal-page {
 .legal-main ul { padding-left: 20px; margin: var(--space-3) 0; }
 .legal-main li { margin-bottom: var(--space-2); }
 
-.legal-main a { color: var(--color-primary); text-decoration: none; }
-.legal-main a:hover { text-decoration: underline; }
+.legal-main a { color: var(--color-brand-ink); text-decoration: none; }
+.legal-main a:not(.legal-back):hover { text-decoration: underline; }
 
 .legal-back, .legal-back:link, .legal-back:visited, .legal-back:hover, .legal-back:active {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 7px 14px 7px 10px; border-radius: var(--radius-md);
   background: var(--icon-bg); border: 1px solid var(--color-border);
-  color: var(--color-primary);
+  color: var(--color-brand-ink);
   text-decoration: none; font-size: 13px; font-weight: var(--fw-medium);
   margin-bottom: var(--space-5);
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 .legal-back svg { stroke-width: var(--icon-stroke); flex-shrink: 0; }
-.legal-back:hover { background: rgba(255,138,61,0.12); color: var(--kley-ember); border-color: var(--kley-ember); }
+.legal-back:hover {
+  background: var(--icon-bg-active);
+  color: var(--color-brand-ink);
+  border-color: color-mix(in srgb, var(--color-brand-ink) 55%, transparent);
+}
 
 .legal-footer {
   text-align: center; padding: var(--space-6) 0;

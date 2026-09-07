@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="./src/styles/components.css">
   <link rel="stylesheet" href="./src/styles/login.css">
 
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://accounts.google.com/gsi/client" defer></script>
 </head>
 <body>
 <div class="shell">
@@ -98,9 +98,7 @@
     <div class="access-card">
 
       <div class="step show" id="stepInicio">
-        <button class="btn btn-google" id="btnGoogle">
-          <img src="/google-icon.webp" alt="" style="width:18px;height:18px;display:inline-block;vertical-align:-4px;margin-right:6px"> Continuar con Google
-        </button>
+        <div class="google-btn-slot" id="googleBtn"></div>
         <div class="btn-divider">O</div>
         <button class="btn" id="btnIrAEmail">
           <img src="/images/icon-email.webp" alt=""> Continuar con correo electrónico

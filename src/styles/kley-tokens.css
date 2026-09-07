@@ -14,6 +14,9 @@
   --text:          #F2F2F5;
   --text-dim:      #96969F;
 
+  /* texto/ícono naranja (en claro baja a Flare, ver [data-theme="light"]) */
+  --brand-ink:     #FF8A3D;
+
   /* acentos y estados */
   --sites-accent:  #7B5CFF;
   --success:       #4FD68F;
@@ -48,4 +51,43 @@
   --r-xl: 16px; --r-2xl: 20px;
   --shadow-card: 0 20px 50px rgba(0,0,0,.5);
   --space: 8px;
+}
+
+/*
+  Modo claro — tema secundario (manual de marca, sección 13).
+  Mismo componente, misma jerarquía y espaciado: solo cambia la capa
+  de color. Tres reglas: fondo #F7F7FA (papel, no blanco puro), el
+  naranja de texto/ícono/enlace baja a Flare (el Orange puro solo
+  sobrevive como relleno de botón), y la sombra sustituye al brillo
+  (sin glow ni degradado radial de fuego).
+*/
+[data-theme="light"] {
+  /* neutros — papel, no blanco puro */
+  --void:          #F7F7FA;
+  --panel:         #FFFFFF;
+  --surface:       #F1F1F5;
+  --border:        #E4E4EC;
+  --border-soft:   #D6D6E0;
+  --text:          #14141D;
+  --text-dim:      #5C5C6B;
+
+  /* el naranja de texto baja a Flare */
+  --brand-ink:     #E23E05;
+  --sites-accent:  #5A34E8;
+  --success:       #0F7A4E;
+  --warning:       #8A5A00;
+  --error:         #C42E28;
+  --info:          #2740C7;
+
+  /* iconos y marco */
+  --icon-rest:     #5C5C6B;
+  --icon-hover:    #14141D;
+  --icon-active:   #E23E05;
+  --icon-bg:        rgba(8,8,13,.03);
+  --icon-bg-active: rgba(226,62,5,.08);
+
+  /* sombra en vez de brillo */
+  --grad-fire:  linear-gradient(135deg, #FF8A3D, #E23E05);
+  --grad-glow:  none;
+  --shadow-card: 0 12px 30px rgba(8,8,13,.09);
 }

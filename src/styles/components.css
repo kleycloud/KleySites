@@ -12,12 +12,6 @@
 .btn:hover { opacity: 0.92; }
 .btn img { width: 18px; height: auto; display: block; }
 
-.btn-google {
-  background: var(--color-panel); color: var(--color-text); border: 1px solid var(--color-border-soft);
-  transition: background 0.2s ease;
-}
-.btn-google:hover { background: var(--color-surface); }
-
 .btn-divider {
   display: flex; align-items: center; gap: 10px; margin: 12px 0;
   color: var(--color-text-dim); font-size: 11px; font-weight: var(--fw-semibold);
@@ -25,11 +19,12 @@
 .btn-divider::before, .btn-divider::after { content: ''; flex: 1; height: 1px; background: var(--color-border); }
 
 label { display: block; font-size: 12px; color: var(--color-text-dim); margin: 10px 0 4px; text-align: left; }
-input {
+input, textarea, select {
   width: 100%; padding: 11px 12px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);
-  background: rgba(255,255,255,0.03); color: var(--color-text); font-size: 14px;
+  background: rgba(255,255,255,0.03); color: var(--color-text); font-size: 14px; font-family: var(--font-body);
 }
-input:focus { outline: none; border-color: var(--color-primary); }
+textarea { min-height: 80px; resize: vertical; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--color-primary); }
 
 .submit {
   width: 100%; margin-top: 14px; padding: 12px; border: none; border-radius: var(--radius-md);
@@ -50,3 +45,44 @@ input:focus { outline: none; border-color: var(--color-primary); }
 .msg.show { display: block; }
 .msg.err { background: rgba(255,128,128,0.1); color: var(--color-error); border: 1px solid rgba(255,128,128,0.2); }
 .msg.ok { background: rgba(79,214,143,0.1); color: var(--color-success); border: 1px solid rgba(79,214,143,0.2); }
+
+/*
+  Marco de icono (manual de marca, sección 09 — regla no negociable).
+  Ningún icono va suelto: siempre vive dentro de esta caja.
+  El icono hereda color del texto (currentColor); solo se pinta
+  var(--color-primary) cuando el marco lleva .is-active.
+*/
+.icon-frame {
+  box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  background: var(--icon-bg);
+  color: var(--icon-rest);
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.icon-frame svg { stroke-width: var(--icon-stroke); }
+.icon-frame.is-active {
+  color: var(--icon-active);
+  background: var(--icon-bg-active);
+  border-color: color-mix(in srgb, var(--icon-active) 30%, transparent);
+}
+
+/* lado / icono, radio = lado÷4 */
+.icon-frame--16 { width: 28px; height: 28px; border-radius: var(--radius-sm); }
+.icon-frame--16 svg { width: 16px; height: 16px; }
+
+.icon-frame--18 { width: 32px; height: 32px; border-radius: var(--radius-sm); }
+.icon-frame--18 svg { width: 18px; height: 18px; }
+
+.icon-frame--20 { width: 36px; height: 36px; border-radius: var(--radius-md); }
+.icon-frame--20 svg { width: 20px; height: 20px; }
+
+.icon-frame--22 { width: 40px; height: 40px; border-radius: var(--radius-md); }
+.icon-frame--22 svg { width: 22px; height: 22px; }
+
+.icon-frame--24 { width: 44px; height: 44px; border-radius: var(--radius-lg); }
+.icon-frame--24 svg { width: 24px; height: 24px; }
+
+.icon-frame--36 { width: 64px; height: 64px; border-radius: var(--radius-xl); }
+.icon-frame--36 svg { width: 36px; height: 36px; }
