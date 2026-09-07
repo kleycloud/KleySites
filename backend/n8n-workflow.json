@@ -1,0 +1,3104 @@
+{
+  "name": "KleySites - Auth (Login + Registro)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kleysites/login",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-login",
+      "name": "Webhook Login",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, email, password_hash, verified FROM clients WHERE email = $1 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$json.body.email] }}"
+        }
+      },
+      "id": "postgres-find-client",
+      "name": "Buscar cliente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -320,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const bcrypt = require('bcryptjs');\nconst jwt = require('jsonwebtoken');\n\nconst body = $('Webhook Login').item.json.body;\nconst cliente = $input.first().json;\n\nif (!cliente || !cliente.password_hash) {\n  return [{ json: { valido: false, motivo: 'no_existe' } }];\n}\n\nif (!cliente.verified) {\n  return [{ json: { valido: false, motivo: 'email_no_verificado' } }];\n}\n\nconst coincide = await bcrypt.compare(body.password, cliente.password_hash);\n\nif (!coincide) {\n  return [{ json: { valido: false, motivo: 'password_incorrecto' } }];\n}\n\nconst SECRET = $env.KLEYSITES_JWT_SECRET;\nconst token = jwt.sign(\n  { client_id: cliente.id, email: cliente.email },\n  SECRET,\n  { expiresIn: '7d' }\n);\n\nreturn [{ json: { valido: true, token, client_id: cliente.id } }];"
+      },
+      "id": "code-validar",
+      "name": "Validar y generar token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-valido",
+              "leftValue": "={{ $json.valido }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-valido",
+      "name": "¿Login válido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { token: $json.token, client_id: $json.client_id } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-ok",
+      "name": "Login: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: $json.motivo === 'email_no_verificado' ? 'Debes verificar tu correo antes de iniciar sesión' : 'Credenciales incorrectas' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "respond-error",
+      "name": "Login: Responder error 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kleysites/registro",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-registro",
+      "name": "Webhook Registro",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id FROM clients WHERE email = $1 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$('Webhook Registro').item.json.body.email] }}"
+        }
+      },
+      "id": "postgres-check-existe",
+      "name": "Verificar si ya existe",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -320,
+        400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-existe",
+              "leftValue": "={{ $json.id === undefined }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-no-existe",
+      "name": "¿Email libre?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const bcrypt = require('bcryptjs');\n\nconst body = $('Webhook Registro').item.json.body;\n\nif (!body.email || !body.password || body.password.length < 8) {\n  return [{ json: { error: true, motivo: 'email o password invalido (minimo 8 caracteres)' } }];\n}\n\nconst hash = await bcrypt.hash(body.password, 10);\n\nreturn [{ json: { error: false, email: body.email, password_hash: hash } }];"
+      },
+      "id": "code-hash",
+      "name": "Generar hash",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-sinerror",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-sinerror",
+      "name": "¿Datos válidos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO clients (email, password_hash, verification_code, verification_expires, verified) VALUES ($1, $2, $3, $4, false) RETURNING id, email, verification_code;",
+        "options": {
+          "queryReplacement": "={{ [$json.email, $json.password_hash, $json.verification_code, $json.verification_expires] }}"
+        }
+      },
+      "id": "postgres-insert",
+      "name": "Crear cliente",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        640,
+        200
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { creado: true, client_id: $('Crear cliente').item.json.id, email: $('Crear cliente').item.json.email, mensaje: 'Revisa tu correo para confirmar tu cuenta' } }}",
+        "options": {
+          "responseCode": 201
+        }
+      },
+      "id": "respond-creado",
+      "name": "Registro: Responder creado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: $json.motivo || 'Datos invalidos' } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond-error-datos",
+      "name": "Registro: Responder error datos",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'Este email ya está registrado' } }}",
+        "options": {
+          "responseCode": 409
+        }
+      },
+      "id": "respond-error-existe",
+      "name": "Registro: Responder email duplicado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        550
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kleysites/blocks",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-guardar-bloque",
+      "name": "Webhook Guardar bloque",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const jwt = require('jsonwebtoken');\nconst body = $json.body;\nconst auth = $json.headers.authorization || '';\nconst token = auth.replace('Bearer ', '');\n\nif (!token) {\n  return [{ json: { autorizado: false, motivo: 'sin_token' } }];\n}\n\ntry {\n  const SECRET = $env.KLEYSITES_JWT_SECRET;\n  const payload = jwt.verify(token, SECRET);\n  return [{\n    json: {\n      autorizado: true,\n      client_id: payload.client_id,\n      site_id: body.site_id,\n      tipo: body.tipo,\n      contenido: JSON.stringify(body.contenido || {}),\n      orden: body.orden || 0,\n      block_id: body.block_id || null,\n      zona: body.zona || 'contenido',\n      parent_id: body.parent_id || null,\n      estilos: JSON.stringify(body.estilos || {})\n    }\n  }];\n} catch (e) {\n  return [{ json: { autorizado: false, motivo: 'token_invalido' } }];\n}"
+      },
+      "id": "code-validar-token-bloque",
+      "name": "Validar token (bloque)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-autorizado-bloque",
+              "leftValue": "={{ $json.autorizado }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-autorizado-bloque",
+      "name": "¿Token válido? (bloque)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO blocks (id, client_id, site_id, tipo, contenido, orden, zona, parent_id, estilos)\nVALUES (COALESCE($1::int, nextval('blocks_id_seq')), $2, $3, $4, $5::jsonb, $6, $7, $8, $9::jsonb)\nON CONFLICT (id) DO UPDATE SET\n  tipo = EXCLUDED.tipo,\n  contenido = EXCLUDED.contenido,\n  orden = EXCLUDED.orden,\n  zona = EXCLUDED.zona,\n  parent_id = EXCLUDED.parent_id,\n  estilos = EXCLUDED.estilos\nWHERE blocks.client_id = EXCLUDED.client_id\nRETURNING id, site_id, tipo, contenido, orden, zona, parent_id, estilos;",
+        "options": {
+          "queryReplacement": "={{ [$json.block_id, $json.client_id, $json.site_id, $json.tipo, $json.contenido, $json.orden, $json.zona, $json.parent_id, $json.estilos] }}"
+        }
+      },
+      "id": "postgres-upsert-bloque",
+      "name": "Guardar bloque en Neon",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        160,
+        700
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { guardado: true, bloque: $json } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-bloque-ok",
+      "name": "Bloque: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'No autorizado' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "respond-bloque-401",
+      "name": "Bloque: Responder error 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "kleysites/blocks",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-listar-bloques",
+      "name": "Webhook Listar bloques",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const jwt = require('jsonwebtoken');\nconst auth = $json.headers.authorization || '';\nconst token = auth.replace('Bearer ', '');\nconst site_id = $json.query.site_id;\n\nif (!token) return [{ json: { autorizado: false } }];\n\ntry {\n  const payload = jwt.verify(token, $env.KLEYSITES_JWT_SECRET);\n  return [{ json: { autorizado: true, client_id: payload.client_id, site_id } }];\n} catch (e) {\n  return [{ json: { autorizado: false } }];\n}"
+      },
+      "id": "code-validar-token-listar",
+      "name": "Validar token (listar)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-autorizado-listar",
+              "leftValue": "={{ $json.autorizado }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-autorizado-listar",
+      "name": "¿Token válido? (listar)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, tipo, contenido, orden, zona, parent_id, estilos FROM blocks WHERE client_id = $1 AND site_id = $2 ORDER BY zona, orden ASC;",
+        "options": {
+          "queryReplacement": "={{ [$json.client_id, $json.site_id] }}"
+        }
+      },
+      "id": "postgres-listar-bloques",
+      "name": "Listar bloques Neon",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        160,
+        1100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { bloques: $input.all().map(i => i.json) } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-listar-ok",
+      "name": "Listar: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        1100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'No autorizado' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "respond-listar-401",
+      "name": "Listar: Responder error 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        1300
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kleysites/upload",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-upload",
+      "name": "Webhook Subir imagen",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const jwt = require('jsonwebtoken');\nconst auth = $json.headers.authorization || '';\nconst token = auth.replace('Bearer ', '');\n\nif (!token) return [{ json: { autorizado: false } }];\n\ntry {\n  const payload = jwt.verify(token, $env.KLEYSITES_JWT_SECRET);\n  return [{ json: { autorizado: true, client_id: payload.client_id } }];\n} catch (e) {\n  return [{ json: { autorizado: false } }];\n}"
+      },
+      "id": "code-validar-token-upload",
+      "name": "Validar token (upload)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-autorizado-upload",
+              "leftValue": "={{ $json.autorizado }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-autorizado-upload",
+      "name": "¿Token válido? (upload)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.cloudinary.com/v1_1/{{ $env.CLOUDINARY_CLOUD_NAME }}/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "={{ $('Webhook Subir imagen').item.binary.keys().next().value }}"
+            },
+            {
+              "name": "upload_preset",
+              "value": "={{ $env.CLOUDINARY_UPLOAD_PRESET }}"
+            },
+            {
+              "name": "folder",
+              "value": "=kleysites/{{ $json.client_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-cloudinary",
+      "name": "Subir a Cloudinary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { url: $json.secure_url, public_id: $json.public_id } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-upload-ok",
+      "name": "Upload: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'No autorizado' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "respond-upload-401",
+      "name": "Upload: Responder error 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        1700
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kleysites/publish",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-publish",
+      "name": "Webhook Publicar sitio",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const jwt = require('jsonwebtoken');\nconst auth = $json.headers.authorization || '';\nconst token = auth.replace('Bearer ', '');\nconst site_id = $json.body.site_id;\n\nif (!token) return [{ json: { autorizado: false } }];\n\ntry {\n  const payload = jwt.verify(token, $env.KLEYSITES_JWT_SECRET);\n  return [{ json: { autorizado: true, client_id: payload.client_id, site_id } }];\n} catch (e) {\n  return [{ json: { autorizado: false } }];\n}"
+      },
+      "id": "code-validar-token-publish",
+      "name": "Validar token (publish)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-autorizado-publish",
+              "leftValue": "={{ $json.autorizado }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-autorizado-publish",
+      "name": "¿Token válido? (publish)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, tipo, contenido, orden, zona, parent_id, estilos FROM blocks WHERE client_id = $1 AND site_id = $2 ORDER BY zona, orden ASC;",
+        "options": {
+          "queryReplacement": "={{ [$('Validar token (publish)').item.json.client_id, $('Validar token (publish)').item.json.site_id] }}"
+        }
+      },
+      "id": "postgres-traer-bloques-publish",
+      "name": "Traer bloques para publicar",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        160,
+        1900
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Renderizador: registro de tipos + árbol (parent_id) + zonas + estilos\nconst filas = $input.all().map(i => i.json);\n\nfunction parseJsonSafe(v) {\n  if (v == null) return {};\n  return typeof v === 'string' ? JSON.parse(v) : v;\n}\n\nconst bloques = filas.map(b => ({\n  ...b,\n  contenido: parseJsonSafe(b.contenido),\n  estilos: parseJsonSafe(b.estilos),\n}));\n\n// Traduce claves de `estilos` (jsonb libre) a CSS inline. Se amplía sin tocar el resto.\nfunction estiloInline(estilos) {\n  const mapa = {\n    color: 'color', fondo: 'background', fuente: 'font-family',\n    tamano: 'font-size', peso: 'font-weight', espaciado: 'padding',\n    alineacion: 'text-align', radio: 'border-radius', ancho: 'width',\n  };\n  return Object.entries(estilos || {})\n    .filter(([k]) => mapa[k])\n    .map(([k, v]) => `${mapa[k]}:${v}`)\n    .join(';');\n}\n\n// Un renderizador por tipo. Agregar un tipo nuevo = agregar una entrada acá,\n// nunca hay que tocar el resto del archivo ni la tabla en Neon.\nconst renderers = {\n  texto:      (c, s) => `<div style=\"${s}\">${c.html || ''}</div>`,\n  titulo:     (c, s) => { const n = c.nivel || 'h2'; return `<${n} style=\"${s}\">${c.texto || ''}</${n}>`; },\n  imagen:     (c, s) => `<img src=\"${c.src || ''}\" alt=\"${c.alt || ''}\" style=\"${s}\">`,\n  boton:      (c, s) => `<a href=\"${c.href || '#'}\" style=\"${s}\">${c.texto || 'Botón'}</a>`,\n  icono:      (c, s) => `<span style=\"${s}\">${c.nombre || ''}</span>`,\n  separador:  (c, s) => `<hr style=\"${s}\">`,\n  espaciador: (c, s) => `<div style=\"height:${c.alto || '24px'};${s}\"></div>`,\n  video:      (c, s) => `<video src=\"${c.src || ''}\" controls style=\"${s}\"></video>`,\n  seccion:    (c, s, hijos) => `<section style=\"${s}\">${hijos}</section>`,\n  columnas:   (c, s, hijos) => `<div style=\"display:flex;gap:16px;${s}\">${hijos}</div>`,\n};\n\nfunction renderBloque(b, porPadre) {\n  const s = estiloInline(b.estilos);\n  const hijos = (porPadre[b.id] || [])\n    .sort((a, z) => (a.orden || 0) - (z.orden || 0))\n    .map(h => renderBloque(h, porPadre))\n    .join('\\n');\n  const render = renderers[b.tipo];\n  if (!render) return `<!-- tipo sin renderizador todavía: ${b.tipo} -->`;\n  return render(b.contenido, s, hijos);\n}\n\nconst porPadre = {};\nbloques.forEach(b => {\n  if (b.parent_id != null) {\n    (porPadre[b.parent_id] = porPadre[b.parent_id] || []).push(b);\n  }\n});\n\nconst raices = bloques.filter(b => b.parent_id == null);\nconst porZona = { encabezado: [], contenido: [], pie: [] };\nraices.forEach(b => (porZona[b.zona] || porZona.contenido).push(b));\n\nfunction renderZona(lista) {\n  return lista\n    .sort((a, z) => (a.orden || 0) - (z.orden || 0))\n    .map(b => renderBloque(b, porPadre))\n    .join('\\n');\n}\n\nconst html = `<!DOCTYPE html><html lang=\"es\"><head><meta charset=\"utf-8\"><title>Mi sitio KleySites</title></head><body>\n<header>${renderZona(porZona.encabezado)}</header>\n<main>${renderZona(porZona.contenido)}</main>\n<footer>${renderZona(porZona.pie)}</footer>\n</body></html>`;\n\nreturn [{ json: { html } }];"
+      },
+      "id": "code-renderizar",
+      "name": "Renderizar HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { publicado: true, slug: $('Preparar deploy (base64)').item.json.slug, resultado: $json.stdout } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-publish-ok",
+      "name": "Publish: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'No autorizado' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "respond-publish-401",
+      "name": "Publish: Responder error 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        2100
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.cloudflare.com/client/v4/accounts/{{ $env.CLOUDFLARE_ACCOUNT_ID }}/pages/projects",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ { name: $json.slug, production_branch: 'main' } }}",
+        "options": {}
+      },
+      "id": "http-crear-proyecto-cf",
+      "name": "Crear proyecto Cloudflare Pages",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        200
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_CLOUDFLARE",
+          "name": "Cloudflare API Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kleysites/sites",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-crear-sitio",
+      "name": "Webhook Crear sitio",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const jwt = require('jsonwebtoken');\nconst auth = $json.headers.authorization || '';\nconst token = auth.replace('Bearer ', '');\nconst nombre = ($json.body.nombre || '').trim();\n\nif (!token) return [{ json: { autorizado: false } }];\nif (!nombre) return [{ json: { autorizado: false, motivo: 'nombre_requerido' } }];\n\ntry {\n  const payload = jwt.verify(token, $env.KLEYSITES_JWT_SECRET);\n\n  // Convertir 'Tienda Luis' -> 'tienda-luis'\n  const slug = nombre\n    .toLowerCase()\n    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '') // quitar tildes\n    .replace(/[^a-z0-9\\s-]/g, '') // quitar caracteres raros\n    .trim()\n    .replace(/\\s+/g, '-') // espacios -> guiones\n    .replace(/-+/g, '-'); // colapsar guiones repetidos\n\n  return [{ json: { autorizado: true, client_id: payload.client_id, nombre, slug } }];\n} catch (e) {\n  return [{ json: { autorizado: false } }];\n}"
+      },
+      "id": "code-slugify",
+      "name": "Validar token y generar slug",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-autorizado-sitio",
+              "leftValue": "={{ $json.autorizado }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-autorizado-sitio",
+      "name": "¿Token válido? (sitio)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, slug FROM sites WHERE slug = $1 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$json.slug] }}"
+        }
+      },
+      "id": "postgres-check-slug",
+      "name": "Verificar slug disponible",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        160,
+        2300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-slug-libre",
+              "leftValue": "={{ $json.id === undefined }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-slug-libre",
+      "name": "¿Nombre disponible?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        2300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO sites (client_id, nombre, slug) VALUES ($1, $2, $3) RETURNING id, nombre, slug;",
+        "options": {
+          "queryReplacement": "={{ [$('Validar token y generar slug').item.json.client_id, $('Validar token y generar slug').item.json.nombre, $('Validar token y generar slug').item.json.slug] }}"
+        }
+      },
+      "id": "postgres-crear-sitio",
+      "name": "Crear sitio en Neon",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        640,
+        2200
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { creado: true, site: { id: $('Crear sitio en Neon').item.json.id, slug: $('Crear sitio en Neon').item.json.slug, url_preview: `https://${$('Crear sitio en Neon').item.json.slug}.pages.dev` } } }}",
+        "options": {
+          "responseCode": 201
+        }
+      },
+      "id": "respond-sitio-ok",
+      "name": "Sitio: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        2200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'Ese nombre ya está en uso', sugerencias: $json.sugerencias } }}",
+        "options": {
+          "responseCode": 409
+        }
+      },
+      "id": "respond-slug-duplicado",
+      "name": "Sitio: Nombre duplicado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        2500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: $json.motivo || 'No autorizado' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "respond-sitio-401",
+      "name": "Sitio: Responder error 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        2600
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT slug FROM sites WHERE id = $1 AND client_id = $2 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$json.site_id, $json.client_id] }}"
+        }
+      },
+      "id": "postgres-buscar-slug-publish",
+      "name": "Buscar slug del sitio",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        160,
+        1980
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Genera 4 variantes candidatas a partir del slug original que el cliente pidio\nconst base = $('Validar token y generar slug').item.json.slug;\nconst random = Math.floor(100 + Math.random() * 900); // 3 digitos\n\nconst candidatos = [\n  `${base}-pe`,\n  `${base}-oficial`,\n  `${base}-${random}`,\n  `${base}-2`\n];\n\nreturn [{ json: { candidatos } }];"
+      },
+      "id": "code-generar-sugerencias",
+      "name": "Generar sugerencias de slug",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT slug FROM sites WHERE slug = ANY($1);",
+        "options": {
+          "queryReplacement": "={{ [$json.candidatos] }}"
+        }
+      },
+      "id": "postgres-verificar-sugerencias",
+      "name": "Verificar sugerencias en Neon",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        640,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Quita de la lista de candidatos los que ya salieron ocupados en la consulta\nconst candidatos = $('Generar sugerencias de slug').item.json.candidatos;\nconst ocupados = $input.all().map(i => i.json.slug);\n\nconst disponibles = candidatos.filter(c => !ocupados.includes(c));\n\nreturn [{ json: { sugerencias: disponibles.slice(0, 3) } }];"
+      },
+      "id": "code-filtrar-disponibles",
+      "name": "Filtrar sugerencias disponibles",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $json.html;\nconst slug = $('Buscar slug del sitio').item.json.slug;\nconst html_b64 = Buffer.from(html, 'utf-8').toString('base64');\n\nreturn [{ json: { html_b64, slug } }];"
+      },
+      "id": "code-preparar-deploy",
+      "name": "Preparar deploy (base64)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "=mkdir -p /tmp/kleysites-{{ $json.slug }} && echo '{{ $json.html_b64 }}' | base64 -d > /tmp/kleysites-{{ $json.slug }}/index.html && cd /tmp/kleysites-{{ $json.slug }} && wrangler pages deploy . --project-name={{ $json.slug }} --branch=main"
+      },
+      "id": "ssh-deploy-wrangler",
+      "name": "Publicar via Wrangler (SSH)",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        880,
+        1900
+      ],
+      "credentials": {
+        "sshPassword": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_SSH",
+          "name": "VPS KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://open.kickbox.com/v1/disposable/{{ $json.body.email.split('@')[1] }}",
+        "options": {}
+      },
+      "id": "http-check-desechable",
+      "name": "Verificar email no desechable",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -440,
+        400
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-no-desechable",
+              "leftValue": "={{ $json.disposable }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-no-desechable",
+      "name": "¿Email no desechable?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -400,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'No se permiten correos temporales/desechables' } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond-desechable",
+      "name": "Registro: Responder email desechable",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -400,
+        550
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const codigo = Math.floor(100000 + Math.random() * 900000).toString();\nconst expira = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 min\nconst anterior = $json;\nreturn [{ json: { ...anterior, verification_code: codigo, verification_expires: expira } }];"
+      },
+      "id": "code-generar-codigo-verif",
+      "name": "Generar código de verificación",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        280,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Confirma tu correo — KleySites",
+        "emailType": "html",
+        "message": "=<div style=\"font-family: -apple-system, Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; background: #ffffff;\">\n  <div style=\"text-align: center; margin-bottom: 8px;\">\n    <img src=\"https://res.cloudinary.com/aup5guac/image/upload/v1788328049/KS_logo_mafngw.png\" alt=\"KleySites\" style=\"height: 72px;\" />\n  </div>\n  <div style=\"background: #f8f7fc; border-radius: 12px; padding: 32px 24px; text-align: center;\">\n    <h2 style=\"color: #1a1a1a; font-size: 20px; margin: 0 0 8px;\">Confirma tu cuenta</h2>\n    <p style=\"color: #666; font-size: 14px; margin: 0 0 24px;\">Usa este código para verificar tu correo y empezar a crear tu sitio.</p>\n    <div style=\"background: linear-gradient(90deg,#8b5cf6,#ff9d4d); display: inline-block; padding: 2px; border-radius: 10px;\">\n      <div style=\"background: #ffffff; border-radius: 8px; padding: 16px 32px;\">\n        <span style=\"font-size: 32px; font-weight: 700; letter-spacing: 8px; color: #1a1a1a;\">{{ $json.verification_code }}</span>\n      </div>\n    </div>\n    <p style=\"color: #999; font-size: 12px; margin: 24px 0 0;\">Este código expira en 15 minutos.</p>\n  </div>\n  <p style=\"color: #aaa; font-size: 11px; text-align: center; margin-top: 24px;\">Powered by KleyCloud</p>\n</div>",
+        "options": {}
+      },
+      "id": "email-enviar-codigo",
+      "name": "Enviar email de verificación",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        300
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_GMAIL",
+          "name": "Gmail KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kleysites/confirmar",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-confirmar",
+      "name": "Webhook Confirmar código",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, verification_code, verification_expires FROM clients WHERE email = $1 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$json.body.email] }}"
+        }
+      },
+      "id": "postgres-buscar-para-confirmar",
+      "name": "Buscar cliente a confirmar",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -320,
+        2400
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $('Webhook Confirmar código').item.json.body;\nconst cliente = $input.first().json;\n\nif (!cliente || cliente.id === undefined) {\n  return [{ json: { ok: false, motivo: 'no_existe' } }];\n}\n\nconst expirado = new Date(cliente.verification_expires) < new Date();\nif (expirado) {\n  return [{ json: { ok: false, motivo: 'codigo_expirado' } }];\n}\n\nif (String(cliente.verification_code) !== String(body.codigo)) {\n  return [{ json: { ok: false, motivo: 'codigo_incorrecto' } }];\n}\n\nreturn [{ json: { ok: true, client_id: cliente.id } }];"
+      },
+      "id": "code-validar-confirmacion",
+      "name": "Validar código",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-ok-confirmar",
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-ok-confirmar",
+      "name": "¿Código correcto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE clients SET verified = true, verification_code = NULL WHERE id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$json.client_id] }}"
+        }
+      },
+      "id": "postgres-marcar-verificado",
+      "name": "Marcar como verificado",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        400,
+        2300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { verificado: true, token: $json.token, client_id: $json.client_id } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-confirmado-ok",
+      "name": "Confirmar: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        2300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: $json.motivo || 'Código inválido' } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond-confirmado-error",
+      "name": "Confirmar: Responder error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        2550
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-google-ya-existe",
+              "leftValue": "={{ $json.id === undefined }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-google-nuevo",
+      "name": "¿Cliente nuevo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        2700
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-google-existe",
+              "leftValue": "={{ $json.id === undefined }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-google-existe",
+      "name": "¿Ya tiene cuenta?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        2700
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kleysites/enviar-codigo",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-enviar-codigo",
+      "name": "Webhook Enviar código",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        3200
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://open.kickbox.com/v1/disposable/{{ $json.body.email.split('@')[1] }}",
+        "options": {}
+      },
+      "id": "http-check-desechable-2",
+      "name": "Verificar no desechable (2)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -440,
+        3200
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-nd2",
+              "leftValue": "={{ $json.disposable }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-nd2",
+      "name": "¿No desechable? (2)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -260,
+        3200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id FROM clients WHERE email = $1 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$('Webhook Enviar código').item.json.body.email] }}"
+        }
+      },
+      "id": "postgres-buscar-passwordless",
+      "name": "Buscar cliente (passwordless)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -60,
+        3100
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const codigo = Math.floor(100000 + Math.random() * 900000).toString();\nconst expira = new Date(Date.now() + 15 * 60 * 1000).toISOString();\nconst email = $('Webhook Enviar código').item.json.body.email;\nconst existente = $json;\n\nreturn [{ json: { email, codigo, expira, existe: existente.id !== undefined, client_id: existente.id || null } }];"
+      },
+      "id": "code-generar-codigo-passwordless",
+      "name": "Generar código (passwordless)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        140,
+        3100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-existe-pw",
+              "leftValue": "={{ $json.existe }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-existe-passwordless",
+      "name": "¿Cliente ya existe?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        3100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE clients SET verification_code = $1, verification_expires = $2 WHERE email = $3 RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ [$json.codigo, $json.expira, $json.email] }}"
+        }
+      },
+      "id": "postgres-update-codigo",
+      "name": "Actualizar código (existente)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        560,
+        3020
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO clients (email, password_hash, verification_code, verification_expires, verified) VALUES ($1, NULL, $2, $3, false) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ [$json.email, $json.codigo, $json.expira] }}"
+        }
+      },
+      "id": "postgres-crear-passwordless",
+      "name": "Crear cliente (passwordless)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        560,
+        3180
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Generar código (passwordless)').item.json.email }}",
+        "subject": "Tu código de acceso — KleySites",
+        "emailType": "html",
+        "message": "=<div style='font-family:sans-serif'><h2>Tu código de acceso a KleySites</h2><h1 style='letter-spacing:4px'>{{ $('Generar código (passwordless)').item.json.codigo }}</h1><p>Este código expira en 15 minutos.</p></div>",
+        "options": {}
+      },
+      "id": "email-enviar-codigo-login",
+      "name": "Enviar email (código login)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        3100
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_GMAIL",
+          "name": "Gmail KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { enviado: true } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-codigo-enviado",
+      "name": "Código: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1000,
+        3100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'No se permiten correos temporales/desechables' } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "respond-desechable-2",
+      "name": "Código: Responder desechable",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -260,
+        3350
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const jwt = require('jsonwebtoken');\nconst client_id = $('Validar código').item.json.client_id;\nconst SECRET = $env.KLEYSITES_JWT_SECRET;\n\nconst token = jwt.sign({ client_id }, SECRET, { expiresIn: '7d' });\n\nreturn [{ json: { token, client_id } }];"
+      },
+      "id": "code-generar-token-confirmar",
+      "name": "Generar token (confirmar)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        2300
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kleysites/google-login",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "gg-webhook",
+      "name": "Webhook Google Login",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        3600
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://oauth2.googleapis.com/tokeninfo?id_token={{ $json.body.id_token }}",
+        "options": {}
+      },
+      "id": "gg-verificar-token",
+      "name": "Verificar token con Google",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -320,
+        3600
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const GOOGLE_CLIENT_ID = $env.GOOGLE_CLIENT_ID_WEB;\nconst info = $json;\n\nif (!info.email || info.aud !== GOOGLE_CLIENT_ID || info.email_verified !== 'true') {\n  return [{ json: { valido: false } }];\n}\n\nreturn [{ json: { valido: true, email: info.email } }];"
+      },
+      "id": "gg-validar-token",
+      "name": "Validar token Google",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        3600
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "gg-cond1",
+              "leftValue": "={{ $json.valido }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "gg-if-valido",
+      "name": "¿Token Google válido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        3600
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id FROM clients WHERE email = $1 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$json.email] }}"
+        }
+      },
+      "id": "gg-buscar-cliente",
+      "name": "Buscar cliente (Google)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        400,
+        3500
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "gg-cond2",
+              "leftValue": "={{ $json.id === undefined }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "gg-if-existe",
+      "name": "¿Ya tiene cuenta? (Google)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        3500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO clients (email, password_hash, verified) VALUES ($1, NULL, true) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ [$('Validar token Google').item.json.email] }}"
+        }
+      },
+      "id": "gg-crear-cliente",
+      "name": "Crear cliente (Google)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        880,
+        3400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const jwt = require('jsonwebtoken');\nconst client_id = $json.id;\nconst SECRET = $env.KLEYSITES_JWT_SECRET;\nconst token = jwt.sign({ client_id }, SECRET, { expiresIn: '7d' });\nreturn [{ json: { token, client_id } }];"
+      },
+      "id": "gg-generar-token",
+      "name": "Generar token (Google)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        3500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { token: $json.token, client_id: $json.client_id } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "gg-respond-ok",
+      "name": "Google: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        3500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'Token de Google inválido' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "gg-respond-error",
+      "name": "Google: Responder error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        3750
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "DELETE",
+        "path": "kleysites/blocks",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-eliminar-bloque",
+      "name": "Webhook Eliminar bloque",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const jwt = require('jsonwebtoken');\nconst auth = $json.headers.authorization || '';\nconst token = auth.replace('Bearer ', '');\nconst block_id = $json.query.block_id;\n\nif (!token) return [{ json: { autorizado: false } }];\nif (!block_id) return [{ json: { autorizado: false, motivo: 'block_id_requerido' } }];\n\ntry {\n  const payload = jwt.verify(token, $env.KLEYSITES_JWT_SECRET);\n  return [{ json: { autorizado: true, client_id: payload.client_id, block_id } }];\n} catch (e) {\n  return [{ json: { autorizado: false } }];\n}"
+      },
+      "id": "code-validar-token-eliminar",
+      "name": "Validar token (eliminar)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-autorizado-eliminar",
+              "leftValue": "={{ $json.autorizado }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-autorizado-eliminar",
+      "name": "¿Token válido? (eliminar)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        1500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM blocks WHERE id = $1 AND client_id = $2 RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ [$json.block_id, $json.client_id] }}"
+        }
+      },
+      "id": "postgres-eliminar-bloque",
+      "name": "Eliminar bloque en Neon",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        160,
+        1400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { eliminado: true, id: $json.id } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-eliminar-ok",
+      "name": "Eliminar: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        1400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'No autorizado' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "respond-eliminar-401",
+      "name": "Eliminar: Responder error 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "kleysites/sites",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-listar-sitios",
+      "name": "Webhook Listar sitios",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const jwt = require('jsonwebtoken');\nconst auth = $json.headers.authorization || '';\nconst token = auth.replace('Bearer ', '');\n\nif (!token) return [{ json: { autorizado: false } }];\n\ntry {\n  const payload = jwt.verify(token, $env.KLEYSITES_JWT_SECRET);\n  return [{ json: { autorizado: true, client_id: payload.client_id } }];\n} catch (e) {\n  return [{ json: { autorizado: false } }];\n}"
+      },
+      "id": "code-validar-token-listar-sitios",
+      "name": "Validar token (listar sitios)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-autorizado-listar-sitios",
+              "leftValue": "={{ $json.autorizado }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-autorizado-listar-sitios",
+      "name": "¿Token válido? (listar sitios)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, nombre, slug, created_at FROM sites WHERE client_id = $1 ORDER BY created_at DESC;",
+        "options": {
+          "queryReplacement": "={{ [$json.client_id] }}"
+        }
+      },
+      "id": "postgres-listar-sitios",
+      "name": "Listar sitios Neon",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        160,
+        1800
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REEMPLAZAR_CON_TU_CREDENCIAL_NEON",
+          "name": "Neon KleySites"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { sitios: $input.all().map(i => i.json) } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-listar-sitios-ok",
+      "name": "Listar sitios: Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        1800
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: 'No autorizado' } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "respond-listar-sitios-401",
+      "name": "Listar sitios: Responder error 401",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        2000
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Login": {
+      "main": [
+        [
+          {
+            "node": "Buscar cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar cliente": {
+      "main": [
+        [
+          {
+            "node": "Validar y generar token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar y generar token": {
+      "main": [
+        [
+          {
+            "node": "¿Login válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Login válido?": {
+      "main": [
+        [
+          {
+            "node": "Login: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Login: Responder error 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Registro": {
+      "main": [
+        [
+          {
+            "node": "Verificar email no desechable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar si ya existe": {
+      "main": [
+        [
+          {
+            "node": "¿Email libre?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Email libre?": {
+      "main": [
+        [
+          {
+            "node": "Generar hash",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registro: Responder email duplicado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar hash": {
+      "main": [
+        [
+          {
+            "node": "¿Datos válidos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Datos válidos?": {
+      "main": [
+        [
+          {
+            "node": "Generar código de verificación",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registro: Responder error datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear cliente": {
+      "main": [
+        [
+          {
+            "node": "Enviar email de verificación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Guardar bloque": {
+      "main": [
+        [
+          {
+            "node": "Validar token (bloque)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar token (bloque)": {
+      "main": [
+        [
+          {
+            "node": "¿Token válido? (bloque)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Token válido? (bloque)": {
+      "main": [
+        [
+          {
+            "node": "Guardar bloque en Neon",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bloque: Responder error 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar bloque en Neon": {
+      "main": [
+        [
+          {
+            "node": "Bloque: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Listar bloques": {
+      "main": [
+        [
+          {
+            "node": "Validar token (listar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar token (listar)": {
+      "main": [
+        [
+          {
+            "node": "¿Token válido? (listar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Token válido? (listar)": {
+      "main": [
+        [
+          {
+            "node": "Listar bloques Neon",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Listar: Responder error 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Listar bloques Neon": {
+      "main": [
+        [
+          {
+            "node": "Listar: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Subir imagen": {
+      "main": [
+        [
+          {
+            "node": "Validar token (upload)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar token (upload)": {
+      "main": [
+        [
+          {
+            "node": "¿Token válido? (upload)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Token válido? (upload)": {
+      "main": [
+        [
+          {
+            "node": "Subir a Cloudinary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upload: Responder error 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir a Cloudinary": {
+      "main": [
+        [
+          {
+            "node": "Upload: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Publicar sitio": {
+      "main": [
+        [
+          {
+            "node": "Validar token (publish)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar token (publish)": {
+      "main": [
+        [
+          {
+            "node": "¿Token válido? (publish)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Token válido? (publish)": {
+      "main": [
+        [
+          {
+            "node": "Buscar slug del sitio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Publish: Responder error 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Traer bloques para publicar": {
+      "main": [
+        [
+          {
+            "node": "Renderizar HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Renderizar HTML": {
+      "main": [
+        [
+          {
+            "node": "Preparar deploy (base64)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear proyecto Cloudflare Pages": {
+      "main": [
+        [
+          {
+            "node": "Sitio: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Crear sitio": {
+      "main": [
+        [
+          {
+            "node": "Validar token y generar slug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar token y generar slug": {
+      "main": [
+        [
+          {
+            "node": "¿Token válido? (sitio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Token válido? (sitio)": {
+      "main": [
+        [
+          {
+            "node": "Verificar slug disponible",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sitio: Responder error 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar slug disponible": {
+      "main": [
+        [
+          {
+            "node": "¿Nombre disponible?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Nombre disponible?": {
+      "main": [
+        [
+          {
+            "node": "Crear sitio en Neon",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generar sugerencias de slug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear sitio en Neon": {
+      "main": [
+        [
+          {
+            "node": "Crear proyecto Cloudflare Pages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar slug del sitio": {
+      "main": [
+        [
+          {
+            "node": "Traer bloques para publicar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar sugerencias de slug": {
+      "main": [
+        [
+          {
+            "node": "Verificar sugerencias en Neon",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar sugerencias en Neon": {
+      "main": [
+        [
+          {
+            "node": "Filtrar sugerencias disponibles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar sugerencias disponibles": {
+      "main": [
+        [
+          {
+            "node": "Sitio: Nombre duplicado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar deploy (base64)": {
+      "main": [
+        [
+          {
+            "node": "Publicar via Wrangler (SSH)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publicar via Wrangler (SSH)": {
+      "main": [
+        [
+          {
+            "node": "Publish: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar email no desechable": {
+      "main": [
+        [
+          {
+            "node": "¿Email no desechable?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Email no desechable?": {
+      "main": [
+        [
+          {
+            "node": "Verificar si ya existe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registro: Responder email desechable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar código de verificación": {
+      "main": [
+        [
+          {
+            "node": "Crear cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar email de verificación": {
+      "main": [
+        [
+          {
+            "node": "Registro: Responder creado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Confirmar código": {
+      "main": [
+        [
+          {
+            "node": "Buscar cliente a confirmar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar cliente a confirmar": {
+      "main": [
+        [
+          {
+            "node": "Validar código",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar código": {
+      "main": [
+        [
+          {
+            "node": "¿Código correcto?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Código correcto?": {
+      "main": [
+        [
+          {
+            "node": "Marcar como verificado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Confirmar: Responder error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar como verificado": {
+      "main": [
+        [
+          {
+            "node": "Generar token (confirmar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Cliente nuevo?": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "¿Ya tiene cuenta?": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Webhook Enviar código": {
+      "main": [
+        [
+          {
+            "node": "Verificar no desechable (2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar no desechable (2)": {
+      "main": [
+        [
+          {
+            "node": "¿No desechable? (2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿No desechable? (2)": {
+      "main": [
+        [
+          {
+            "node": "Buscar cliente (passwordless)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Código: Responder desechable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar cliente (passwordless)": {
+      "main": [
+        [
+          {
+            "node": "Generar código (passwordless)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar código (passwordless)": {
+      "main": [
+        [
+          {
+            "node": "¿Cliente ya existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Cliente ya existe?": {
+      "main": [
+        [
+          {
+            "node": "Actualizar código (existente)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Crear cliente (passwordless)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar código (existente)": {
+      "main": [
+        [
+          {
+            "node": "Enviar email (código login)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear cliente (passwordless)": {
+      "main": [
+        [
+          {
+            "node": "Enviar email (código login)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar email (código login)": {
+      "main": [
+        [
+          {
+            "node": "Código: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar token (confirmar)": {
+      "main": [
+        [
+          {
+            "node": "Confirmar: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Google Login": {
+      "main": [
+        [
+          {
+            "node": "Verificar token con Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar token con Google": {
+      "main": [
+        [
+          {
+            "node": "Validar token Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar token Google": {
+      "main": [
+        [
+          {
+            "node": "¿Token Google válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Token Google válido?": {
+      "main": [
+        [
+          {
+            "node": "Buscar cliente (Google)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google: Responder error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar cliente (Google)": {
+      "main": [
+        [
+          {
+            "node": "¿Ya tiene cuenta? (Google)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Ya tiene cuenta? (Google)": {
+      "main": [
+        [
+          {
+            "node": "Crear cliente (Google)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generar token (Google)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear cliente (Google)": {
+      "main": [
+        [
+          {
+            "node": "Generar token (Google)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar token (Google)": {
+      "main": [
+        [
+          {
+            "node": "Google: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Eliminar bloque": {
+      "main": [
+        [
+          {
+            "node": "Validar token (eliminar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar token (eliminar)": {
+      "main": [
+        [
+          {
+            "node": "¿Token válido? (eliminar)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Token válido? (eliminar)": {
+      "main": [
+        [
+          {
+            "node": "Eliminar bloque en Neon",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Eliminar: Responder error 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eliminar bloque en Neon": {
+      "main": [
+        [
+          {
+            "node": "Eliminar: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Listar sitios": {
+      "main": [
+        [
+          {
+            "node": "Validar token (listar sitios)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar token (listar sitios)": {
+      "main": [
+        [
+          {
+            "node": "¿Token válido? (listar sitios)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Token válido? (listar sitios)": {
+      "main": [
+        [
+          {
+            "node": "Listar sitios Neon",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Listar sitios: Responder error 401",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Listar sitios Neon": {
+      "main": [
+        [
+          {
+            "node": "Listar sitios: Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
