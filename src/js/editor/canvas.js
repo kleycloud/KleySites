@@ -8,10 +8,12 @@
 
 import * as api from '../api.js';
 import { initAccountMenu } from '../account-menu.js';
-import { state, CONTENEDORES, CONTENIDO_INICIAL, escribirCampo } from './state.js';
+import { state, CONTENEDORES, CONTENIDO_INICIAL, PLANTILLAS, ETIQUETAS_ZONA, escribirCampo } from './state.js';
 import { guardarSnapshot, registrarEdicionDebounced, deshacer as deshacerHistorial, rehacer as rehacerHistorial } from './history.js';
 import { marcarEstado, programarGuardado } from './sync.js';
 import { renderCanvas, renderPropiedades, actualizarEstadosVisuales } from './render.js';
+import { contenedorDestino, datosDestino, indiceDeInsercion } from './dragdrop.js';
+import { analizarHTML } from './importar.js';
 
 // Sin sesión, no hay editor: se necesita el token para leer/guardar en Neon.
 if (!localStorage.getItem('kleysites_token')) {
@@ -62,6 +64,61 @@ function crearBloque(tipo) {
   programarGuardado();
 }
 
+// Inserta un árbol de bloques ({ tipo, contenido, hijos? }) ya armado —
+// lo comparten las plantillas (contenido fijo del código) y la
+// importación de HTML (contenido ajeno, ya saneado en importar.js).
+function insertarArbol(nodos, zona, parentId, ordenInicial = 0) {
+  nodos.forEach((n, i) => {
+    const bloque = {
+      id: state.nextId++,
+      remoteId: null,
+      tipo: n.tipo,
+      contenido: structuredClone(n.contenido),
+      estilos: {},
+      zona,
+      parent_id: parentId,
+      orden: ordenInicial + i,
+    };
+    state.blocks.push(bloque);
+    if (n.hijos && n.hijos.length) insertarArbol(n.hijos, zona, bloque.id);
+  });
+}
+
+function insertarPlantilla(id) {
+  const plantilla = PLANTILLAS.find((p) => p.id === id);
+  if (!plantilla) return;
+
+  guardarSnapshot();
+  const zona = state.zonaActiva;
+  const hermanos = state.blocks.filter((b) => b.parent_id === null && b.zona === zona);
+  const seccion = {
+    id: state.nextId++, remoteId: null, tipo: 'seccion', contenido: {}, estilos: {},
+    zona, parent_id: null, orden: hermanos.length,
+  };
+  state.blocks.push(seccion);
+  insertarArbol(plantilla.hijos, zona, seccion.id);
+
+  state.selectedId = seccion.id;
+  renderCanvas();
+  renderPropiedades();
+  programarGuardado();
+}
+
+function importarHTML(html) {
+  const arbol = analizarHTML(html);
+  if (!arbol.length) return false;
+
+  guardarSnapshot();
+  const zona = state.zonaActiva;
+  const base = state.blocks.filter((b) => b.parent_id === null && b.zona === zona).length;
+  insertarArbol(arbol, zona, null, base);
+
+  renderCanvas();
+  renderPropiedades();
+  programarGuardado();
+  return true;
+}
+
 function seleccionarBloque(id) {
   const bloque = state.blocks.find((b) => b.id === id);
   if (bloque) state.zonaActiva = bloque.zona;
@@ -109,6 +166,54 @@ function eliminarBloqueSeleccionado() {
   remotosAEliminar.forEach((remoteId) => {
     api.eliminarBloque(remoteId).catch((e) => console.error('No se pudo eliminar en Neon', remoteId, e));
   });
+}
+
+// --- Arrastrar y soltar para reordenar/reanidar bloques ---
+
+// true si moverlo a nuevoParentId lo metería dentro de sí mismo o de uno
+// de sus propios descendientes (una sección arrastrada sobre su propio hijo).
+function formaCiclo(idArrastrado, nuevoParentId) {
+  if (nuevoParentId == null) return false;
+  let actual = state.blocks.find((b) => b.id === nuevoParentId);
+  while (actual) {
+    if (actual.id === idArrastrado) return true;
+    actual = actual.parent_id == null ? null : state.blocks.find((b) => b.id === actual.parent_id);
+  }
+  return false;
+}
+
+function moverBloque(idArrastrado, zonaDestino, parentIdDestino, indiceDestino) {
+  const bloque = state.blocks.find((b) => b.id === idArrastrado);
+  if (!bloque || zonaDestino == null) return;
+  if (idArrastrado === parentIdDestino || formaCiclo(idArrastrado, parentIdDestino)) return;
+  if (bloque.zona === zonaDestino && bloque.parent_id === parentIdDestino) {
+    // Reordenar dentro del mismo grupo: si ya está justo en ese índice, no
+    // hay nada que hacer (evita un snapshot de deshacer vacío).
+    const hermanos = state.blocks
+      .filter((b) => b.zona === zonaDestino && b.parent_id === parentIdDestino)
+      .sort((a, z) => a.orden - z.orden);
+    if (hermanos[indiceDestino] === bloque) return;
+  }
+
+  guardarSnapshot();
+
+  const hermanosViejos = state.blocks
+    .filter((b) => b.id !== idArrastrado && b.zona === bloque.zona && b.parent_id === bloque.parent_id)
+    .sort((a, z) => a.orden - z.orden);
+  hermanosViejos.forEach((b, i) => { b.orden = i; });
+
+  bloque.zona = zonaDestino;
+  bloque.parent_id = parentIdDestino;
+
+  const hermanosNuevos = state.blocks
+    .filter((b) => b.id !== idArrastrado && b.zona === zonaDestino && b.parent_id === parentIdDestino)
+    .sort((a, z) => a.orden - z.orden);
+  hermanosNuevos.splice(Math.min(indiceDestino, hermanosNuevos.length), 0, bloque);
+  hermanosNuevos.forEach((b, i) => { b.orden = i; });
+
+  renderCanvas();
+  renderPropiedades();
+  programarGuardado();
 }
 
 function actualizarCampo(id, path, valor) {
@@ -178,6 +283,94 @@ document.querySelector('.ed-widget-grid').addEventListener('click', (e) => {
   crearBloque(card.dataset.tipo);
 });
 
+// --- Riel lateral: qué panel se muestra (Bloques/Capas/Plantillas/...) ---
+
+const TITULOS_PANEL = { bloques: 'Bloques', capas: 'Capas', plantillas: 'Plantillas', paginas: 'Páginas', tienda: 'Tienda' };
+
+function mostrarPanel(nombre) {
+  document.querySelectorAll('.ed-rail-item[data-panel]').forEach((el) => {
+    el.querySelector('.icon-frame').classList.toggle('is-active', el.dataset.panel === nombre);
+  });
+  document.querySelectorAll('.ed-panel-content').forEach((el) => {
+    el.classList.toggle('is-active', el.dataset.panelContent === nombre);
+  });
+  document.getElementById('panelTitle').textContent = TITULOS_PANEL[nombre] || '';
+}
+
+document.querySelectorAll('.ed-rail-item[data-panel]').forEach((el) => {
+  el.addEventListener('click', () => mostrarPanel(el.dataset.panel));
+});
+mostrarPanel('bloques');
+
+// --- Capas: clic en una fila selecciona ese bloque ---
+
+document.getElementById('layersTree').addEventListener('click', (e) => {
+  const fila = e.target.closest('[data-block-id]');
+  if (fila) seleccionarBloque(Number(fila.dataset.blockId));
+});
+
+// --- Plantillas: lista fija, se pinta una sola vez ---
+
+document.getElementById('tplItemList').innerHTML = PLANTILLAS.map((p) => `
+  <button type="button" class="ed-tpl-item" data-plantilla="${p.id}">
+    <span class="ed-tpl-item-nombre">${p.nombre}</span>
+  </button>`).join('');
+
+document.getElementById('tplItemList').addEventListener('click', (e) => {
+  const item = e.target.closest('[data-plantilla]');
+  if (item) insertarPlantilla(item.dataset.plantilla);
+});
+
+// --- Importar HTML ---
+
+const modalImportar = document.getElementById('modalImportar');
+const textareaImportar = document.getElementById('textareaImportar');
+const modalImportarError = document.getElementById('modalImportarError');
+
+function abrirModalImportar() {
+  document.getElementById('modalZonaNombre').textContent = ETIQUETAS_ZONA[state.zonaActiva] || state.zonaActiva;
+  textareaImportar.value = '';
+  modalImportarError.hidden = true;
+  modalImportar.classList.add('is-open');
+  textareaImportar.focus();
+}
+
+function cerrarModalImportar() {
+  modalImportar.classList.remove('is-open');
+}
+
+document.getElementById('btnImportar').addEventListener('click', abrirModalImportar);
+document.getElementById('btnCerrarImportar').addEventListener('click', cerrarModalImportar);
+document.getElementById('btnCancelarImportar').addEventListener('click', cerrarModalImportar);
+modalImportar.addEventListener('click', (e) => {
+  if (e.target === modalImportar) cerrarModalImportar();
+});
+
+const inputArchivoHTML = document.getElementById('inputArchivoHTML');
+document.getElementById('btnSubirArchivo').addEventListener('click', () => inputArchivoHTML.click());
+inputArchivoHTML.addEventListener('change', async () => {
+  const archivo = inputArchivoHTML.files[0];
+  if (!archivo) return;
+  textareaImportar.value = await archivo.text();
+  inputArchivoHTML.value = '';
+});
+
+document.getElementById('btnConfirmarImportar').addEventListener('click', () => {
+  const html = textareaImportar.value.trim();
+  if (!html) {
+    modalImportarError.textContent = 'Pega o sube algo de HTML primero.';
+    modalImportarError.hidden = false;
+    return;
+  }
+  const huboBloques = importarHTML(html);
+  if (!huboBloques) {
+    modalImportarError.textContent = 'No se encontró nada que convertir en bloques.';
+    modalImportarError.hidden = false;
+    return;
+  }
+  cerrarModalImportar();
+});
+
 const canvasWrap = document.querySelector('.ed-canvas-wrap');
 
 canvasWrap.addEventListener('click', (e) => {
@@ -236,6 +429,75 @@ canvasWrap.addEventListener('blur', (e) => {
   if (state.editandoInline && e.target === state.editandoInline.el) finalizarEdicionInline();
 }, true);
 
+// Arrastrar y soltar: la manija (.ed-drag-handle) es lo único con
+// draggable="true" — el bloque completo no, para no chocar con la
+// selección de texto y la edición directa por doble clic.
+let arrastrando = null; // id del bloque que se está arrastrando
+let indicador = null; // <div class="ed-drop-indicator"> insertado mientras se arrastra encima
+
+function limpiarIndicadorArrastre() {
+  if (indicador) { indicador.remove(); indicador = null; }
+  document.querySelectorAll('.ed-contenedor.is-drop-target').forEach((el) => el.classList.remove('is-drop-target'));
+}
+
+function calcularDestinoArrastre(e) {
+  if (arrastrando == null) return null;
+  const contenedorEl = contenedorDestino(e.target);
+  if (!contenedorEl) return null;
+  const { zona, parentId } = datosDestino(contenedorEl, state.blocks);
+  if (zona == null || arrastrando === parentId || formaCiclo(arrastrando, parentId)) return null;
+  const horizontal = contenedorEl.classList.contains('ed-contenedor--columnas');
+  const indice = indiceDeInsercion(contenedorEl, arrastrando, e.clientX, e.clientY, horizontal);
+  return { contenedorEl, zona, parentId, indice };
+}
+
+canvasWrap.addEventListener('dragstart', (e) => {
+  const manija = e.target.closest('.ed-drag-handle');
+  const bloqueEl = manija && manija.closest('[data-block-id]');
+  if (!bloqueEl) { e.preventDefault(); return; }
+  arrastrando = Number(bloqueEl.dataset.blockId);
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', String(arrastrando)); // Firefox exige setData para permitir el arrastre
+  e.dataTransfer.setDragImage(bloqueEl, 16, 16);
+  bloqueEl.classList.add('is-dragging');
+});
+
+canvasWrap.addEventListener('dragover', (e) => {
+  // Primero quitar el indicador de la vuelta anterior: si sigue en el DOM
+  // mientras se miden las posiciones de los bloques, sus 3px de alto
+  // corren el layout y desalinean el índice calculado.
+  limpiarIndicadorArrastre();
+  const destino = calcularDestinoArrastre(e);
+  if (!destino) return;
+
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+
+  if (destino.contenedorEl.classList.contains('ed-contenedor')) destino.contenedorEl.classList.add('is-drop-target');
+
+  indicador = document.createElement('div');
+  indicador.className = 'ed-drop-indicator';
+  const hijos = [...destino.contenedorEl.children].filter(
+    (el) => el.matches('.ed-block') && Number(el.dataset.blockId) !== arrastrando,
+  );
+  if (destino.indice >= hijos.length) destino.contenedorEl.appendChild(indicador);
+  else destino.contenedorEl.insertBefore(indicador, hijos[destino.indice]);
+});
+
+canvasWrap.addEventListener('drop', (e) => {
+  e.preventDefault();
+  limpiarIndicadorArrastre();
+  const destino = calcularDestinoArrastre(e);
+  if (destino) moverBloque(arrastrando, destino.zona, destino.parentId, destino.indice);
+  arrastrando = null;
+});
+
+canvasWrap.addEventListener('dragend', () => {
+  document.querySelectorAll('.ed-block.is-dragging').forEach((el) => el.classList.remove('is-dragging'));
+  limpiarIndicadorArrastre();
+  arrastrando = null;
+});
+
 const propertiesBody = document.getElementById('propertiesBody');
 
 // Solo "input": dispara con cada tecleo y con cada cambio de <select> en
@@ -275,6 +537,14 @@ async function inicializar() {
 
   state.siteId = idSitio;
 
+  // Se pinta de una vez (los espacios vacíos de cada zona), sin esperar a
+  // la red: si para cuando la carga de bloques responda el usuario ya
+  // empezó a insertar o editar algo, ese renderCanvas() de más pisaría el
+  // DOM a media edición — por eso el único que vuelve a renderizar más
+  // abajo es el de la carga exitosa, que sí trae datos nuevos que mostrar.
+  renderCanvas();
+  renderPropiedades();
+
   try {
     const resp = await api.listarSitios();
     const sitio = (resp.sitios || []).find((s) => String(s.id) === String(state.siteId));
@@ -304,13 +574,12 @@ async function inicializar() {
       delete b._parentRemoteId;
     });
     marcarEstado('');
+    renderCanvas();
+    renderPropiedades();
   } catch (e) {
     console.error('No se pudieron cargar los bloques', e);
     marcarEstado('Sin conexión — trabajando solo en este navegador');
   }
-
-  renderCanvas();
-  renderPropiedades();
 }
 
 inicializar();

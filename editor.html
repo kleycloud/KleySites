@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="/src/styles/editor/sidebar.css">
   <link rel="stylesheet" href="/src/styles/editor/canvas.css">
   <link rel="stylesheet" href="/src/styles/editor/properties.css">
+  <link rel="stylesheet" href="/src/styles/editor/modal.css">
 </head>
 <body>
 
@@ -59,6 +60,10 @@
         </div>
       </button>
       <div class="ed-topbar-divider"></div>
+      <button class="ed-btn ed-btn--secondary" id="btnImportar">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+        Importar
+      </button>
       <button class="ed-btn ed-btn--secondary">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></svg>
         Vista previa
@@ -73,27 +78,27 @@
   <div class="ed-body">
 
     <nav class="ed-rail">
-      <div class="ed-rail-item" title="Páginas">
+      <div class="ed-rail-item" title="Páginas" data-panel="paginas">
         <div class="icon-frame icon-frame--20">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>
         </div>
       </div>
-      <div class="ed-rail-item" title="Plantillas">
+      <div class="ed-rail-item" title="Plantillas" data-panel="plantillas">
         <div class="icon-frame icon-frame--20">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="8" height="7" rx="1"/><rect x="13" y="14" width="8" height="7" rx="1"/></svg>
         </div>
       </div>
-      <div class="ed-rail-item" title="Bloques">
-        <div class="icon-frame icon-frame--20 is-active">
+      <div class="ed-rail-item" title="Bloques" data-panel="bloques">
+        <div class="icon-frame icon-frame--20">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg>
         </div>
       </div>
-      <div class="ed-rail-item" title="Tienda">
+      <div class="ed-rail-item" title="Tienda" data-panel="tienda">
         <div class="icon-frame icon-frame--20">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 4M18 2l-1.5 4"/><path d="M3.5 6h17l-1.2 12.5a2 2 0 0 1-2 1.8H6.7a2 2 0 0 1-2-1.8L3.5 6z"/><path d="M8 10a4 4 0 0 0 8 0"/></svg>
         </div>
       </div>
-      <div class="ed-rail-item" title="Capas">
+      <div class="ed-rail-item" title="Capas" data-panel="capas">
         <div class="icon-frame icon-frame--20">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5-8 4.5-8-4.5z"/><path d="M4 12l8 4.5 8-4.5"/><path d="M4 16.5l8 4.5 8-4.5"/></svg>
         </div>
@@ -129,8 +134,10 @@
 
     <aside class="ed-panel">
       <div class="ed-panel-header">
-        <span class="ed-panel-title">Bloques</span>
+        <span class="ed-panel-title" id="panelTitle">Bloques</span>
       </div>
+
+      <div class="ed-panel-content is-active" data-panel-content="bloques">
       <div class="ed-widget-grid">
         <div class="ed-widget-card" data-tipo="imagen">
           <div class="icon-frame icon-frame--22">
@@ -174,6 +181,72 @@
           </div>
           <span class="ed-widget-label">Video</span>
         </div>
+        <div class="ed-widget-card" data-tipo="icono">
+          <div class="icon-frame icon-frame--22">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>
+          </div>
+          <span class="ed-widget-label">Ícono</span>
+        </div>
+        <div class="ed-widget-card" data-tipo="separador">
+          <div class="icon-frame icon-frame--22">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16"/></svg>
+          </div>
+          <span class="ed-widget-label">Separador</span>
+        </div>
+        <div class="ed-widget-card" data-tipo="espaciador">
+          <div class="icon-frame icon-frame--22">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M8 8l4-4 4 4M8 16l4 4 4-4"/></svg>
+          </div>
+          <span class="ed-widget-label">Espaciador</span>
+        </div>
+        <div class="ed-widget-card" data-tipo="galeria">
+          <div class="icon-frame icon-frame--22">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="2"/><rect x="9" y="9" width="12" height="12" rx="2"/></svg>
+          </div>
+          <span class="ed-widget-label">Galería</span>
+        </div>
+        <div class="ed-widget-card" data-tipo="formulario">
+          <div class="icon-frame icon-frame--22">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h10M7 17h6"/></svg>
+          </div>
+          <span class="ed-widget-label">Formulario</span>
+        </div>
+        <div class="ed-widget-card" data-tipo="mapa">
+          <div class="icon-frame icon-frame--22">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3L3 5v16l6-2 6 2 6-2V3l-6 2-6-2z"/><path d="M9 3v16M15 5v16"/></svg>
+          </div>
+          <span class="ed-widget-label">Mapa</span>
+        </div>
+      </div>
+      </div>
+
+      <div class="ed-panel-content" data-panel-content="capas">
+        <div class="ed-layers-tree" id="layersTree"></div>
+      </div>
+
+      <div class="ed-panel-content" data-panel-content="plantillas">
+        <p class="ed-panel-hint">Un clic agrega una sección ya armada — después puedes editar cada bloque como cualquier otro.</p>
+        <div class="ed-tpl-item-list" id="tplItemList"></div>
+      </div>
+
+      <div class="ed-panel-content" data-panel-content="paginas">
+        <div class="ed-panel-proximamente">
+          <div class="icon-frame icon-frame--36">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>
+          </div>
+          <p class="ed-panel-proximamente-titulo">Por ahora, una sola página</p>
+          <p class="ed-panel-proximamente-texto">Cada sitio tiene una página de inicio. Poder agregar más páginas está en camino.</p>
+        </div>
+      </div>
+
+      <div class="ed-panel-content" data-panel-content="tienda">
+        <div class="ed-panel-proximamente">
+          <div class="icon-frame icon-frame--36">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 4M18 2l-1.5 4"/><path d="M3.5 6h17l-1.2 12.5a2 2 0 0 1-2 1.8H6.7a2 2 0 0 1-2-1.8L3.5 6z"/><path d="M8 10a4 4 0 0 0 8 0"/></svg>
+          </div>
+          <p class="ed-panel-proximamente-titulo">Próximamente</p>
+          <p class="ed-panel-proximamente-texto">Vender productos desde tu sitio está en camino.</p>
+        </div>
       </div>
     </aside>
 
@@ -205,6 +278,31 @@
       <div class="ed-properties-body" id="propertiesBody"></div>
     </aside>
 
+  </div>
+
+  <div class="ed-modal-overlay" id="modalImportar">
+    <div class="ed-modal">
+      <div class="ed-modal-header">
+        <span class="ed-modal-title">Importar HTML</span>
+        <button class="ed-icon-btn" id="btnCerrarImportar" title="Cerrar">
+          <div class="icon-frame icon-frame--18">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </div>
+        </button>
+      </div>
+      <p class="ed-modal-hint">Pega código HTML o sube un archivo <code>.html</code>. Se convierte en bloques editables dentro de la zona "<span id="modalZonaNombre">Contenido</span>".</p>
+      <input type="file" id="inputArchivoHTML" accept=".html,text/html" hidden>
+      <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirArchivo">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+        Subir archivo .html
+      </button>
+      <textarea id="textareaImportar" placeholder="&lt;h1&gt;Bienvenido&lt;/h1&gt;&#10;&lt;p&gt;Contenido de ejemplo…&lt;/p&gt;"></textarea>
+      <p class="ed-modal-error" id="modalImportarError" hidden></p>
+      <div class="ed-modal-footer">
+        <button type="button" class="ed-btn ed-btn--secondary" id="btnCancelarImportar">Cancelar</button>
+        <button type="button" class="ed-btn ed-btn--primary" id="btnConfirmarImportar">Importar</button>
+      </div>
+    </div>
   </div>
 
 </div>

@@ -4,7 +4,7 @@
   el estado ni conoce la red — solo lee y escribe DOM.
 */
 
-import { state, ZONAS, CONTENEDORES, ETIQUETAS, CAMPOS, leerCampo } from './state.js';
+import { state, ZONAS, ETIQUETAS_ZONA, CONTENEDORES, ETIQUETAS, CAMPOS, ICONOS, leerCampo, sanearHTML } from './state.js';
 
 const MAPA_ESTILOS = { color: 'color', fondo: 'background' };
 
@@ -24,7 +24,9 @@ function renderContenido(b) {
   const c = b.contenido;
   switch (b.tipo) {
     case 'texto':
-      return `<div class="ed-editable" data-editable-field="contenido.html" style="${s}">${c.html || ''}</div>`;
+      // Defensa en dos capas: escribirCampo ya sanea al guardar, pero un
+      // bloque cargado desde Neon llega directo aquí sin pasar por ahí.
+      return `<div class="ed-editable" data-editable-field="contenido.html" style="${s}">${sanearHTML(c.html)}</div>`;
     case 'titulo': {
       const n = c.nivel || 'h2';
       return `<${n} class="ed-editable" data-editable-field="contenido.texto" style="${s}">${escapeHTML(c.texto)}</${n}>`;
@@ -39,6 +41,39 @@ function renderContenido(b) {
       return c.src
         ? `<video src="${escapeHTML(c.src)}" controls style="max-width:100%;${s}"></video>`
         : `<div class="ed-block-placeholder">Sin video todavía</div>`;
+    case 'icono': {
+      const tam = parseInt(c.tamano, 10) || 32;
+      const svgInterior = ICONOS[c.nombre] || ICONOS.estrella;
+      return `<svg viewBox="0 0 24 24" width="${tam}" height="${tam}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="${s}">${svgInterior}</svg>`;
+    }
+    case 'separador':
+      return `<hr class="ed-separador" style="${s}">`;
+    case 'espaciador': {
+      const alto = parseInt(c.alto, 10) || 40;
+      return `<div class="ed-espaciador" style="height:${alto}px;${s}"></div>`;
+    }
+    case 'galeria': {
+      const urls = (c.imagenes || '').split('\n').map((u) => u.trim()).filter(Boolean);
+      return urls.length
+        ? `<div class="ed-galeria" style="${s}">${urls.map((u) => `<img src="${escapeHTML(u)}" alt="">`).join('')}</div>`
+        : `<div class="ed-block-placeholder">Sin imágenes todavía</div>`;
+    }
+    case 'formulario':
+      // Vista previa nada más: todavía no hay a dónde enviar el formulario
+      // (falta el endpoint que reciba estos envíos), así que queda
+      // deshabilitado para no aparentar que ya funciona.
+      return `
+        <form class="ed-preview-form" style="${s}">
+          <h3>${escapeHTML(c.titulo)}</h3>
+          <input type="text" placeholder="Nombre" disabled>
+          <input type="email" placeholder="Correo" disabled>
+          <textarea placeholder="Mensaje" disabled></textarea>
+          <span class="ed-preview-btn">${escapeHTML(c.boton) || 'Enviar'}</span>
+        </form>`;
+    case 'mapa':
+      return c.src
+        ? `<iframe src="${escapeHTML(c.src)}" class="ed-mapa" style="${s}" loading="lazy"></iframe>`
+        : `<div class="ed-block-placeholder">Sin mapa todavía — pega una URL de inserción de Google Maps</div>`;
     default:
       return '';
   }
@@ -63,7 +98,11 @@ function renderNodo(b) {
   if (esContenedor) clases.push(b.tipo === 'columnas' ? 'ed-contenedor ed-contenedor--columnas' : 'ed-contenedor');
   if (b.id === state.selectedId) clases.push('is-selected');
 
-  return `<div class="${clases.join(' ')}" data-block-id="${b.id}">${interior}</div>`;
+  const manija = `<span class="ed-drag-handle" draggable="true" title="Arrastrar para reordenar">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+  </span>`;
+
+  return `<div class="${clases.join(' ')}" data-block-id="${b.id}">${manija}${interior}</div>`;
 }
 
 function renderZonaBloques(zona) {
@@ -99,11 +138,42 @@ export function actualizarEstadosVisuales() {
   document.querySelectorAll('.ed-zone').forEach((el) => {
     el.classList.toggle('is-target', el.dataset.zona === state.zonaActiva);
   });
+  document.querySelectorAll('.ed-capa-fila').forEach((el) => {
+    el.classList.toggle('is-selected', Number(el.dataset.blockId) === state.selectedId);
+  });
+}
+
+// --- Panel de Capas: el mismo árbol de bloques, en forma de lista ---
+
+function filaCapa(b, profundidad) {
+  return `<div class="ed-capa-fila" data-block-id="${b.id}" style="padding-left:${profundidad * 14}px">${ETIQUETAS[b.tipo]}</div>`;
+}
+
+function filasCapasHijos(parentId, zona, profundidad) {
+  return state.blocks
+    .filter((b) => b.zona === zona && b.parent_id === parentId)
+    .sort((a, z) => a.orden - z.orden)
+    .map((b) => filaCapa(b, profundidad) + filasCapasHijos(b.id, zona, profundidad + 1))
+    .join('');
+}
+
+export function renderCapas() {
+  const cont = document.getElementById('layersTree');
+  if (!cont) return;
+  cont.innerHTML = ZONAS.map((zona) => {
+    const filas = filasCapasHijos(null, zona, 0);
+    return `
+      <div class="ed-capa-zona">
+        <div class="ed-capa-zona-titulo">${ETIQUETAS_ZONA[zona]}</div>
+        ${filas || '<p class="ed-capa-vacio">Vacío</p>'}
+      </div>`;
+  }).join('');
 }
 
 export function renderCanvas() {
   ZONAS.forEach(renderZonaBloques);
   actualizarEstadosVisuales();
+  renderCapas();
 }
 
 function campoHTML(bloque, campo) {
