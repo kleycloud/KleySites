@@ -230,13 +230,14 @@
       </div>
 
       <div class="ed-panel-content" data-panel-content="paginas">
-        <div class="ed-panel-proximamente">
-          <div class="icon-frame icon-frame--36">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>
-          </div>
-          <p class="ed-panel-proximamente-titulo">Por ahora, una sola página</p>
-          <p class="ed-panel-proximamente-texto">Cada sitio tiene una página de inicio. Poder agregar más páginas está en camino.</p>
-        </div>
+        <div class="ed-pagina-list" id="paginaList"></div>
+        <form class="ed-pagina-crear" id="formCrearPagina">
+          <input type="text" id="inputNombrePagina" placeholder="Nombre de la página nueva" autocomplete="off">
+          <button type="submit" class="ed-btn ed-btn--secondary">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg>
+            Agregar página
+          </button>
+        </form>
       </div>
 
       <div class="ed-panel-content" data-panel-content="tienda">

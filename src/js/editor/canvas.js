@@ -321,6 +321,20 @@ document.getElementById('tplItemList').addEventListener('click', (e) => {
   if (item) insertarPlantilla(item.dataset.plantilla);
 });
 
+// --- Páginas: lista dinámica (se pinta desde inicializar/cambiarPagina) ---
+
+document.getElementById('paginaList').addEventListener('click', (e) => {
+  const item = e.target.closest('[data-pagina-id]');
+  if (item) cambiarPagina(Number(item.dataset.paginaId));
+});
+
+document.getElementById('formCrearPagina').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = document.getElementById('inputNombrePagina');
+  crearPaginaNueva(input.value);
+  input.value = '';
+});
+
 // --- Importar HTML ---
 
 const modalImportar = document.getElementById('modalImportar');
@@ -554,8 +568,47 @@ async function inicializar() {
   }
 
   try {
-    const resp = await api.listarBloques(state.siteId);
-    state.blocks = (resp.bloques || []).map((b) => ({
+    const resp = await api.listarPaginas(state.siteId);
+    paginasSitio = resp.paginas || [];
+  } catch (e) {
+    console.error('No se pudieron cargar las páginas', e);
+    paginasSitio = [];
+  }
+  if (paginasSitio.length === 0) {
+    // Sitio recién creado (o de antes de que existieran páginas): sin
+    // esto no habría dónde guardar los bloques.
+    try {
+      const creada = await api.crearPagina(state.siteId, 'Inicio');
+      paginasSitio = [creada.pagina];
+    } catch (e) {
+      console.error('No se pudo crear la página inicial', e);
+    }
+  }
+  renderPaginaList();
+
+  if (paginasSitio.length > 0) {
+    state.pageId = paginasSitio[0].id;
+    await cargarBloquesDePagina(state.pageId);
+  } else {
+    marcarEstado('Sin conexión — trabajando solo en este navegador');
+  }
+}
+
+let paginasSitio = [];
+
+function renderPaginaList() {
+  const cont = document.getElementById('paginaList');
+  if (!cont) return;
+  cont.innerHTML = paginasSitio.map((p) => `
+    <button type="button" class="ed-pagina-item${p.id === state.pageId ? ' is-active' : ''}" data-pagina-id="${p.id}">
+      ${p.nombre}
+    </button>`).join('');
+}
+
+async function cargarBloquesDePagina(pageId) {
+  try {
+    const resp = await api.listarBloques(pageId);
+    const bloques = (resp.bloques || []).map((b) => ({
       id: state.nextId++,
       remoteId: b.id,
       tipo: b.tipo,
@@ -566,19 +619,48 @@ async function inicializar() {
       orden: b.orden,
       _parentRemoteId: b.parent_id,
     }));
-    state.blocks.forEach((b) => {
+    bloques.forEach((b) => {
       if (b._parentRemoteId != null) {
-        const padre = state.blocks.find((x) => x.remoteId === b._parentRemoteId);
+        const padre = bloques.find((x) => x.remoteId === b._parentRemoteId);
         b.parent_id = padre ? padre.id : null;
       }
       delete b._parentRemoteId;
     });
+    state.blocks = bloques;
     marcarEstado('');
+    // Solo se re-renderiza aquí, en el camino exitoso: si la respuesta
+    // llega tarde y el usuario ya está editando algo, un renderCanvas()
+    // incondicional le pisaría el DOM a media edición (ver el mismo
+    // razonamiento en inicializar()).
     renderCanvas();
     renderPropiedades();
   } catch (e) {
     console.error('No se pudieron cargar los bloques', e);
     marcarEstado('Sin conexión — trabajando solo en este navegador');
+  }
+}
+
+async function cambiarPagina(pageId) {
+  if (pageId === state.pageId) return;
+  state.pageId = pageId;
+  state.selectedId = null;
+  state.blocks = [];
+  renderPaginaList();
+  renderCanvas();
+  renderPropiedades();
+  marcarEstado('Cargando…', true);
+  await cargarBloquesDePagina(pageId);
+}
+
+async function crearPaginaNueva(nombre) {
+  if (!nombre.trim()) return;
+  try {
+    const resp = await api.crearPagina(state.siteId, nombre.trim());
+    paginasSitio.push(resp.pagina);
+    await cambiarPagina(resp.pagina.id);
+  } catch (e) {
+    console.error('No se pudo crear la página', e);
+    alert('No se pudo crear la página. Intenta de nuevo.');
   }
 }
 

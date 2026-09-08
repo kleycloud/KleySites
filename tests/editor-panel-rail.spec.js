@@ -13,7 +13,7 @@ test('cambiar de panel en el riel muestra el contenido correcto', async ({ sesio
   await expect(page.locator('#panelTitle')).toHaveText('Capas');
 
   await page.click('.ed-rail-item[data-panel="paginas"]');
-  await expect(page.locator('[data-panel-content="paginas"] .ed-panel-proximamente')).toBeVisible();
+  await expect(page.locator('[data-panel-content="paginas"] #formCrearPagina')).toBeVisible();
 
   await page.click('.ed-rail-item[data-panel="tienda"]');
   await expect(page.locator('[data-panel-content="tienda"] .ed-panel-proximamente')).toBeVisible();

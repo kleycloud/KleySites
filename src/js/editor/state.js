@@ -130,6 +130,35 @@ export const PLANTILLAS = [
   },
 ];
 
+// Estilos genéricos: aplican a cualquier tipo de bloque (incluidos
+// contenedores — la tipografía de una "seccion" cae en cascada sobre sus
+// hijos como en CSS normal). Los campos tipo "select" guardan una clave
+// legible ('negrita', 'sutil'...), nunca el valor CSS crudo — el mapeo a
+// CSS real vive en render.js (estiloInline), así el <select> nunca
+// muestra un valor técnico.
+export const FUENTES = ['Sora', 'Inter', 'JetBrains Mono', 'Georgia', 'Arial'];
+export const PESOS = { normal: '400', medio: '500', semibold: '600', negrita: '700', extra: '800' };
+export const ALINEACIONES = { izquierda: 'left', centro: 'center', derecha: 'right' };
+export const SOMBRAS = {
+  ninguna: '',
+  sutil: '0 1px 3px rgba(0,0,0,.12)',
+  media: '0 4px 12px rgba(0,0,0,.18)',
+  fuerte: '0 8px 24px rgba(0,0,0,.28)',
+};
+
+export const CAMPOS_ESTILO = [
+  { grupo: 'Color', key: 'estilos.color', label: 'Color de texto', type: 'text', placeholder: '#f2f2f5' },
+  { grupo: 'Color', key: 'estilos.fondo', label: 'Fondo', type: 'text', placeholder: 'transparent' },
+  { grupo: 'Tipografía', key: 'estilos.fuente', label: 'Fuente', type: 'select', opciones: FUENTES },
+  { grupo: 'Tipografía', key: 'estilos.tamano', label: 'Tamaño (px)', type: 'text', placeholder: '16' },
+  { grupo: 'Tipografía', key: 'estilos.peso', label: 'Grosor', type: 'select', opciones: Object.keys(PESOS) },
+  { grupo: 'Tipografía', key: 'estilos.alineacion', label: 'Alineación', type: 'select', opciones: Object.keys(ALINEACIONES) },
+  { grupo: 'Forma', key: 'estilos.borde', label: 'Borde (px)', type: 'text', placeholder: '0' },
+  { grupo: 'Forma', key: 'estilos.borde_color', label: 'Color del borde', type: 'text', placeholder: '#e5e5e5' },
+  { grupo: 'Forma', key: 'estilos.radio', label: 'Radio de esquinas (px)', type: 'text', placeholder: '0' },
+  { grupo: 'Forma', key: 'estilos.sombra', label: 'Sombra', type: 'select', opciones: Object.keys(SOMBRAS) },
+];
+
 // Estado del lienzo en memoria, sincronizado con Neon. `id` es el
 // identificador local (estable durante toda la sesión, para anidar y
 // seleccionar); `remoteId` es el id real en la tabla `blocks` una vez que
@@ -141,6 +170,7 @@ export const state = {
   selectedId: null,
   zonaActiva: 'contenido', // dónde cae lo próximo que se inserte desde el panel
   siteId: null,
+  pageId: null,
   editandoInline: null, // { id, path, el } — bloque en edición directa (doble clic)
 };
 

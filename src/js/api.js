@@ -27,8 +27,16 @@ export function listarSitios() {
   return llamar('/kleysites/sites', { method: 'GET' });
 }
 
-export function listarBloques(siteId) {
-  return llamar(`/kleysites/blocks?site_id=${siteId}`, { method: 'GET' });
+export function listarPaginas(siteId) {
+  return llamar(`/kleysites/pages?site_id=${siteId}`, { method: 'GET' });
+}
+
+export function crearPagina(siteId, nombre) {
+  return llamar('/kleysites/pages', { method: 'POST', body: JSON.stringify({ site_id: siteId, nombre }) });
+}
+
+export function listarBloques(pageId) {
+  return llamar(`/kleysites/blocks?page_id=${pageId}`, { method: 'GET' });
 }
 
 export function guardarBloque(payload) {

@@ -19,7 +19,7 @@ export function marcarEstado(texto, persistente = false) {
 }
 
 export async function sincronizar() {
-  if (!state.siteId) return;
+  if (!state.pageId) return;
   marcarEstado('Guardando…', true);
 
   let progreso = true;
@@ -37,7 +37,7 @@ export async function sincronizar() {
       try {
         const resp = await api.guardarBloque({
           block_id: b.remoteId ?? null,
-          site_id: state.siteId,
+          page_id: state.pageId,
           tipo: b.tipo,
           contenido: b.contenido,
           orden: b.orden,

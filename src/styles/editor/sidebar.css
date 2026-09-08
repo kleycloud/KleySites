@@ -208,7 +208,37 @@ html[data-theme="light"] .ed-theme-toggle .icon-frame.icon-moon { display: flex;
   color: var(--color-text);
 }
 
-/* --- Páginas / Tienda: "próximamente" --- */
+/* --- Páginas --- */
+
+.ed-pagina-list { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-3); }
+
+.ed-pagina-item {
+  display: block;
+  width: 100%;
+  padding: 10px var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: var(--fw-medium);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ed-pagina-item:hover { border-color: color-mix(in srgb, var(--icon-active) 50%, transparent); }
+.ed-pagina-item.is-active {
+  border-color: var(--icon-active);
+  background: var(--icon-bg-active);
+  color: var(--icon-active);
+  font-weight: var(--fw-semibold);
+}
+
+.ed-pagina-crear { display: flex; flex-direction: column; gap: var(--space-2); }
+.ed-pagina-crear input { margin: 0; }
+.ed-pagina-crear .ed-btn { width: 100%; justify-content: center; }
+
+/* --- Tienda: "próximamente" --- */
 
 .ed-panel-proximamente {
   display: flex;

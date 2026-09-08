@@ -4,15 +4,30 @@
   el estado ni conoce la red — solo lee y escribe DOM.
 */
 
-import { state, ZONAS, ETIQUETAS_ZONA, CONTENEDORES, ETIQUETAS, CAMPOS, ICONOS, leerCampo, sanearHTML } from './state.js';
+import {
+  state, ZONAS, ETIQUETAS_ZONA, CONTENEDORES, ETIQUETAS, CAMPOS, CAMPOS_ESTILO,
+  PESOS, ALINEACIONES, SOMBRAS, ICONOS, leerCampo, sanearHTML,
+} from './state.js';
 
-const MAPA_ESTILOS = { color: 'color', fondo: 'background' };
-
+// Cada campo de estilo se traduce a CSS por su cuenta (no un mapeo
+// genérico clave→propiedad): "peso"/"alineacion"/"sombra" guardan una
+// clave legible que hay que resolver, y "borde" solo tiene efecto si
+// además se define un estilo de borde.
 function estiloInline(estilos) {
-  return Object.entries(estilos || {})
-    .filter(([k, v]) => MAPA_ESTILOS[k] && v)
-    .map(([k, v]) => `${MAPA_ESTILOS[k]}:${v}`)
-    .join(';');
+  const e = estilos || {};
+  const partes = [];
+  if (e.color) partes.push(`color:${e.color}`);
+  if (e.fondo) partes.push(`background:${e.fondo}`);
+  if (e.fuente) partes.push(`font-family:'${e.fuente}',sans-serif`);
+  if (e.tamano) partes.push(`font-size:${e.tamano}px`);
+  if (e.peso && PESOS[e.peso]) partes.push(`font-weight:${PESOS[e.peso]}`);
+  if (e.alineacion && ALINEACIONES[e.alineacion]) partes.push(`text-align:${ALINEACIONES[e.alineacion]}`);
+  if (e.borde) {
+    partes.push('border-style:solid', `border-width:${e.borde}px`, `border-color:${e.borde_color || '#000'}`);
+  }
+  if (e.radio) partes.push(`border-radius:${e.radio}px`);
+  if (e.sombra && SOMBRAS[e.sombra]) partes.push(`box-shadow:${SOMBRAS[e.sombra]}`);
+  return partes.join(';');
 }
 
 export function escapeHTML(str) {
@@ -187,7 +202,13 @@ function campoHTML(bloque, campo) {
       .join('');
     return `<label>${campo.label}</label><select data-campo="${campo.key}">${opciones}</select>`;
   }
-  return `<label>${campo.label}</label><input type="text" data-campo="${campo.key}" value="${escapeHTML(valor)}">`;
+  const placeholder = campo.placeholder ? ` placeholder="${campo.placeholder}"` : '';
+  return `<label>${campo.label}</label><input type="text" data-campo="${campo.key}" value="${escapeHTML(valor)}"${placeholder}>`;
+}
+
+function campoEstiloGrupo(bloque, nombreGrupo) {
+  const campos = CAMPOS_ESTILO.filter((c) => c.grupo === nombreGrupo).map((c) => campoHTML(bloque, c)).join('');
+  return `<div class="ed-field-group"><p class="ed-field-group-titulo">${nombreGrupo}</p>${campos}</div>`;
 }
 
 export function renderPropiedades() {
@@ -216,12 +237,9 @@ export function renderPropiedades() {
     <div class="ed-properties-type">${ETIQUETAS[bloque.tipo]}</div>
     ${notaContenedor}
     ${campos}
-    <div class="ed-field-group">
-      <label>Color de texto</label>
-      <input type="text" data-campo="estilos.color" value="${escapeHTML(bloque.estilos.color)}" placeholder="#f2f2f5">
-      <label>Fondo</label>
-      <input type="text" data-campo="estilos.fondo" value="${escapeHTML(bloque.estilos.fondo)}" placeholder="transparent">
-    </div>
+    ${campoEstiloGrupo(bloque, 'Color')}
+    ${campoEstiloGrupo(bloque, 'Tipografía')}
+    ${campoEstiloGrupo(bloque, 'Forma')}
     <button type="button" class="ed-btn ed-btn--secondary ed-delete-btn" data-accion="eliminar">Eliminar bloque</button>
   `;
 }
