@@ -5,6 +5,19 @@ function token() {
   return localStorage.getItem('kleysites_token');
 }
 
+// El JWT no está cifrado, solo firmado — leer el client_id del propio
+// token (el del usuario actual) no es un problema de seguridad, evita
+// tener que pedírselo a n8n solo para nombrar una carpeta de Cloudinary.
+export function clienteId() {
+  const t = token();
+  if (!t) return null;
+  try {
+    return JSON.parse(atob(t.split('.')[1])).client_id ?? null;
+  } catch (e) {
+    return null;
+  }
+}
+
 async function llamar(path, opciones = {}) {
   const res = await fetch(BASE + path, {
     ...opciones,
@@ -61,4 +74,12 @@ export function obtenerPerfil() {
 
 export function guardarAvatarUrl(avatarUrl) {
   return llamar('/kleysites/perfil/avatar', { method: 'POST', body: JSON.stringify({ avatar_url: avatarUrl }) });
+}
+
+export function guardarFaviconSitio(siteId, faviconUrl) {
+  return llamar('/kleysites/sites/favicon', { method: 'POST', body: JSON.stringify({ site_id: siteId, favicon_url: faviconUrl }) });
+}
+
+export function publicarSitio(siteId, pageId) {
+  return llamar('/kleysites/publish', { method: 'POST', body: JSON.stringify({ site_id: siteId, page_id: pageId }) });
 }

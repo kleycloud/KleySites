@@ -5,6 +5,7 @@
 */
 
 import * as api from '../api.js';
+import { subirACloudinary } from '../cloudinary.js';
 
 let sitioActual = null;
 
@@ -20,6 +21,16 @@ function renderAjustesSitio() {
   document.getElementById('ajustesCreado').value = sitioActual.created_at
     ? new Date(sitioActual.created_at).toLocaleDateString('es', { year: 'numeric', month: 'long', day: 'numeric' })
     : '';
+  renderFaviconPreview();
+}
+
+function renderFaviconPreview() {
+  const cont = document.getElementById('faviconPreview');
+  if (sitioActual?.favicon_url) {
+    cont.innerHTML = `<img src="${sitioActual.favicon_url}" alt="">`;
+  } else {
+    cont.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/></svg>';
+  }
 }
 
 export function initAjustes() {
@@ -41,6 +52,26 @@ export function initAjustes() {
       console.error('No se pudo renombrar el sitio', e);
       mostrarErrorAjustes('No se pudo guardar el nombre. Intenta de nuevo.');
     }
+  });
+
+  const faviconError = document.getElementById('faviconError');
+  const inputFavicon = document.getElementById('inputFaviconArchivo');
+  document.getElementById('btnSubirFavicon').addEventListener('click', () => inputFavicon.click());
+  inputFavicon.addEventListener('change', async () => {
+    const archivo = inputFavicon.files[0];
+    if (!archivo || !sitioActual) return;
+    faviconError.hidden = true;
+    try {
+      const url = await subirACloudinary(archivo, `clientes/${api.clienteId()}/sitios/${sitioActual.id}`);
+      const resp = await api.guardarFaviconSitio(sitioActual.id, url);
+      sitioActual.favicon_url = resp.favicon_url;
+      renderFaviconPreview();
+    } catch (e) {
+      console.error('No se pudo actualizar el favicon', e);
+      faviconError.textContent = 'No se pudo subir el favicon. Intenta de nuevo.';
+      faviconError.hidden = false;
+    }
+    inputFavicon.value = '';
   });
 
   document.getElementById('btnEliminarSitio').addEventListener('click', () => {

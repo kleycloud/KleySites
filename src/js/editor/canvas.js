@@ -20,6 +20,8 @@ import { initPaneles } from './paneles.js';
 import { initPaginas, cargarPaginasIniciales } from './paginas.js';
 import { initAjustes, setSitioActual } from './ajustes.js';
 import { initImportarUI } from './importar-ui.js';
+import { initPublicar } from './publicar.js';
+import { initVistaPrevia } from './vista-previa.js';
 
 // Sin sesión, no hay editor: se necesita el token para leer/guardar en Neon.
 if (!localStorage.getItem('kleysites_token')) {
@@ -35,6 +37,8 @@ initPaneles();
 initPaginas();
 initAjustes();
 initImportarUI();
+initPublicar();
+initVistaPrevia();
 
 const canvasWrap = document.querySelector('.ed-canvas-wrap');
 initEdicionInline(canvasWrap);

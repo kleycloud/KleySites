@@ -6,28 +6,13 @@
   n8n que guarde la URL resultante en Neon.
 */
 
-import { obtenerPerfil, guardarAvatarUrl } from './api.js';
-
-const CLOUD_NAME = 'aup5guac';
-const UPLOAD_PRESET = 'kleysites_uploads';
+import { obtenerPerfil, guardarAvatarUrl, clienteId } from './api.js';
+import { subirACloudinary } from './cloudinary.js';
 
 function pintarAvatares(url, inicial) {
   document.querySelectorAll('[data-avatar]').forEach((el) => {
     el.innerHTML = url ? `<img src="${url}" alt="">` : inicial;
   });
-}
-
-async function subirACloudinary(archivo) {
-  const formData = new FormData();
-  formData.append('file', archivo);
-  formData.append('upload_preset', UPLOAD_PRESET);
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-    method: 'POST',
-    body: formData,
-  });
-  if (!res.ok) throw new Error('No se pudo subir la imagen');
-  const data = await res.json();
-  return data.secure_url;
 }
 
 export function initPerfil() {
@@ -73,7 +58,7 @@ export function initPerfil() {
     if (!archivo) return;
     errorEl.hidden = true;
     try {
-      const url = await subirACloudinary(archivo);
+      const url = await subirACloudinary(archivo, `clientes/${clienteId()}/perfil`);
       await guardarAvatarUrl(url);
       pintarAvatares(url, inicial);
     } catch (e) {
