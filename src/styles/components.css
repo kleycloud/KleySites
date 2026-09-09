@@ -49,6 +49,14 @@
 }
 .ed-btn--primary:hover { background: var(--kley-ember); }
 
+.ed-btn--peligro {
+  border: none;
+  background: var(--color-error);
+  color: #fff;
+  font-weight: var(--fw-bold);
+}
+.ed-btn--peligro:hover { opacity: 0.85; }
+
 label { display: block; font-size: 12px; color: var(--color-text-dim); margin: 10px 0 4px; text-align: left; }
 input, textarea, select {
   width: 100%; padding: 11px 12px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);
@@ -167,3 +175,97 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--c
 
 .icon-frame--36 { width: 64px; height: 64px; border-radius: var(--radius-xl); }
 .icon-frame--36 svg { width: 36px; height: 36px; }
+
+/*
+  Modal genérico (overlay + tarjeta): lo usan tanto el editor
+  (Importar HTML) como el dashboard (Perfil) — por eso vive acá y no en
+  un archivo específico del editor.
+*/
+.ed-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+/* .is-open (no el atributo [hidden]): un display:flex propio en la misma
+   clase ganaría por orden de cascada al [hidden]{display:none} del user
+   agent aunque la especificidad sea igual — el modal quedaría invisible
+   pero seguiría tapando toda la pantalla y bloqueando los clics. */
+.ed-modal-overlay.is-open { display: flex; }
+
+.ed-modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-panel);
+}
+
+.ed-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ed-modal-title {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 16px;
+  color: var(--color-text);
+}
+
+.ed-modal-hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-dim);
+}
+.ed-modal-hint code {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  background: var(--color-surface);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+}
+
+.ed-modal-error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-error);
+}
+
+.ed-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* Avatar grande (modal de Perfil) — [data-avatar] también marca los
+   avatares chicos del topbar/riel, para que perfil.js los actualice
+   a todos a la vez cuando cambia la foto. */
+.kley-avatar-grande {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  border-radius: 999px;
+  border: 2px solid var(--color-brand-ink);
+  background: var(--icon-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 28px;
+  color: var(--color-brand-ink);
+}
+[data-avatar] img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }

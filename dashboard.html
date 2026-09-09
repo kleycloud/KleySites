@@ -38,16 +38,37 @@
     </div>
     <div class="kley-account-wrap">
       <button class="db-avatar-btn" id="btnCuenta" title="Tu cuenta">
-        <div class="db-avatar">K</div>
+        <div class="db-avatar" data-avatar>K</div>
       </button>
       <div class="kley-menu" id="menuCuenta">
-        <button class="kley-menu-item" disabled>Perfil <span class="kley-menu-soon">Próximamente</span></button>
+        <button class="kley-menu-item" data-accion="perfil">Perfil</button>
         <button class="kley-menu-item" disabled>Configuración <span class="kley-menu-soon">Próximamente</span></button>
         <div class="kley-menu-sep"></div>
         <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
       </div>
     </div>
   </header>
+
+  <div class="ed-modal-overlay" id="modalPerfil">
+    <div class="ed-modal">
+      <div class="ed-modal-header">
+        <span class="ed-modal-title">Tu perfil</span>
+        <button class="ed-icon-btn" id="btnCerrarPerfil" title="Cerrar">
+          <div class="icon-frame icon-frame--18">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </div>
+        </button>
+      </div>
+      <div class="kley-avatar-grande" data-avatar>?</div>
+      <p class="ed-modal-hint" id="perfilCorreo"></p>
+      <input type="file" id="inputAvatarArchivo" accept="image/*" hidden>
+      <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirAvatar">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+        Subir foto
+      </button>
+      <p class="ed-modal-error" id="perfilError" hidden></p>
+    </div>
+  </div>
 
   <main class="db-main">
     <div class="db-header-row">
@@ -106,6 +127,7 @@
 </div>
 
 <script type="module" src="/src/js/theme.js"></script>
+<script type="module" src="/src/js/perfil.js"></script>
 <script type="module" src="/src/js/dashboard.js"></script>
 </body>
 </html>

@@ -46,3 +46,19 @@ export function guardarBloque(payload) {
 export function eliminarBloque(blockId) {
   return llamar(`/kleysites/blocks?block_id=${blockId}`, { method: 'DELETE' });
 }
+
+export function renombrarSitio(siteId, nombre) {
+  return llamar('/kleysites/sites', { method: 'PATCH', body: JSON.stringify({ site_id: siteId, nombre }) });
+}
+
+export function eliminarSitio(siteId) {
+  return llamar(`/kleysites/sites?site_id=${siteId}`, { method: 'DELETE' });
+}
+
+export function obtenerPerfil() {
+  return llamar('/kleysites/perfil', { method: 'GET' });
+}
+
+export function guardarAvatarUrl(avatarUrl) {
+  return llamar('/kleysites/perfil/avatar', { method: 'POST', body: JSON.stringify({ avatar_url: avatarUrl }) });
+}

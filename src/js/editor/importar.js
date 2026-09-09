@@ -7,7 +7,41 @@
   como bloque de texto.
 */
 
-import { sanearHTML } from './state.js';
+import { sanearHTML, ETIQUETAS } from './state.js';
+
+const TIPOS_VALIDOS = new Set(Object.keys(ETIQUETAS));
+
+// El bloque "texto" es el único con HTML crudo — igual que al escribirlo
+// a mano en el editor, se sanea antes de guardarse en el árbol. El resto
+// de los tipos "no reconocidos" (tipo fuera del catálogo) se descarta
+// entero en vez de intentar adivinar qué quiso decir.
+function saneaNodoJSON(n) {
+  if (!n || typeof n !== 'object' || !TIPOS_VALIDOS.has(n.tipo)) return null;
+  const contenido = { ...(n.contenido || {}) };
+  if (n.tipo === 'texto' && typeof contenido.html === 'string') {
+    contenido.html = sanearHTML(contenido.html);
+  }
+  const nodo = { tipo: n.tipo, contenido };
+  if (Array.isArray(n.hijos)) {
+    const hijos = n.hijos.map(saneaNodoJSON).filter(Boolean);
+    if (hijos.length) nodo.hijos = hijos;
+  }
+  return nodo;
+}
+
+// Formato propio de KleySites (lo mismo que exportan las plantillas):
+// un archivo generado por Claude, o exportado de otro sitio, se importa
+// tal cual sin pasar por la heurística de HTML.
+export function analizarJSON(texto) {
+  let datos;
+  try {
+    datos = JSON.parse(texto);
+  } catch (e) {
+    return null;
+  }
+  if (!Array.isArray(datos)) datos = [datos];
+  return datos.map(saneaNodoJSON).filter(Boolean);
+}
 
 function textoPlano(el) {
   return (el.textContent || '').trim();

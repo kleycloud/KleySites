@@ -48,6 +48,23 @@
       <span class="ed-site-name" id="siteName">Mi sitio nuevo</span>
       <span class="ed-save-status" id="saveStatus"></span>
     </div>
+    <div class="ed-topbar-center">
+      <button class="ed-icon-btn" data-vista="escritorio" title="Vista escritorio">
+        <div class="icon-frame icon-frame--20 is-active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+      </button>
+      <button class="ed-icon-btn" data-vista="tablet" title="Vista tablet">
+        <div class="icon-frame icon-frame--20">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M18 12h.01"/></svg>
+        </div>
+      </button>
+      <button class="ed-icon-btn" data-vista="movil" title="Vista móvil">
+        <div class="icon-frame icon-frame--20">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+        </div>
+      </button>
+    </div>
     <div class="ed-topbar-right">
       <button class="ed-icon-btn" id="btnDeshacer" title="Deshacer (Ctrl+Z)" disabled>
         <div class="icon-frame icon-frame--20">
@@ -113,17 +130,17 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
           </div>
         </button>
-        <div class="ed-rail-item" title="Ajustes">
+        <div class="ed-rail-item" title="Ajustes" data-panel="ajustes">
           <div class="icon-frame icon-frame--20">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
           </div>
         </div>
         <div class="kley-account-wrap ed-account-wrap">
           <button class="ed-rail-account" id="btnCuentaEditor" title="Kleyder · tu cuenta">
-            <div class="ed-avatar">K</div>
+            <div class="ed-avatar" data-avatar>K</div>
           </button>
           <div class="kley-menu kley-menu--up" id="menuCuentaEditor">
-            <button class="kley-menu-item" disabled>Perfil <span class="kley-menu-soon">Próximamente</span></button>
+            <button class="kley-menu-item" data-accion="perfil">Perfil</button>
             <button class="kley-menu-item" disabled>Configuración <span class="kley-menu-soon">Próximamente</span></button>
             <div class="kley-menu-sep"></div>
             <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
@@ -249,6 +266,30 @@
           <p class="ed-panel-proximamente-texto">Vender productos desde tu sitio está en camino.</p>
         </div>
       </div>
+
+      <div class="ed-panel-content" data-panel-content="ajustes">
+        <div class="ed-field-group" style="margin-top:0;padding-top:0;border-top:none;">
+          <label>Nombre del sitio</label>
+          <input type="text" id="inputNombreSitioAjustes">
+          <button type="button" class="ed-btn ed-btn--secondary" id="btnGuardarNombreSitio">Guardar nombre</button>
+        </div>
+        <div class="ed-field-group">
+          <label>Dirección</label>
+          <input type="text" id="ajustesSlug" disabled>
+          <label>Creado</label>
+          <input type="text" id="ajustesCreado" disabled>
+        </div>
+        <div class="ed-field-group">
+          <p class="ed-field-group-titulo">Zona de peligro</p>
+          <button type="button" class="ed-btn ed-btn--secondary" id="btnEliminarSitio">Eliminar sitio</button>
+          <div id="confirmarEliminarSitio" hidden>
+            <p class="ed-modal-error">Esto borra el sitio completo, sus páginas y bloques. No se puede deshacer. Escribe el nombre exacto del sitio para confirmar.</p>
+            <input type="text" id="inputConfirmarNombreSitio" placeholder="Nombre exacto del sitio">
+            <button type="button" class="ed-btn ed-btn--peligro" id="btnConfirmarEliminarSitio">Sí, eliminar para siempre</button>
+          </div>
+        </div>
+        <p class="ed-modal-error" id="ajustesError" hidden></p>
+      </div>
     </aside>
 
     <main class="ed-canvas-wrap">
@@ -291,11 +332,11 @@
           </div>
         </button>
       </div>
-      <p class="ed-modal-hint">Pega código HTML o sube un archivo <code>.html</code>. Se convierte en bloques editables dentro de la zona "<span id="modalZonaNombre">Contenido</span>".</p>
-      <input type="file" id="inputArchivoHTML" accept=".html,text/html" hidden>
+      <p class="ed-modal-hint">Pega código HTML o JSON, o sube un archivo <code>.html</code>/<code>.json</code>. Se convierte en bloques editables dentro de la zona "<span id="modalZonaNombre">Contenido</span>".</p>
+      <input type="file" id="inputArchivoHTML" accept=".html,text/html,.json,application/json" hidden>
       <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirArchivo">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
-        Subir archivo .html
+        Subir archivo .html o .json
       </button>
       <textarea id="textareaImportar" placeholder="&lt;h1&gt;Bienvenido&lt;/h1&gt;&#10;&lt;p&gt;Contenido de ejemplo…&lt;/p&gt;"></textarea>
       <p class="ed-modal-error" id="modalImportarError" hidden></p>
@@ -306,9 +347,31 @@
     </div>
   </div>
 
+  <div class="ed-modal-overlay" id="modalPerfil">
+    <div class="ed-modal">
+      <div class="ed-modal-header">
+        <span class="ed-modal-title">Tu perfil</span>
+        <button class="ed-icon-btn" id="btnCerrarPerfil" title="Cerrar">
+          <div class="icon-frame icon-frame--18">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </div>
+        </button>
+      </div>
+      <div class="kley-avatar-grande" data-avatar>?</div>
+      <p class="ed-modal-hint" id="perfilCorreo"></p>
+      <input type="file" id="inputAvatarArchivo" accept="image/*" hidden>
+      <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirAvatar">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+        Subir foto
+      </button>
+      <p class="ed-modal-error" id="perfilError" hidden></p>
+    </div>
+  </div>
+
 </div>
 
 <script type="module" src="/src/js/theme.js"></script>
+<script type="module" src="/src/js/perfil.js"></script>
 <script type="module" src="/src/js/editor/canvas.js"></script>
 </body>
 </html>

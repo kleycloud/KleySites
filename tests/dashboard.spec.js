@@ -16,6 +16,13 @@ test('el menú de cuenta abre y cierra', async ({ sesion: page }) => {
   await expect(page.locator('#menuCuenta')).not.toHaveClass(/is-open/);
 });
 
+test('el menú de cuenta abre el modal de perfil', async ({ sesion: page }) => {
+  await page.click('#btnCuenta');
+  await page.click('[data-accion="perfil"]');
+  await expect(page.locator('#modalPerfil')).toBeVisible();
+  await expect(page.locator('#menuCuenta')).not.toHaveClass(/is-open/);
+});
+
 test('cerrar sesión borra el token y vuelve al login', async ({ sesion: page }) => {
   await page.click('#btnCuenta');
   await page.click('[data-accion="cerrar-sesion"]');
