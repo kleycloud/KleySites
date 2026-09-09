@@ -67,7 +67,7 @@ function mostrarFormularioCrear() {
       window.location.href = `/editor.html?site=${resp.site.id}`;
     } catch (e) {
       console.error('No se pudo crear el sitio', e);
-      alert('No se pudo crear el sitio. Intenta de nuevo.');
+      alert(e.message || 'No se pudo crear el sitio. Intenta de nuevo.');
     }
   });
 }

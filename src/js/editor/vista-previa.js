@@ -8,6 +8,9 @@
 */
 
 import { state } from './state.js';
+import { obtenerPerfil } from '../api.js';
+
+const BADGE_HTML = '<a href="https://kleysites.com" target="_blank" rel="noopener" style="position:fixed;bottom:12px;right:12px;background:#0b0b0f;color:#fff;font:12px system-ui,sans-serif;padding:6px 10px;border-radius:8px;text-decoration:none;opacity:.85;z-index:9999;">Hecho con KleySites</a>';
 
 const PESOS = { normal: '400', medio: '500', semibold: '600', negrita: '700', extra: '800' };
 const ALINEACIONES = { izquierda: 'left', centro: 'center', derecha: 'right' };
@@ -63,7 +66,7 @@ function renderBloque(b, porPadre) {
   return render ? render(b.contenido, s, hijos) : '';
 }
 
-function generarHTML(nombreSitio) {
+function generarHTML(nombreSitio, conBadge) {
   const porPadre = {};
   state.blocks.forEach((b) => {
     if (b.parent_id != null) (porPadre[b.parent_id] = porPadre[b.parent_id] || []).push(b);
@@ -78,14 +81,30 @@ function generarHTML(nombreSitio) {
 <header>${zona(porZona.encabezado)}</header>
 <main>${zona(porZona.contenido)}</main>
 <footer>${zona(porZona.pie)}</footer>
+${conBadge ? BADGE_HTML : ''}
 </body></html>`;
 }
 
 export function initVistaPrevia() {
-  document.getElementById('btnVistaPrevia').addEventListener('click', () => {
+  document.getElementById('btnVistaPrevia').addEventListener('click', async () => {
+    // Se abre la pestaña primero, sincrónico con el clic — si se espera a
+    // obtener el plan antes de abrir, algunos navegadores (Safari sobre
+    // todo) bloquean la ventana por no verla como resultado directo del clic.
+    const popup = window.open('', '_blank');
+
+    let plan = 'gratis';
+    try {
+      const resp = await obtenerPerfil();
+      plan = resp.perfil.plan || 'gratis';
+    } catch (e) {
+      console.error('No se pudo obtener el plan', e);
+    }
+
     const nombre = document.getElementById('siteName').textContent;
-    const html = generarHTML(nombre);
-    const blob = new Blob([html], { type: 'text/html' });
-    window.open(URL.createObjectURL(blob), '_blank');
+    const html = generarHTML(nombre, plan !== 'pro');
+    if (popup) {
+      popup.document.write(html);
+      popup.document.close();
+    }
   });
 }
