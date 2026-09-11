@@ -1,7 +1,7 @@
 /*
   publicar.js
-  Botón "Publicar": manda el sitio y la página actual a n8n, que renderiza
-  el HTML final y lo despliega a Cloudflare Pages. El deploy puede tardar
+  Botón "Publicar": manda el sitio y la página actual al backend, que
+  renderiza el HTML final y lo despliega a Cloudflare Pages. El deploy puede tardar
   unos segundos — el botón se deshabilita mientras tanto. Al terminar,
   siempre se avisa algo claro (modal con el enlace si vino en la
   respuesta, aviso genérico si no vino, o error) — nunca se queda en

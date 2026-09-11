@@ -1,6 +1,5 @@
--- Migración para pasar de n8n a este backend. Pensada para correr sobre
--- la misma base Neon que ya usa producción — revisar cada bloque antes
--- de correrlo si algo no coincide con lo que ya existe ahí.
+-- Migración de esquema para este backend, ya aplicada contra Neon en
+-- producción (2026-09-11). Se deja como registro histórico.
 
 -- clients: nueva columna para el límite de plan (gratis = 1 sitio) y avatar.
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS plan text NOT NULL DEFAULT 'free';

@@ -42,9 +42,8 @@ export const POST = conManejoDeErrores(async (req) => {
   const zona = body.zona || 'contenido';
   const orden = body.orden || 0;
 
-  // Mismo patrón que el nodo n8n "Guardar bloque en Neon": upsert por id,
-  // así el editor puede llamar a esto tanto para crear como para
-  // actualizar (guarda con `block_id` si el bloque ya existe).
+  // Upsert por id: así el editor puede llamar a esto tanto para crear
+  // como para actualizar (guarda con `block_id` si el bloque ya existe).
   const { rows } = await consultar(
     `INSERT INTO blocks (id, page_id, client_id, tipo, contenido, orden, zona, parent_id, estilos)
      VALUES (COALESCE($1::int, nextval('blocks_id_seq')), $2, $3, $4, $5::jsonb, $6, $7, $8, $9::jsonb)

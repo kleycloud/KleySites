@@ -2,8 +2,8 @@
   perfil.js
   Foto de perfil y correo del cliente — compartido entre dashboard.html y
   editor.html. Sube directo a Cloudinary desde el navegador (preset sin
-  firmar: no hace falta backend para la subida en sí) y solo le pide a
-  n8n que guarde la URL resultante en Neon.
+  firmar: no hace falta backend para la subida en sí) y solo le pide al
+  backend que guarde la URL resultante en Neon.
 */
 
 import { obtenerPerfil, guardarAvatarUrl, clienteId } from './api.js';

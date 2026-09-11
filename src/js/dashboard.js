@@ -84,7 +84,7 @@ function mostrarFormularioCrear() {
 
 // El listado de sitios se cachea en localStorage y se pinta de inmediato
 // al volver al dashboard — sin esto, cada visita esperaba el viaje
-// completo a n8n/Neon (uno o dos segundos) antes de mostrar nada. La
+// completo al backend (uno o dos segundos) antes de mostrar nada. La
 // versión cacheada puede quedar un instante desactualizada; el fetch de
 // abajo la reemplaza en cuanto responde.
 const CACHE_KEY = 'kleysites_sitios_cache';

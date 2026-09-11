@@ -1,7 +1,7 @@
 // Deploy a Cloudflare Pages vía la CLI de Wrangler (no la API de "Direct
-// Upload" directa) — la API multipart da errores según ya se comprobó
-// antes, en el workflow de n8n. Wrangler necesita CLOUDFLARE_API_TOKEN y
-// CLOUDFLARE_ACCOUNT_ID como variables de entorno (los lee solo).
+// Upload" directa) — la API multipart da errores intermitentes. Wrangler
+// necesita CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID como variables
+// de entorno (los lee solo).
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { mkdtemp, writeFile, rm } from 'fs/promises';

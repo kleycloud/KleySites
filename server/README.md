@@ -1,8 +1,8 @@
 # Backend (Next.js)
 
-API-only: no sirve páginas, solo `/api/kleysites/*`. Reemplaza a n8n — el
-frontend (Vite, en la raíz del repo) es un sitio estático aparte, solo le
-apunta por `src/js/api.js`/`auth.js` (`VITE_API_BASE`).
+API-only: no sirve páginas, solo `/api/kleysites/*`. El frontend (Vite,
+en la raíz del repo) es un sitio estático aparte, solo le apunta por
+`src/js/api.js`/`auth.js` (`VITE_API_BASE`).
 
 En producción: backend en Vercel (`kleysites-api.vercel.app`), frontend
 en Cloudflare Pages (`kleysites.pages.dev`), base de datos en Neon.
@@ -43,9 +43,8 @@ recargarlas en cada deploy, solo si cambia algún valor.
 ## Publicar sitios (Cloudflare Pages)
 
 `/publish` genera el HTML del sitio y lo sube con Wrangler CLI (no la
-API de "Direct Upload" directa — esa da errores intermitentes, ya
-comprobado antes en n8n). Dos detalles de por qué está armado así en
-`lib/cloudflarePages.js`:
+API de "Direct Upload" directa — esa da errores intermitentes). Dos
+detalles de por qué está armado así en `lib/cloudflarePages.js`:
 
 - Se invoca `node node_modules/wrangler/bin/wrangler.js` en vez del
   symlink `.bin/wrangler`, porque el tracer de archivos de Vercel no

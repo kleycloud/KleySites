@@ -11,8 +11,7 @@ export function slugificar(nombre) {
     .replace(/-+/g, '-');
 }
 
-// Igual que el nodo "Generar sugerencias de slug" de n8n: si el slug base
-// ya existe, intenta variantes antes de rendirse.
+// Si el slug base ya existe, intenta variantes antes de rendirse.
 export async function slugDisponible(base) {
   const random = Math.floor(100 + Math.random() * 900);
   const candidatos = [base, `${base}-pe`, `${base}-oficial`, `${base}-${random}`, `${base}-2`];

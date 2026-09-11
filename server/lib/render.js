@@ -1,6 +1,6 @@
-// Mismo renderizador que el nodo "Renderizar HTML" de n8n: registro de
-// tipo -> función, árbol vía parent_id, y estilos jsonb traducidos a CSS
-// inline. Agregar un tipo de bloque nuevo = agregar una entrada acá.
+// Renderizador de bloques a HTML: registro de tipo -> función, árbol vía
+// parent_id, y estilos jsonb traducidos a CSS inline. Agregar un tipo de
+// bloque nuevo = agregar una entrada acá.
 const MAPA_ESTILOS = {
   color: 'color', fondo: 'background', fuente: 'font-family',
   tamano: 'font-size', peso: 'font-weight', espaciado: 'padding',

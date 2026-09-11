@@ -5,7 +5,7 @@ import { json, error, conManejoDeErrores, opciones } from '../../../../lib/respu
 export const OPTIONS = opciones;
 
 // Registro clásico con verificación por código (ver /kleysites/confirmar).
-// El código expira en 15 min, igual que el workflow de n8n que reemplaza.
+// El código expira en 15 min.
 export const POST = conManejoDeErrores(async (req) => {
   const body = await req.json();
   const email = String(body.email || '').trim().toLowerCase();
@@ -27,6 +27,6 @@ export const POST = conManejoDeErrores(async (req) => {
     [email, hash, codigo, expira]
   );
 
-  // TODO: enviar `codigo` por correo (el workflow de n8n usaba un nodo de email aparte).
+  // TODO: enviar `codigo` por correo — todavía no hay proveedor de email conectado.
   return json({ registrado: true, client_id: rows[0].id });
 });

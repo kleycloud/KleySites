@@ -3,8 +3,8 @@
   Botón "Vista previa": renderiza el estado actual del lienzo (aunque no
   se haya guardado todavía) como HTML final y lo abre en una pestaña
   nueva. Sin backend — por eso el mapeo de estilos/tipos está duplicado
-  del renderizador de n8n (Renderizar HTML): son dos runtimes distintos,
-  no hay forma de compartir el código entre ambos.
+  del renderizador real (server/lib/render.js): son dos runtimes
+  distintos, no hay forma de compartir el código entre ambos.
 */
 
 import { state } from './state.js';

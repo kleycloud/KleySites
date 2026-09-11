@@ -7,7 +7,7 @@ function token() {
 
 // El JWT no está cifrado, solo firmado — leer el client_id del propio
 // token (el del usuario actual) no es un problema de seguridad, evita
-// tener que pedírselo a n8n solo para nombrar una carpeta de Cloudinary.
+// tener que pedírselo al backend solo para nombrar una carpeta de Cloudinary.
 export function clienteId() {
   const t = token();
   if (!t) return null;
