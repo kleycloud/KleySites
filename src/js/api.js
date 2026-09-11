@@ -1,5 +1,5 @@
-// Cliente de los webhooks de n8n: sesión, sitios y bloques.
-const BASE = 'https://kleyderproject.cloud/webhook';
+// Cliente del backend: sesión, sitios y bloques.
+const BASE = import.meta.env.VITE_API_BASE || 'https://kleysites-api.vercel.app/api';
 
 function token() {
   return localStorage.getItem('kleysites_token');
@@ -28,7 +28,11 @@ async function llamar(path, opciones = {}) {
     },
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+  if (!res.ok) {
+    const err = new Error(data.error || `Error ${res.status}`);
+    err.status = res.status; // así quien llama puede distinguir "límite de plan" (402) de un error cualquiera
+    throw err;
+  }
   return data;
 }
 

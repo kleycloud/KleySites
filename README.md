@@ -7,30 +7,31 @@ Powered by [KleyCloud](https://kleyderproject.cloud).
 
 - **Frontend**: HTML + CSS + JS puro (ES Modules), sin frameworks pesados
 - **Build tool**: [Vite](https://vitejs.dev)
-- **Backend**: n8n (webhooks) + Neon (PostgreSQL)
-- **Hosting**: Cloudflare Pages (deploy automático desde este repo)
-- **Publicación de sitios de clientes**: Wrangler + SSH desde el VPS (proceso aparte, no pasa por este repo)
+- **Backend**: Next.js (API routes) en `server/` + Neon (PostgreSQL) — ver [server/README.md](server/README.md)
+- **Hosting frontend**: Cloudflare Pages (`kleysites.pages.dev`)
+- **Hosting backend**: Vercel (`kleysites-api.vercel.app`)
+- **Publicación de sitios de clientes**: el backend corre Wrangler para desplegar cada sitio a su propio proyecto de Cloudflare Pages
 
 ## Estructura
 
 ```
-├── index.html              # entrada (login)
+├── index.html, dashboard.html, editor.html   # las 3 páginas de la app
 ├── public/                 # assets estáticos (favicons, manifest, imágenes)
-│   └── images/
 ├── src/
-│   ├── styles/
-│   │   ├── kley-tokens.css   # tokens del manual de marca (Claude Design) — fuente de verdad
-│   │   ├── theme.css         # alias semánticos sobre los tokens (colores, tipografía, espaciado)
-│   │   ├── layout.css        # estructura general (contenedores, grillas)
-│   │   ├── components.css    # piezas reutilizables (botones, inputs, mensajes)
-│   │   └── login.css         # estilos específicos de la pantalla de login
+│   ├── styles/              # theme.css/kley-tokens.css son la fuente de verdad de diseño
 │   └── js/
-│       └── auth.js           # lógica de login/registro (passwordless + Google)
+│       ├── api.js            # cliente del backend (sesión, sitios, bloques)
+│       ├── auth.js           # login/registro (passwordless + Google) en index.html
+│       └── editor/           # lógica del editor visual, un archivo por responsabilidad
+├── tests/                   # Playwright, mockea el backend con page.route()
+├── server/                  # backend (Next.js) — ver server/README.md
 └── vite.config.js
 ```
 
 **Regla del proyecto**: nunca se escriben colores, tamaños o tipografías sueltas
 directamente en un componente. Todo se referencia desde `theme.css`/`kley-tokens.css`.
+Los archivos se mantienen chicos y con una sola responsabilidad — de ahí que el
+editor esté dividido en `src/js/editor/*.js` en vez de un solo archivo.
 
 ## Desarrollo local
 
@@ -38,9 +39,21 @@ directamente en un componente. Todo se referencia desde `theme.css`/`kley-tokens
 npm install
 npm run dev       # levanta el servidor local con recarga en vivo
 npm run build     # genera /dist listo para producción
+npm test          # Playwright (42 specs, no necesita el backend corriendo)
 ```
+
+Backend: ver [server/README.md](server/README.md).
 
 ## Deploy
 
-Cloudflare Pages está conectado directamente a este repositorio. Cada push a `main`
-dispara un build y deploy automático — no hace falta subir archivos a mano.
+Ninguno de los dos (frontend ni backend) tiene integración git automática todavía
+— ambos se publican a mano:
+
+```bash
+# Frontend -> Cloudflare Pages
+VITE_API_BASE=https://kleysites-api.vercel.app/api npm run build
+npx wrangler pages deploy dist --project-name=kleysites
+
+# Backend -> Vercel
+cd server && vercel deploy --prod
+```
