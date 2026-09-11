@@ -8,6 +8,7 @@ import * as api from '../api.js';
 import { state } from './state.js';
 import { marcarEstado } from './sync.js';
 import { renderCanvas, renderPropiedades } from './render.js';
+import { mostrarAviso } from '../aviso.js';
 
 let paginasSitio = [];
 
@@ -78,7 +79,7 @@ async function crearPaginaNueva(nombre) {
     await cambiarPagina(resp.pagina.id);
   } catch (e) {
     console.error('No se pudo crear la página', e);
-    alert('No se pudo crear la página. Intenta de nuevo.');
+    await mostrarAviso(e.message || 'No se pudo crear la página. Intenta de nuevo.');
   }
 }
 

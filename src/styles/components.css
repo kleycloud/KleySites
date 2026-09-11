@@ -274,3 +274,45 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--c
 .ed-publicado-url-row input { margin: 0; font-family: var(--font-mono); font-size: 12.5px; }
 
 .ed-publicado-ver { justify-content: center; text-decoration: none; }
+
+/*
+  Modales "importantes" (límite de plan, publicado con éxito): ícono en
+  círculo + encabezado + descripción, centrado — mismo lenguaje visual
+  que un aviso de suscripción, en vez de un cuadro de texto plano.
+*/
+.ed-modal--centrado { align-items: center; text-align: center; position: relative; }
+
+.ed-modal-cerrar-flotante { position: absolute; top: var(--space-3); right: var(--space-3); }
+
+.ed-modal-icono {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-brand-ink) 15%, transparent);
+  color: var(--color-brand-ink);
+}
+.ed-modal-icono--exito {
+  background: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}
+
+.ed-modal-headline {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.ed-modal-descripcion {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--color-text-dim);
+}
+
+.ed-modal--centrado .ed-publicado-url-row,
+.ed-modal--centrado .ed-btn { width: 100%; }

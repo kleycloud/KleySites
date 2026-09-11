@@ -381,16 +381,17 @@
   </div>
 
   <div class="ed-modal-overlay" id="modalPublicado">
-    <div class="ed-modal">
-      <div class="ed-modal-header">
-        <span class="ed-modal-title">¡Tu sitio está publicado!</span>
-        <button class="ed-icon-btn" id="btnCerrarPublicado" title="Cerrar">
-          <div class="icon-frame icon-frame--18">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </div>
-        </button>
+    <div class="ed-modal ed-modal--centrado">
+      <button class="ed-icon-btn ed-modal-cerrar-flotante" id="btnCerrarPublicado" title="Cerrar">
+        <div class="icon-frame icon-frame--18">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </div>
+      </button>
+      <div class="ed-modal-icono ed-modal-icono--exito">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
       </div>
-      <p class="ed-modal-hint">Ya está en línea, visible para cualquiera con el enlace:</p>
+      <h3 class="ed-modal-headline">¡Tu sitio está publicado!</h3>
+      <p class="ed-modal-descripcion">Ya está en línea, visible para cualquiera con el enlace:</p>
       <div class="ed-publicado-url-row">
         <input type="text" id="publicadoUrlInput" readonly>
         <button type="button" class="ed-btn ed-btn--secondary" id="btnCopiarUrlPublicado">Copiar</button>

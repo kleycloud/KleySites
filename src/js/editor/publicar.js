@@ -3,12 +3,14 @@
   Botón "Publicar": manda el sitio y la página actual a n8n, que renderiza
   el HTML final y lo despliega a Cloudflare Pages. El deploy puede tardar
   unos segundos — el botón se deshabilita mientras tanto. Al terminar,
-  un modal muestra el enlace: un texto chiquito en la barra superior no
-  alcanza para algo tan importante como "tu sitio ya está en internet".
+  siempre se avisa algo claro (modal con el enlace si vino en la
+  respuesta, aviso genérico si no vino, o error) — nunca se queda en
+  silencio como si no hubiera pasado nada.
 */
 
 import * as api from '../api.js';
 import { state } from './state.js';
+import { mostrarAviso } from '../aviso.js';
 
 function abrirModalPublicado(url) {
   const modal = document.getElementById('modalPublicado');
@@ -42,10 +44,16 @@ export function initPublicar() {
     try {
       const resp = await api.publicarSitio(state.siteId, state.pageId);
       status.textContent = '';
-      if (resp.url) abrirModalPublicado(resp.url);
+      const url = resp.url || (resp.slug ? `https://${resp.slug}.pages.dev` : null);
+      if (url) {
+        abrirModalPublicado(url);
+      } else {
+        await mostrarAviso('Tu sitio se publicó, pero no se pudo determinar el enlace todavía.', '¡Publicado!');
+      }
     } catch (e) {
       console.error('No se pudo publicar', e);
-      status.textContent = 'No se pudo publicar. Intenta de nuevo.';
+      status.textContent = '';
+      await mostrarAviso(e.message || 'No se pudo publicar. Intenta de nuevo.', 'No se pudo publicar');
     } finally {
       btn.disabled = false;
     }
