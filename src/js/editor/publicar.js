@@ -1,8 +1,9 @@
 /*
   publicar.js
-  Botón "Publicar": manda el sitio y la página actual al backend, que
-  renderiza el HTML final y lo despliega a Cloudflare Pages. El deploy puede tardar
-  unos segundos — el botón se deshabilita mientras tanto. Al terminar,
+  Botón "Publicar": genera el sitio completo (los mismos archivos que
+  Exportar) y se los manda al backend, que solo los despliega a Cloudflare
+  Pages. El deploy puede tardar unos segundos — el botón se deshabilita
+  mientras tanto. Al terminar,
   siempre se avisa algo claro (modal con el enlace si vino en la
   respuesta, aviso genérico si no vino, o error) — nunca se queda en
   silencio como si no hubiera pasado nada.
@@ -11,6 +12,7 @@
 import * as api from '../api.js';
 import { state } from './state.js';
 import { mostrarAviso } from '../aviso.js';
+import { construirArchivosSitio } from './sitio.js';
 
 function abrirModalPublicado(url) {
   const modal = document.getElementById('modalPublicado');
@@ -42,7 +44,8 @@ export function initPublicar() {
     status.textContent = 'Publicando…';
 
     try {
-      const resp = await api.publicarSitio(state.siteId, state.pageId);
+      const { archivos } = await construirArchivosSitio();
+      const resp = await api.publicarSitio(state.siteId, archivos);
       status.textContent = '';
       const url = resp.url || (resp.slug ? `https://${resp.slug}.pages.dev` : null);
       if (url) {

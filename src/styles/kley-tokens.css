@@ -24,10 +24,10 @@
   --error:         #FF8080;
   --info:          #4D6BFF;
 
-  /* zonas del lienzo del editor */
+  /* zonas del lienzo del editor: encabezado azul, contenido morado, pie naranja */
   --zone-header:   #4D6BFF;
-  --zone-content:  #FF8A3D;
-  --zone-footer:   #7B5CFF;
+  --zone-content:  #7B5CFF;
+  --zone-footer:   #FF8A3D;
 
   /* iconos */
   --icon-rest:     #96969F;

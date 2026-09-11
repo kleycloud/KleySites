@@ -66,11 +66,26 @@
   color: var(--color-text-dim);
 }
 
-.ed-zone-empty .icon-frame { color: var(--zone-color); }
+.ed-zone-empty .icon-frame {
+  color: var(--zone-color);
+  border-color: color-mix(in srgb, var(--zone-color) 35%, transparent);
+  background: color-mix(in srgb, var(--zone-color) 10%, transparent);
+}
+
+.ed-zone-empty-nombre {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  font-size: 14px;
+  color: var(--zone-color);
+}
 
 .ed-zone-empty-text {
+  margin: 0;
   font-size: 13px;
   color: var(--color-text-dim);
+  text-align: center;
+  max-width: 34ch;
 }
 
 /* --- Bloques insertados --- */

@@ -42,9 +42,14 @@ recargarlas en cada deploy, solo si cambia algún valor.
 
 ## Publicar sitios (Cloudflare Pages)
 
-`/publish` genera el HTML del sitio y lo sube con Wrangler CLI (no la
-API de "Direct Upload" directa — esa da errores intermitentes). Dos
-detalles de por qué está armado así en `lib/cloudflarePages.js`:
+El backend **no renderiza nada**: el frontend genera el sitio completo
+(`src/js/render/` — el mismo código del lienzo, la vista previa y el ZIP
+de Exportar) y `/publish` recibe `{ site_id, archivos: [{ nombre,
+contenido }] }`, valida (solo `.html/.json/.txt` planos, ≤ 50 archivos,
+≤ 5 MB, `index.html` obligatorio, sitio del cliente) y lo sube con
+Wrangler CLI (no la API de "Direct Upload" directa — esa da errores
+intermitentes). Detalles de por qué está armado así en
+`lib/cloudflarePages.js`:
 
 - Se invoca `node node_modules/wrangler/bin/wrangler.js` en vez del
   symlink `.bin/wrangler`, porque el tracer de archivos de Vercel no

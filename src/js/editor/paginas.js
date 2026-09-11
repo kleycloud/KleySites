@@ -83,6 +83,17 @@ async function crearPaginaNueva(nombre) {
   }
 }
 
+// Devuelve la página con ese nombre, creándola si no existe (importación
+// de proyectos con varias páginas).
+export async function asegurarPagina(nombre) {
+  const existente = paginasSitio.find((p) => p.nombre.toLowerCase() === nombre.toLowerCase());
+  if (existente) return existente;
+  const resp = await api.crearPagina(state.siteId, nombre);
+  paginasSitio.push(resp.pagina);
+  renderPaginaList();
+  return resp.pagina;
+}
+
 export function initPaginas() {
   document.getElementById('paginaList').addEventListener('click', (e) => {
     const item = e.target.closest('[data-pagina-id]');

@@ -84,6 +84,8 @@ export function guardarFaviconSitio(siteId, faviconUrl) {
   return llamar('/kleysites/sites/favicon', { method: 'POST', body: JSON.stringify({ site_id: siteId, favicon_url: faviconUrl }) });
 }
 
-export function publicarSitio(siteId, pageId) {
-  return llamar('/kleysites/publish', { method: 'POST', body: JSON.stringify({ site_id: siteId, page_id: pageId }) });
+// `archivos`: [{ nombre, contenido }] ya generados por el frontend — el
+// backend solo los despliega, no renderiza nada.
+export function publicarSitio(siteId, archivos) {
+  return llamar('/kleysites/publish', { method: 'POST', body: JSON.stringify({ site_id: siteId, archivos }) });
 }

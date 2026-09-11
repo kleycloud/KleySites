@@ -10,17 +10,16 @@ import { initAccountMenu } from '../account-menu.js';
 import { state } from './state.js';
 import { marcarEstado } from './sync.js';
 import { renderCanvas, renderPropiedades } from './render.js';
-import {
-  deshacer, rehacer, seleccionarBloque, activarZona, deseleccionar,
-  eliminarBloqueSeleccionado, actualizarCampo,
-} from './bloques.js';
+import { deshacer, rehacer, seleccionarBloque, activarZona, deseleccionar } from './bloques.js';
 import { initEdicionInline, estaEditandoInline } from './edicion-inline.js';
 import { initArrastre } from './arrastrar.js';
 import { initPaneles } from './paneles.js';
+import { initPropiedades } from './propiedades/eventos.js';
 import { initPaginas, cargarPaginasIniciales } from './paginas.js';
 import { initAjustes, setSitioActual } from './ajustes.js';
 import { initImportarUI } from './importar-ui.js';
 import { initPublicar } from './publicar.js';
+import { initExportar } from './exportar.js';
 import { initVistaPrevia } from './vista-previa.js';
 
 // Sin sesión, no hay editor: se necesita el token para leer/guardar en Neon.
@@ -34,10 +33,12 @@ document.getElementById('btnVolverDashboard').addEventListener('click', () => {
 });
 
 initPaneles();
+initPropiedades(document.getElementById('propertiesBody'));
 initPaginas();
 initAjustes();
 initImportarUI();
 initPublicar();
+initExportar();
 initVistaPrevia();
 
 const canvasWrap = document.querySelector('.ed-canvas-wrap');
@@ -63,22 +64,6 @@ canvasWrap.addEventListener('click', (e) => {
   }
 
   deseleccionar();
-});
-
-const propertiesBody = document.getElementById('propertiesBody');
-
-// Solo "input": dispara con cada tecleo y con cada cambio de <select> en
-// todos los navegadores modernos. "change" se dispara también al perder
-// foco si el valor cambió, duplicando la escritura y ensuciando el
-// historial de deshacer con un snapshot fantasma idéntico al actual.
-propertiesBody.addEventListener('input', (e) => {
-  const campo = e.target.dataset.campo;
-  if (!campo || state.selectedId == null) return;
-  actualizarCampo(state.selectedId, campo, e.target.value);
-});
-
-propertiesBody.addEventListener('click', (e) => {
-  if (e.target.closest('[data-accion="eliminar"]')) eliminarBloqueSeleccionado();
 });
 
 document.getElementById('btnDeshacer').addEventListener('click', deshacer);

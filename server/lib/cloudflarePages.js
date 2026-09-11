@@ -33,12 +33,14 @@ async function asegurarProyecto(slug) {
   });
 }
 
-export async function publicarHTML(slug, html) {
+// `archivos`: [{ nombre, contenido }] ya validados por la ruta (solo
+// nombres planos .html/.json/.txt).
+export async function publicarArchivos(slug, archivos) {
   await asegurarProyecto(slug);
 
   const dir = await mkdtemp(join(tmpdir(), 'kleysites-deploy-'));
   try {
-    await writeFile(join(dir, 'index.html'), html, 'utf-8');
+    await Promise.all(archivos.map((a) => writeFile(join(dir, a.nombre), a.contenido, 'utf-8')));
 
     await execFileAsync(
       process.execPath,

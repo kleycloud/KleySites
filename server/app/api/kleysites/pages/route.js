@@ -17,7 +17,7 @@ export const GET = conManejoDeErrores(async (req) => {
   if (!(await siteEsDelCliente(siteId, client_id))) return error(404, 'Sitio no encontrado.');
 
   const { rows } = await consultar(
-    'SELECT id, nombre, orden, created_at FROM pages WHERE site_id = $1 ORDER BY orden ASC, created_at ASC',
+    'SELECT id, nombre, slug, orden, created_at FROM pages WHERE site_id = $1 ORDER BY orden ASC, created_at ASC',
     [siteId]
   );
   return json({ paginas: rows });
@@ -42,7 +42,7 @@ export const POST = conManejoDeErrores(async (req) => {
   }
 
   const { rows } = await consultar(
-    'INSERT INTO pages (site_id, nombre, slug, orden) VALUES ($1, $2, $3, $4) RETURNING id, nombre, orden, created_at',
+    'INSERT INTO pages (site_id, nombre, slug, orden) VALUES ($1, $2, $3, $4) RETURNING id, nombre, slug, orden, created_at',
     [body.site_id, nombre, slug, cuenta[0].n]
   );
   return json({ pagina: rows[0] });

@@ -6,11 +6,13 @@
 */
 
 import * as api from '../api.js';
-import { state, CONTENEDORES, CONTENIDO_INICIAL, PLANTILLAS, escribirCampo } from './state.js';
+import { state, ZONAS, CONTENEDORES, CONTENIDO_INICIAL, PLANTILLAS, escribirCampo } from './state.js';
 import { guardarSnapshot, registrarEdicionDebounced, deshacer as deshacerHistorial, rehacer as rehacerHistorial } from './history.js';
-import { marcarEstado, programarGuardado } from './sync.js';
+import { programarGuardado } from './sync.js';
 import { renderCanvas, renderPropiedades, actualizarEstadosVisuales } from './render.js';
-import { analizarHTML, analizarJSON } from './importar.js';
+import { analizarJSON } from './importar/json.js';
+import { analizarHTML } from './importar/html.js';
+import { importarPaginas } from './importar/paginas.js';
 
 export function deshacer() {
   if (!deshacerHistorial()) return;
@@ -51,17 +53,17 @@ export function crearBloque(tipo) {
   programarGuardado();
 }
 
-// Inserta un árbol de bloques ({ tipo, contenido, hijos? }) ya armado —
-// lo comparten las plantillas (contenido fijo del código) y la
-// importación de HTML/JSON (contenido ajeno, ya saneado en importar.js).
+// Inserta un árbol de bloques ({ tipo, contenido, estilos?, hijos? }) ya
+// armado — lo comparten las plantillas (contenido fijo del código) y la
+// importación de HTML/JSON (contenido ajeno, ya saneado en importar/).
 function insertarArbol(nodos, zona, parentId, ordenInicial = 0) {
   nodos.forEach((n, i) => {
     const bloque = {
       id: state.nextId++,
       remoteId: null,
       tipo: n.tipo,
-      contenido: structuredClone(n.contenido),
-      estilos: {},
+      contenido: structuredClone(n.contenido || {}),
+      estilos: { ...(n.estilos || {}) },
       zona,
       parent_id: parentId,
       orden: ordenInicial + i,
@@ -69,6 +71,27 @@ function insertarArbol(nodos, zona, parentId, ordenInicial = 0) {
     state.blocks.push(bloque);
     if (n.hijos && n.hijos.length) insertarArbol(n.hijos, zona, bloque.id);
   });
+}
+
+// { encabezado?, contenido?, pie?, activa? } -> cada lista se agrega al
+// final de su zona ("activa" = la zona activa). Devuelve cuántos bloques
+// raíz se insertaron.
+function insertarPorZona(porZona) {
+  const listas = ZONAS.map((zona) => [zona, porZona[zona] || []]);
+  if (porZona.activa && porZona.activa.length) listas.push([state.zonaActiva, porZona.activa]);
+  const total = listas.reduce((n, [, lista]) => n + lista.length, 0);
+  if (!total) return 0;
+
+  guardarSnapshot();
+  listas.forEach(([zona, lista]) => {
+    if (!lista.length) return;
+    const base = state.blocks.filter((b) => b.parent_id === null && b.zona === zona).length;
+    insertarArbol(lista, zona, null, base);
+  });
+  renderCanvas();
+  renderPropiedades();
+  programarGuardado();
+  return total;
 }
 
 export function insertarPlantilla(id) {
@@ -91,24 +114,17 @@ export function insertarPlantilla(id) {
   programarGuardado();
 }
 
-export function importarContenido(texto) {
-  // JSON propio de KleySites primero (lo que exportaría el producto o
-  // genera Claude); si no parece JSON válido con bloques reales, se
-  // interpreta como HTML.
+// Devuelve cuántos bloques se importaron (0 = nada que convertir). Un
+// JSON malformado lanza ErrorImportacion en vez de caer al heurístico
+// de HTML, que solo produciría basura.
+export async function importarContenido(texto) {
   const t = texto.trim();
-  let arbol = (t.startsWith('[') || t.startsWith('{')) ? analizarJSON(t) : null;
-  if (!arbol || !arbol.length) arbol = analizarHTML(t);
-  if (!arbol.length) return false;
-
-  guardarSnapshot();
-  const zona = state.zonaActiva;
-  const base = state.blocks.filter((b) => b.parent_id === null && b.zona === zona).length;
-  insertarArbol(arbol, zona, null, base);
-
-  renderCanvas();
-  renderPropiedades();
-  programarGuardado();
-  return true;
+  if (t.startsWith('[') || t.startsWith('{')) {
+    const datos = analizarJSON(t);
+    if (datos.paginas) return importarPaginas(datos.paginas, insertarPorZona);
+    return insertarPorZona(datos);
+  }
+  return insertarPorZona(await analizarHTML(t));
 }
 
 export function seleccionarBloque(id) {

@@ -14,6 +14,10 @@ export function setSitioActual(sitio) {
   renderAjustesSitio();
 }
 
+export function getSitioActual() {
+  return sitioActual;
+}
+
 function renderAjustesSitio() {
   if (!sitioActual) return;
   document.getElementById('inputNombreSitioAjustes').value = sitioActual.nombre || '';

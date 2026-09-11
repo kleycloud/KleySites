@@ -10,7 +10,8 @@ Powered by [KleyCloud](https://kleyderproject.cloud).
 - **Backend**: Next.js (API routes) en `server/` + Neon (PostgreSQL) — ver [server/README.md](server/README.md)
 - **Hosting frontend**: Cloudflare Pages (`kleysites.pages.dev`)
 - **Hosting backend**: Vercel (`kleysites-api.vercel.app`)
-- **Publicación de sitios de clientes**: el backend corre Wrangler para desplegar cada sitio a su propio proyecto de Cloudflare Pages
+- **Publicación de sitios de clientes**: el frontend genera el sitio completo (`src/js/render/`, el único renderizador: lienzo, vista previa, ZIP y publicado salen del mismo código) y el backend lo despliega con Wrangler a su propio proyecto de Cloudflare Pages. **Exportar** descarga esos mismos archivos como ZIP para publicarlos a mano en cualquier hosting.
+- **Formato de intercambio**: [docs/formato-kleysites.md](docs/formato-kleysites.md) — el JSON que exporta e importa el editor (sirve para pedirle una página a Claude y editarla en KleySites)
 
 ## Estructura
 
@@ -39,7 +40,7 @@ editor esté dividido en `src/js/editor/*.js` en vez de un solo archivo.
 npm install
 npm run dev       # levanta el servidor local con recarga en vivo
 npm run build     # genera /dist listo para producción
-npm test          # Playwright (42 specs, no necesita el backend corriendo)
+npm test          # Playwright (no necesita el backend corriendo)
 ```
 
 Backend: ver [server/README.md](server/README.md).
