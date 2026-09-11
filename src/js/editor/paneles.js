@@ -6,7 +6,7 @@
   topbar. Cada acción real (crear/seleccionar bloque) vive en bloques.js.
 */
 
-import { PLANTILLAS } from './state.js';
+import { PLANTILLAS, CATALOGO_BLOQUES } from './state.js';
 import { crearBloque, insertarPlantilla, seleccionarBloque } from './bloques.js';
 
 const TITULOS_PANEL = { bloques: 'Bloques', capas: 'Capas', plantillas: 'Plantillas', paginas: 'Páginas', ajustes: 'Ajustes', tienda: 'Tienda' };
@@ -38,7 +38,16 @@ function initVistaDispositivo() {
 }
 
 export function initPaneles() {
-  document.querySelector('.ed-widget-grid').addEventListener('click', (e) => {
+  const widgetGrid = document.querySelector('.ed-widget-grid');
+  widgetGrid.innerHTML = CATALOGO_BLOQUES.map((b) => `
+    <div class="ed-widget-card" data-tipo="${b.tipo}">
+      <div class="icon-frame icon-frame--22">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${b.icono}</svg>
+      </div>
+      <span class="ed-widget-label">${b.etiqueta}</span>
+    </div>`).join('');
+
+  widgetGrid.addEventListener('click', (e) => {
     const card = e.target.closest('.ed-widget-card');
     if (!card) return;
     crearBloque(card.dataset.tipo);
