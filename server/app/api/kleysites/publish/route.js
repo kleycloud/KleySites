@@ -41,6 +41,7 @@ export const POST = conManejoDeErrores(async (req) => {
 
   try {
     const { url } = await publicarArchivos(slug, body.archivos);
+    await consultar('UPDATE sites SET published_at = now() WHERE id = $1', [body.site_id]);
     return json({ publicado: true, slug, url });
   } catch (e) {
     console.error('Fallo el deploy a Cloudflare Pages', e);

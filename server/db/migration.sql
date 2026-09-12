@@ -26,3 +26,12 @@ CREATE TABLE IF NOT EXISTS pages (
 -- Se deja como ALTER simple porque no hay forma de saber desde acá si
 -- blocks ya tiene datos reales que migrar o está vacía.
 ALTER TABLE blocks ADD COLUMN IF NOT EXISTS page_id integer REFERENCES pages(id) ON DELETE CASCADE;
+
+-- clients: nombre para mostrar (saludo del dashboard) — opcional, si no
+-- está seteado el frontend deriva uno del correo.
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS nombre text;
+
+-- sites: cuándo se publicó por última vez (null = nunca) y la miniatura
+-- del lienzo, generada en el navegador con html2canvas al publicar.
+ALTER TABLE sites ADD COLUMN IF NOT EXISTS published_at timestamptz;
+ALTER TABLE sites ADD COLUMN IF NOT EXISTS thumbnail_url text;

@@ -2,7 +2,8 @@
   por-tipo.js
   Grupos de propiedades específicos de un tipo de bloque, y qué grupos
   (genéricos + específicos) ve cada tipo — texto no muestra "Imagen",
-  imagen no muestra "Tipografía", etc.
+  imagen no muestra "Letra", etc. Mismo criterio que grupos.js: nada de
+  jerga técnica en las etiquetas.
 */
 
 import {
@@ -15,10 +16,10 @@ const claves = (obj) => Object.keys(obj);
 const IMAGEN = {
   id: 'imagen', titulo: 'Imagen',
   campos: [
-    { key: 'estilos.ajuste', label: 'Ajuste', control: 'select', opciones: ['', ...claves(AJUSTES_IMAGEN)] },
+    { key: 'estilos.ajuste', label: 'Cómo se ve la imagen', control: 'select', opciones: ['', ...claves(AJUSTES_IMAGEN)] },
     { key: 'estilos.filtro_brillo', label: 'Brillo', control: 'rango', min: 0, max: 200, inicial: 100, sufijo: '%' },
     { key: 'estilos.filtro_contraste', label: 'Contraste', control: 'rango', min: 0, max: 200, inicial: 100, sufijo: '%' },
-    { key: 'estilos.filtro_gris', label: 'Escala de grises', control: 'rango', min: 0, max: 100, inicial: 0, sufijo: '%' },
+    { key: 'estilos.filtro_gris', label: 'Blanco y negro', control: 'rango', min: 0, max: 100, inicial: 0, sufijo: '%' },
     { key: 'estilos.filtro_desenfoque', label: 'Desenfoque', control: 'rango', min: 0, max: 20, inicial: 0, sufijo: 'px' },
   ],
 };
@@ -31,11 +32,11 @@ const BOTON = {
 };
 
 const CONTENEDOR = {
-  id: 'contenedor', titulo: 'Distribución',
+  id: 'contenedor', titulo: 'Acomodo',
   campos: [
-    { key: 'estilos.direccion', label: 'Dirección', control: 'select', opciones: ['', ...claves(DIRECCIONES)] },
-    { key: 'estilos.columnas_n', label: 'Columnas iguales', control: 'numero', min: 0, max: 6, placeholder: '0 = automático' },
-    { key: 'estilos.gap', label: 'Separación entre bloques', control: 'numero', sufijo: 'px', min: 0, placeholder: '16' },
+    { key: 'estilos.direccion', label: 'En fila o en columna', control: 'select', opciones: ['', ...claves(DIRECCIONES)] },
+    { key: 'estilos.columnas_n', label: 'Número de columnas', control: 'numero', min: 0, max: 6, placeholder: '0 = automático' },
+    { key: 'estilos.gap', label: 'Espacio entre bloques', control: 'numero', sufijo: 'px', min: 0, placeholder: '16' },
     { key: 'estilos.alinear_h', label: 'Alineación horizontal', control: 'select', opciones: ['', ...claves(ALINEAR_H)] },
     { key: 'estilos.alinear_v', label: 'Alineación vertical', control: 'select', opciones: ['', ...claves(ALINEAR_V)] },
   ],
@@ -44,9 +45,9 @@ const CONTENEDOR = {
 const GALERIA = {
   id: 'galeria', titulo: 'Galería',
   campos: [
-    { key: 'estilos.galeria_columnas', label: 'Columnas', control: 'numero', min: 1, max: 6, placeholder: 'automático' },
-    { key: 'estilos.galeria_gap', label: 'Separación', control: 'numero', sufijo: 'px', min: 0, placeholder: '8' },
-    { key: 'estilos.galeria_alto', label: 'Alto de cada imagen', control: 'numero', sufijo: 'px', min: 40, placeholder: '160' },
+    { key: 'estilos.galeria_columnas', label: 'Cuántas fotos por fila', control: 'numero', min: 1, max: 6, placeholder: 'automático' },
+    { key: 'estilos.galeria_gap', label: 'Espacio entre fotos', control: 'numero', sufijo: 'px', min: 0, placeholder: '8' },
+    { key: 'estilos.galeria_alto', label: 'Alto de cada foto', control: 'numero', sufijo: 'px', min: 40, placeholder: '160' },
   ],
 };
 
@@ -59,14 +60,14 @@ const SEPARADOR = {
   id: 'separador', titulo: 'Línea',
   campos: [
     { key: 'estilos.borde', label: 'Grosor', control: 'numero', sufijo: 'px', min: 1, placeholder: '2' },
-    { key: 'estilos.borde_estilo', label: 'Estilo', control: 'select', opciones: claves(ESTILOS_BORDE) },
+    { key: 'estilos.borde_estilo', label: 'Tipo de línea', control: 'select', opciones: claves(ESTILOS_BORDE) },
     { key: 'estilos.borde_color', label: 'Color', control: 'color', placeholder: '#dddddd' },
   ],
 };
 
 const MEDIOS = {
-  id: 'medios', titulo: 'Proporción',
-  campos: [{ key: 'estilos.proporcion', label: 'Proporción', control: 'select', opciones: claves(PROPORCIONES) }],
+  id: 'medios', titulo: 'Forma',
+  campos: [{ key: 'estilos.proporcion', label: 'Forma del video', control: 'select', opciones: claves(PROPORCIONES) }],
 };
 
 const GRUPOS_POR_TIPO = {

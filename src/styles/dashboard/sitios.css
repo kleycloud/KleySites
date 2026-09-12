@@ -1,0 +1,123 @@
+/*
+  sitios.css
+  Tarjeta de "Mis sitios": miniatura real (o un bloque de color con la
+  inicial mientras no exista — ver capturarYSubirMiniatura en
+  editor/miniatura.js), estado Publicado/Borrador, y páginas + fecha de
+  creación reales. Mismas clases que ya usan tests/dashboard.spec.js
+  (.db-card, .db-card-nombre, .db-card-slug, .db-card--crear/--form) —
+  el rediseño es visual, no cambia esos contratos.
+*/
+
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+/* .db-card fija su propio `display`, que le gana en cascada al
+   [hidden]{display:none} del navegador (mismo motivo que .ed-btn[hidden]
+   en components.css) — sin esto el buscador no podría esconder tarjetas. */
+.db-card[hidden] { display: none; }
+
+.db-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-panel);
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.db-card:hover { border-color: color-mix(in srgb, var(--color-brand-ink) 50%, transparent); }
+
+.db-card-miniatura {
+  position: relative;
+  height: 110px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-brand-ink) 12%, var(--color-surface));
+  color: var(--color-brand-ink);
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 28px;
+  overflow: hidden;
+}
+.db-card-miniatura img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+
+.db-card-badge {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 10.5px;
+  font-weight: var(--fw-semibold);
+  background: var(--color-panel);
+  color: var(--color-text-dim);
+  border: 1px solid var(--color-border);
+}
+.db-card-badge[data-estado="publicado"] { color: var(--color-success); border-color: color-mix(in srgb, var(--color-success) 40%, transparent); }
+
+.db-card-cuerpo { padding: var(--space-4); display: flex; flex-direction: column; gap: 2px; }
+
+.db-card-nombre {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.db-card-slug {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--color-text-dim);
+}
+
+.db-card-meta {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  font-size: 11.5px;
+  color: var(--color-text-dim);
+}
+
+.db-card--crear {
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 180px;
+  border-style: dashed;
+  color: var(--color-text-dim);
+  padding: var(--space-5);
+}
+.db-card--crear .icon-frame { color: var(--color-text-dim); }
+.db-card--crear:hover .icon-frame { color: var(--icon-active); background: var(--icon-bg-active); }
+.db-card--crear .db-card-nombre { text-align: center; }
+
+.db-card--form { gap: var(--space-2); padding: var(--space-5); }
+.db-card--form label { margin: 0; }
+
+.db-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-7) 0;
+  text-align: center;
+}
+.db-empty-text { font-size: 14px; color: var(--color-text-dim); max-width: 32ch; }
+
+.db-cargando, .db-error {
+  grid-column: 1 / -1;
+  font-size: 14px;
+  color: var(--color-text-dim);
+  text-align: center;
+  padding: var(--space-6) 0;
+}

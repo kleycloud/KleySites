@@ -1,0 +1,73 @@
+/*
+  plantillas.css
+  Galería de plantillas para empezar un sitio — cada tarjeta a color
+  sólido (tinte de marca, no un color suelto: color-mix sobre el panel),
+  con su ícono como marca de agua detrás del texto.
+*/
+
+.db-tpl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: var(--space-4);
+}
+
+.db-tpl-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  padding-top: calc(var(--space-4) + 4px);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--tpl-color, var(--color-text-dim)) 16%, var(--color-panel));
+  cursor: pointer;
+  overflow: hidden;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.db-tpl-card:hover { border-color: color-mix(in srgb, var(--tpl-color, var(--color-brand-ink)) 60%, transparent); transform: translateY(-1px); }
+.db-tpl-card:disabled { cursor: wait; opacity: 0.6; transform: none; }
+
+.db-tpl-card[data-nombre="Sitio en blanco"] { --tpl-color: var(--color-text-dim); }
+.db-tpl-card[data-nombre="Clínica"] { --tpl-color: var(--color-zone-header); }
+.db-tpl-card[data-nombre="Inmobiliaria"] { --tpl-color: var(--color-zone-content); }
+.db-tpl-card[data-nombre="Tienda online"] { --tpl-color: var(--color-zone-footer); }
+.db-tpl-card[data-nombre="Portafolio"] { --tpl-color: var(--color-brand-ink); }
+
+.db-tpl-accent {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--tpl-color, var(--color-text-dim));
+}
+
+/* Marca de agua: el mismo ícono de la tarjeta, grande y tenue detrás del
+   texto — le da algo de vida al fondo sin depender de fotos de stock. */
+.db-tpl-watermark {
+  position: absolute;
+  right: -14px;
+  bottom: -18px;
+  width: 84px;
+  height: 84px;
+  opacity: 0.16;
+  color: var(--tpl-color, var(--color-text-dim));
+  pointer-events: none;
+}
+.db-tpl-watermark svg { width: 100%; height: 100%; }
+
+.db-tpl-card .icon-frame {
+  color: var(--tpl-color, var(--icon-rest));
+  background: color-mix(in srgb, var(--tpl-color, transparent) 18%, var(--icon-bg));
+  border-color: color-mix(in srgb, var(--tpl-color, transparent) 30%, var(--color-border));
+}
+
+.db-tpl-nombre {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  font-size: 13.5px;
+  color: var(--color-text);
+}
+.db-tpl-hint { font-size: 11.5px; color: var(--color-text-dim); margin-top: -6px; }

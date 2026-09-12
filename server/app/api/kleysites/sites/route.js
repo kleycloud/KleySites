@@ -9,8 +9,16 @@ const LIMITE_SITIOS_PLAN_GRATIS = 1;
 
 export const GET = conManejoDeErrores(async (req) => {
   const { client_id } = clienteDesdeRequest(req);
+  // paginas_count viene de un LEFT JOIN (no de una subconsulta por sitio)
+  // para traer todo en una sola ida a la base — el dashboard lo usa para
+  // la tarjeta de cada sitio y para la estadística "Páginas totales".
   const { rows } = await consultar(
-    'SELECT id, nombre, slug, favicon_url, created_at FROM sites WHERE client_id = $1 ORDER BY created_at DESC',
+    `SELECT sites.id, sites.nombre, sites.slug, sites.favicon_url, sites.thumbnail_url,
+            sites.published_at, sites.created_at, COUNT(pages.id)::int AS paginas_count
+     FROM sites LEFT JOIN pages ON pages.site_id = sites.id
+     WHERE sites.client_id = $1
+     GROUP BY sites.id
+     ORDER BY sites.created_at DESC`,
     [client_id]
   );
   return json({ sitios: rows });
@@ -35,7 +43,7 @@ export const POST = conManejoDeErrores(async (req) => {
   const slug = await slugDisponible(base);
 
   const { rows } = await consultar(
-    'INSERT INTO sites (client_id, nombre, slug) VALUES ($1, $2, $3) RETURNING id, nombre, slug, favicon_url, created_at',
+    'INSERT INTO sites (client_id, nombre, slug) VALUES ($1, $2, $3) RETURNING id, nombre, slug, favicon_url, thumbnail_url, published_at, created_at',
     [client_id, nombre, slug]
   );
   return json({ site: rows[0] });
@@ -48,7 +56,7 @@ export const PATCH = conManejoDeErrores(async (req) => {
   if (!body.site_id || !nombre) return error(400, 'Falta site_id o nombre.');
 
   const { rows } = await consultar(
-    'UPDATE sites SET nombre = $1 WHERE id = $2 AND client_id = $3 RETURNING id, nombre, slug, favicon_url, created_at',
+    'UPDATE sites SET nombre = $1 WHERE id = $2 AND client_id = $3 RETURNING id, nombre, slug, favicon_url, thumbnail_url, published_at, created_at',
     [nombre, body.site_id, client_id]
   );
   if (!rows[0]) return error(404, 'Sitio no encontrado.');

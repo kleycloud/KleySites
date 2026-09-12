@@ -88,10 +88,6 @@
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></svg>
         Vista previa
       </button>
-      <button class="ed-btn ed-btn--secondary" id="btnExportar" title="Descargar el sitio completo como ZIP">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
-        Exportar
-      </button>
       <span class="ed-save-status" id="publishStatus"></span>
       <button class="ed-btn ed-btn--primary" id="btnPublicar">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5M12 5l-5 5M12 5l5 5"/><path d="M4 20h16"/></svg>
@@ -149,7 +145,9 @@
           </button>
           <div class="kley-menu kley-menu--up" id="menuCuentaEditor">
             <button class="kley-menu-item" data-accion="perfil">Perfil</button>
-            <button class="kley-menu-item" disabled>Configuración <span class="kley-menu-soon">Próximamente</span></button>
+            <button class="kley-menu-item" data-accion="plan">Mi plan</button>
+            <button class="kley-menu-item" data-accion="configuracion">Configuración</button>
+            <a class="kley-menu-item" href="mailto:kleysite@gmail.com">Ayuda</a>
             <div class="kley-menu-sep"></div>
             <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
           </div>
@@ -218,6 +216,15 @@
             <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirFavicon">Subir favicon</button>
           </div>
           <p class="ed-modal-error" id="faviconError" hidden></p>
+        </div>
+        <div class="ed-field-group">
+          <p class="ed-field-group-titulo">Descargar tu sitio</p>
+          <p class="ed-modal-hint">Te llevas todo en una carpeta, lista para subir a cualquier otro lugar.</p>
+          <button type="button" class="ed-btn ed-btn--secondary" id="btnExportar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+            Descargar sitio (.zip)
+          </button>
+          <span class="ed-save-status" id="exportarStatus"></span>
         </div>
         <div class="ed-field-group">
           <p class="ed-field-group-titulo">Zona de peligro</p>
@@ -298,13 +305,67 @@
         </button>
       </div>
       <div class="kley-avatar-grande" data-avatar>?</div>
+      <div class="ed-field-group" style="margin-top:0;padding-top:0;border-top:none;">
+        <label>Nombre</label>
+        <input type="text" id="inputNombrePerfil" placeholder="Tu nombre">
+        <button type="button" class="ed-btn ed-btn--secondary" id="btnGuardarNombrePerfil">Guardar nombre</button>
+      </div>
       <p class="ed-modal-hint" id="perfilCorreo"></p>
       <input type="file" id="inputAvatarArchivo" accept="image/*" hidden>
-      <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirAvatar">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
-        Subir foto
-      </button>
+      <div class="ed-perfil-avatar-botones">
+        <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirAvatar">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+          Subir foto
+        </button>
+        <button type="button" class="ed-btn ed-btn--secondary" id="btnQuitarAvatar" hidden>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          Quitar foto
+        </button>
+      </div>
       <p class="ed-modal-error" id="perfilError" hidden></p>
+    </div>
+  </div>
+
+  <div class="ed-modal-overlay" id="modalPlan">
+    <div class="ed-modal ed-modal--centrado">
+      <button class="ed-icon-btn ed-modal-cerrar-flotante" id="btnCerrarPlan" title="Cerrar">
+        <div class="icon-frame icon-frame--18">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </div>
+      </button>
+      <div class="ed-modal-icono">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>
+      </div>
+      <h3 class="ed-modal-headline" id="planTitulo">Plan Gratis</h3>
+      <p class="ed-modal-descripcion" id="planDescripcion"></p>
+    </div>
+  </div>
+
+  <div class="ed-modal-overlay" id="modalConfiguracion">
+    <div class="ed-modal">
+      <div class="ed-modal-header">
+        <span class="ed-modal-title">Configuración</span>
+        <button class="ed-icon-btn" id="btnCerrarConfiguracion" title="Cerrar">
+          <div class="icon-frame icon-frame--18">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </div>
+        </button>
+      </div>
+      <p class="ed-modal-hint">Cómo se ve KleySites en esta pantalla.</p>
+      <div class="ed-tema-opciones">
+        <label class="ed-tema-opcion">
+          <input type="radio" name="tema" value="light">
+          Claro
+        </label>
+        <label class="ed-tema-opcion">
+          <input type="radio" name="tema" value="dark">
+          Oscuro
+        </label>
+        <label class="ed-tema-opcion">
+          <input type="radio" name="tema" value="auto">
+          Automático (el mismo de tu celular o computadora)
+        </label>
+      </div>
     </div>
   </div>
 
@@ -335,6 +396,8 @@
 
 <script type="module" src="/src/js/theme.js"></script>
 <script type="module" src="/src/js/perfil.js"></script>
+<script type="module" src="/src/js/plan.js"></script>
+<script type="module" src="/src/js/configuracion.js"></script>
 <script type="module" src="/src/js/editor/canvas.js"></script>
 </body>
 </html>

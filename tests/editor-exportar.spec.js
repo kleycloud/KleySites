@@ -8,6 +8,7 @@ test('Exportar descarga un ZIP con el sitio completo, y el HTML lleva los estilo
   await page.fill('#propertiesBody input[data-campo="contenido.texto"]', 'Título exportado');
   await page.fill('#propertiesBody input[data-campo="estilos.color"]', '#ff0000');
 
+  await page.click('.ed-rail-item[data-panel="ajustes"]');
   const [descarga] = await Promise.all([
     page.waitForEvent('download'),
     page.click('#btnExportar'),

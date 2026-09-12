@@ -84,6 +84,14 @@ export function guardarFaviconSitio(siteId, faviconUrl) {
   return llamar('/kleysites/sites/favicon', { method: 'POST', body: JSON.stringify({ site_id: siteId, favicon_url: faviconUrl }) });
 }
 
+export function guardarNombre(nombre) {
+  return llamar('/kleysites/perfil/nombre', { method: 'POST', body: JSON.stringify({ nombre }) });
+}
+
+export function guardarMiniaturaSitio(siteId, thumbnailUrl) {
+  return llamar('/kleysites/sites/thumbnail', { method: 'POST', body: JSON.stringify({ site_id: siteId, thumbnail_url: thumbnailUrl }) });
+}
+
 // `archivos`: [{ nombre, contenido }] ya generados por el frontend — el
 // backend solo los despliega, no renderiza nada.
 export function publicarSitio(siteId, archivos) {

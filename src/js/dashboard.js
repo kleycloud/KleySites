@@ -1,49 +1,29 @@
+/*
+  dashboard.js
+  Orquesta el dashboard: sesión, carga de sitios (con caché), el flujo de
+  crear sitio (a mano o desde plantilla), y llama a los módulos chicos de
+  src/js/dashboard/ para cada pieza visual (barra lateral, cuenta,
+  estadísticas, tarjetas de sitio).
+*/
+
 import { listarSitios, crearSitio } from './api.js';
 import { initAccountMenu, cerrarSesion } from './account-menu.js';
 import { mostrarAviso } from './aviso.js';
+import { initSidebar, initBuscador } from './dashboard/sidebar.js';
+import { initCuenta } from './dashboard/cuenta.js';
+import { calcularStats, renderStats } from './dashboard/stats.js';
+import { tarjetaSitio, tarjetaCrear, estadoVacio } from './dashboard/sitios.js';
 
 if (!localStorage.getItem('kleysites_token')) {
   window.location.href = '/';
 }
 
 initAccountMenu(document.getElementById('btnCuenta'), document.getElementById('menuCuenta'));
+initSidebar();
 
 const grid = document.getElementById('sitiosGrid');
-
-function escapeHTML(str) {
-  return String(str ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-}
-
-function tarjetaSitio(sitio) {
-  return `
-    <a class="db-card" href="/editor.html?site=${sitio.id}">
-      <div class="icon-frame icon-frame--24">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>
-      </div>
-      <div class="db-card-nombre">${escapeHTML(sitio.nombre)}</div>
-      <div class="db-card-slug">${escapeHTML(sitio.slug)}</div>
-    </a>`;
-}
-
-function tarjetaCrear() {
-  return `
-    <div class="db-card db-card--crear" id="tarjetaCrear">
-      <div class="icon-frame icon-frame--24">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg>
-      </div>
-      <div class="db-card-nombre">Crear sitio nuevo</div>
-    </div>`;
-}
-
-function estadoVacio() {
-  return `
-    <div class="db-empty">
-      <div class="icon-frame icon-frame--36">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>
-      </div>
-      <p class="db-empty-text">Aún no tienes sitios. Crea el primero para empezar a diseñar.</p>
-    </div>`;
-}
+const statsGrid = document.getElementById('statsGrid');
+initBuscador(grid);
 
 function pintarSitios(sitios) {
   grid.innerHTML = sitios.map(tarjetaSitio).join('') + tarjetaCrear();
@@ -103,15 +83,23 @@ function guardarCacheSitios(sitios) {
   } catch (e) { /* localStorage lleno o deshabilitado: no es crítico, solo se pierde el atajo */ }
 }
 
-async function cargar() {
+// El plan viene de /perfil (initCuenta ya la llamó para el saludo) — se
+// espera esa misma promesa acá en vez de pedirlo de nuevo al backend.
+async function pintarStats(sitios, perfilPromesa) {
+  const perfil = await perfilPromesa;
+  renderStats(statsGrid, calcularStats(sitios, perfil?.plan));
+}
+
+async function cargar(perfilPromesa) {
   const cache = leerCacheSitios();
-  if (cache) pintarSitios(cache);
+  if (cache) { pintarSitios(cache); pintarStats(cache, perfilPromesa); }
 
   try {
     const resp = await listarSitios();
     const sitios = resp.sitios || [];
     guardarCacheSitios(sitios);
     pintarSitios(sitios);
+    pintarStats(sitios, perfilPromesa);
   } catch (e) {
     console.error('No se pudieron cargar los sitios', e);
     if (String(e.message).includes('401') || String(e.message).toLowerCase().includes('token')) {
@@ -171,4 +159,4 @@ function cerrarLimitePlan() {
 document.getElementById('btnCerrarLimitePlan').addEventListener('click', cerrarLimitePlan);
 modalLimitePlan.addEventListener('click', (e) => { if (e.target === modalLimitePlan) cerrarLimitePlan(); });
 
-cargar();
+cargar(initCuenta());

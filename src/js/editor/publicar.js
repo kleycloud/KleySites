@@ -13,6 +13,7 @@ import * as api from '../api.js';
 import { state } from './state.js';
 import { mostrarAviso } from '../aviso.js';
 import { construirArchivosSitio } from './sitio.js';
+import { capturarYSubirMiniatura } from './miniatura.js';
 
 function abrirModalPublicado(url) {
   const modal = document.getElementById('modalPublicado');
@@ -53,6 +54,7 @@ export function initPublicar() {
       } else {
         await mostrarAviso('Tu sitio se publicó, pero no se pudo determinar el enlace todavía.', '¡Publicado!');
       }
+      capturarYSubirMiniatura(state.siteId).catch((err) => console.error('No se pudo generar la miniatura', err));
     } catch (e) {
       console.error('No se pudo publicar', e);
       status.textContent = '';

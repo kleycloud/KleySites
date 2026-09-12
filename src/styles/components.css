@@ -20,6 +20,13 @@
 
 /* Botones de ancho fijo (barras de herramientas, tarjetas) — .btn arriba es
    siempre 100% de ancho, pensado para formularios de login. */
+/* [hidden] es un atributo, no una clase — pero .ed-btn fija `display`
+   con la misma especificidad, y por orden de cascada le gana a la regla
+   [hidden]{display:none} del navegador (mismo motivo por el que los
+   modales usan .is-open en vez de [hidden]). Sin esto, un <button
+   class="ed-btn" hidden> queda igual de visible. */
+.ed-btn[hidden] { display: none; }
+
 .ed-btn {
   display: inline-flex;
   align-items: center;
@@ -119,6 +126,8 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--c
   color: var(--color-text);
   cursor: pointer;
   text-align: left;
+  text-decoration: none; /* algunos ítems son <a> (ej. Ayuda, mailto:) */
+  box-sizing: border-box;
 }
 .kley-menu-item:hover:not(:disabled) { background: var(--color-border-soft); }
 .kley-menu-item:disabled { color: var(--color-text-dim); cursor: default; }
@@ -270,10 +279,29 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--c
 }
 [data-avatar] img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
 
+.ed-perfil-avatar-botones { display: flex; gap: var(--space-2); }
+.ed-perfil-avatar-botones .ed-btn { width: auto; flex: 1; }
+
 .ed-publicado-url-row { display: flex; gap: var(--space-2); }
 .ed-publicado-url-row input { margin: 0; font-family: var(--font-mono); font-size: 12.5px; }
 
 .ed-publicado-ver { justify-content: center; text-decoration: none; }
+
+.ed-tema-opciones { display: flex; flex-direction: column; gap: var(--space-2); }
+.ed-tema-opcion {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--color-text);
+  cursor: pointer;
+  margin: 0;
+}
+.ed-tema-opcion:has(input:checked) { border-color: var(--color-brand-ink); background: color-mix(in srgb, var(--color-brand-ink) 8%, transparent); }
+.ed-tema-opcion input { width: auto; margin: 0; accent-color: var(--color-brand-ink); }
 
 /*
   Modales "importantes" (límite de plan, publicado con éxito): ícono en

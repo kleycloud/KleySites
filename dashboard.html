@@ -25,120 +25,322 @@
   <link rel="stylesheet" href="/src/styles/theme.css">
   <link rel="stylesheet" href="/src/styles/layout.css">
   <link rel="stylesheet" href="/src/styles/components.css">
-  <link rel="stylesheet" href="/src/styles/dashboard.css">
+  <link rel="stylesheet" href="/src/styles/dashboard/shell.css">
+  <link rel="stylesheet" href="/src/styles/dashboard/hero.css">
+  <link rel="stylesheet" href="/src/styles/dashboard/plantillas.css">
+  <link rel="stylesheet" href="/src/styles/dashboard/stats.css">
+  <link rel="stylesheet" href="/src/styles/dashboard/sitios.css">
+  <link rel="stylesheet" href="/src/styles/dashboard/promos.css">
+  <link rel="stylesheet" href="/src/styles/dashboard/footer.css">
 </head>
 <body>
 
-<div class="db-shell">
+<div class="db-app">
 
-  <header class="db-topbar">
-    <div class="db-topbar-left">
+  <aside class="db-sidebar">
+    <div class="db-sidebar-logo">
       <img src="/logo-kleysites.webp" alt="KleySites">
       <span class="db-logo-text">Kley<span class="accent">Sites</span></span>
     </div>
-    <div class="kley-account-wrap">
-      <button class="db-avatar-btn" id="btnCuenta" title="Tu cuenta">
-        <div class="db-avatar" data-avatar>K</div>
+
+    <nav class="db-sidebar-nav">
+      <button class="db-sidebar-item is-active" data-ir="tope" title="Inicio">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+        Inicio
       </button>
-      <div class="kley-menu" id="menuCuenta">
-        <button class="kley-menu-item" data-accion="perfil">Perfil</button>
-        <button class="kley-menu-item" disabled>Configuración <span class="kley-menu-soon">Próximamente</span></button>
-        <div class="kley-menu-sep"></div>
-        <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
+      <button class="db-sidebar-item" data-ir="mis-sitios" title="Mis sitios">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5-8 4.5-8-4.5z"/><path d="M4 12l8 4.5 8-4.5"/><path d="M4 16.5l8 4.5 8-4.5"/></svg>
+        Mis sitios
+      </button>
+      <button class="db-sidebar-item" data-ir="plantillas" title="Plantillas">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="8" height="7" rx="1"/><rect x="13" y="14" width="8" height="7" rx="1"/></svg>
+        Plantillas
+      </button>
+      <button class="db-sidebar-item" disabled title="Todavía no existe">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>
+        Dominios <span class="kley-menu-soon">Próximamente</span>
+      </button>
+      <button class="db-sidebar-item" disabled title="Todavía no existe">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="15" rx="2"/><path d="M2 10h20"/></svg>
+        Facturación <span class="kley-menu-soon">Próximamente</span>
+      </button>
+      <a class="db-sidebar-item" href="mailto:kleysite@gmail.com" title="Escríbenos">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .6 2.9a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.5 2.9.6a2 2 0 0 1 1.8 2.1z"/></svg>
+        Soporte
+      </a>
+      <button class="db-sidebar-item" data-accion="configuracion" title="Configuración">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+        Configuración
+      </button>
+    </nav>
+
+    <div class="db-sidebar-promo">
+      <div class="db-sidebar-promo-icono">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>
+      </div>
+      <p class="db-sidebar-promo-titulo">Potencia tu plan al máximo</p>
+      <p class="db-sidebar-promo-texto">Más sitios, más funciones y soporte prioritario.</p>
+      <button type="button" class="ed-btn ed-btn--primary" data-accion="plan">Ver planes</button>
+    </div>
+  </aside>
+
+  <div class="db-content">
+
+    <header class="db-topbar">
+      <div class="db-search">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="inputBuscarSitios" placeholder="Buscar sitios…" autocomplete="off">
+      </div>
+      <div class="kley-account-wrap">
+        <button class="db-avatar-btn" id="btnCuenta" title="Tu cuenta">
+          <div class="db-avatar" data-avatar>K</div>
+          <span class="db-avatar-info">
+            <span class="db-avatar-nombre" data-nombre-saludo></span>
+            <span class="db-avatar-plan" data-plan-etiqueta></span>
+          </span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="kley-menu" id="menuCuenta">
+          <button class="kley-menu-item" data-accion="perfil">Perfil</button>
+          <button class="kley-menu-item" data-accion="plan">Mi plan</button>
+          <button class="kley-menu-item" data-accion="configuracion">Configuración</button>
+          <a class="kley-menu-item" href="mailto:kleysite@gmail.com">Ayuda</a>
+          <div class="kley-menu-sep"></div>
+          <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="ed-modal-overlay" id="modalPerfil">
+      <div class="ed-modal">
+        <div class="ed-modal-header">
+          <span class="ed-modal-title">Tu perfil</span>
+          <button class="ed-icon-btn" id="btnCerrarPerfil" title="Cerrar">
+            <div class="icon-frame icon-frame--18">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </div>
+          </button>
+        </div>
+        <div class="kley-avatar-grande" data-avatar>?</div>
+        <div class="ed-field-group" style="margin-top:0;padding-top:0;border-top:none;">
+          <label>Nombre</label>
+          <input type="text" id="inputNombrePerfil" placeholder="Tu nombre">
+          <button type="button" class="ed-btn ed-btn--secondary" id="btnGuardarNombrePerfil">Guardar nombre</button>
+        </div>
+        <p class="ed-modal-hint" id="perfilCorreo"></p>
+        <input type="file" id="inputAvatarArchivo" accept="image/*" hidden>
+        <div class="ed-perfil-avatar-botones">
+          <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirAvatar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+            Subir foto
+          </button>
+          <button type="button" class="ed-btn ed-btn--secondary" id="btnQuitarAvatar" hidden>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            Quitar foto
+          </button>
+        </div>
+        <p class="ed-modal-error" id="perfilError" hidden></p>
       </div>
     </div>
-  </header>
 
-  <div class="ed-modal-overlay" id="modalPerfil">
-    <div class="ed-modal">
-      <div class="ed-modal-header">
-        <span class="ed-modal-title">Tu perfil</span>
-        <button class="ed-icon-btn" id="btnCerrarPerfil" title="Cerrar">
+    <div class="ed-modal-overlay" id="modalPlan">
+      <div class="ed-modal ed-modal--centrado">
+        <button class="ed-icon-btn ed-modal-cerrar-flotante" id="btnCerrarPlan" title="Cerrar">
           <div class="icon-frame icon-frame--18">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </div>
         </button>
+        <div class="ed-modal-icono">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>
+        </div>
+        <h3 class="ed-modal-headline" id="planTitulo">Plan Gratis</h3>
+        <p class="ed-modal-descripcion" id="planDescripcion"></p>
       </div>
-      <div class="kley-avatar-grande" data-avatar>?</div>
-      <p class="ed-modal-hint" id="perfilCorreo"></p>
-      <input type="file" id="inputAvatarArchivo" accept="image/*" hidden>
-      <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirAvatar">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
-        Subir foto
-      </button>
-      <p class="ed-modal-error" id="perfilError" hidden></p>
     </div>
-  </div>
 
-  <div class="ed-modal-overlay" id="modalLimitePlan">
-    <div class="ed-modal ed-modal--centrado">
-      <div class="ed-modal-icono">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 10H5z"/></svg>
+    <div class="ed-modal-overlay" id="modalConfiguracion">
+      <div class="ed-modal">
+        <div class="ed-modal-header">
+          <span class="ed-modal-title">Configuración</span>
+          <button class="ed-icon-btn" id="btnCerrarConfiguracion" title="Cerrar">
+            <div class="icon-frame icon-frame--18">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </div>
+          </button>
+        </div>
+        <p class="ed-modal-hint">Cómo se ve KleySites en esta pantalla.</p>
+        <div class="ed-tema-opciones">
+          <label class="ed-tema-opcion">
+            <input type="radio" name="tema" value="light">
+            Claro
+          </label>
+          <label class="ed-tema-opcion">
+            <input type="radio" name="tema" value="dark">
+            Oscuro
+          </label>
+          <label class="ed-tema-opcion">
+            <input type="radio" name="tema" value="auto">
+            Automático (el mismo de tu celular o computadora)
+          </label>
+        </div>
       </div>
-      <h3 class="ed-modal-headline">Llegaste al límite de tu plan gratis</h3>
-      <p class="ed-modal-descripcion" id="limitePlanMensaje"></p>
-      <button type="button" class="ed-btn ed-btn--primary" id="btnCerrarLimitePlan">Entendido</button>
     </div>
+
+    <div class="ed-modal-overlay" id="modalLimitePlan">
+      <div class="ed-modal ed-modal--centrado">
+        <div class="ed-modal-icono">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 10H5z"/></svg>
+        </div>
+        <h3 class="ed-modal-headline">Llegaste al límite de tu plan gratis</h3>
+        <p class="ed-modal-descripcion" id="limitePlanMensaje"></p>
+        <button type="button" class="ed-btn ed-btn--primary" id="btnCerrarLimitePlan">Entendido</button>
+      </div>
+    </div>
+
+    <main class="db-main" id="tope">
+
+      <section class="db-hero">
+        <div class="db-hero-texto">
+          <h1>¡Bienvenido, <span data-nombre-saludo>de nuevo</span>! 👋</h1>
+          <p class="db-hero-sub">¿Qué quieres crear hoy?</p>
+          <p class="db-hero-hint">Elige un punto de partida y construye algo increíble.</p>
+        </div>
+        <div class="db-hero-grafico" aria-hidden="true">
+          <img src="/logo-kleysites.webp" alt="">
+          <p class="db-hero-tagline">IDEAS QUE<br><strong>SE CONVIERTEN</strong><br>EN SITIOS REALES</p>
+        </div>
+      </section>
+
+      <div class="db-stats-grid" id="statsGrid"></div>
+
+      <div class="db-cols">
+        <div class="db-cols-principal">
+
+          <div class="db-header-row" id="plantillas">
+            <h2 class="db-section-title">Empezar un sitio nuevo</h2>
+            <p class="db-section-hint">Elige un punto de partida — puedes cambiar todo después.</p>
+          </div>
+
+          <div class="db-tpl-grid" id="tplGrid">
+            <button class="db-tpl-card" data-nombre="Sitio en blanco" id="tplEnBlanco">
+              <div class="db-tpl-accent" data-accent="blanco"></div>
+              <div class="db-tpl-watermark" data-accent="blanco" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+              </div>
+              <div class="icon-frame icon-frame--24">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+              </div>
+              <span class="db-tpl-nombre">Página en blanco</span>
+              <span class="db-tpl-hint">Empieza desde cero</span>
+            </button>
+            <button class="db-tpl-card" data-nombre="Clínica">
+              <div class="db-tpl-accent" data-accent="header"></div>
+              <div class="db-tpl-watermark" data-accent="header" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v7M8.5 6.5h7"/><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M9 16h6"/></svg>
+              </div>
+              <div class="icon-frame icon-frame--24">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v7M8.5 6.5h7"/><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M9 16h6"/></svg>
+              </div>
+              <span class="db-tpl-nombre">Clínica web</span>
+              <span class="db-tpl-hint">Ideal para salud</span>
+            </button>
+            <button class="db-tpl-card" data-nombre="Inmobiliaria">
+              <div class="db-tpl-accent" data-accent="content"></div>
+              <div class="db-tpl-watermark" data-accent="content" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+              </div>
+              <div class="icon-frame icon-frame--24">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+              </div>
+              <span class="db-tpl-nombre">Inmobiliaria</span>
+              <span class="db-tpl-hint">Propiedades y más</span>
+            </button>
+            <button class="db-tpl-card" data-nombre="Tienda online">
+              <div class="db-tpl-accent" data-accent="footer"></div>
+              <div class="db-tpl-watermark" data-accent="footer" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 4M18 2l-1.5 4"/><path d="M3.5 6h17l-1.2 12.5a2 2 0 0 1-2 1.8H6.7a2 2 0 0 1-2-1.8L3.5 6z"/><path d="M8 10a4 4 0 0 0 8 0"/></svg>
+              </div>
+              <div class="icon-frame icon-frame--24">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 4M18 2l-1.5 4"/><path d="M3.5 6h17l-1.2 12.5a2 2 0 0 1-2 1.8H6.7a2 2 0 0 1-2-1.8L3.5 6z"/><path d="M8 10a4 4 0 0 0 8 0"/></svg>
+              </div>
+              <span class="db-tpl-nombre">Tienda online</span>
+              <span class="db-tpl-hint">Vende sin límites</span>
+            </button>
+            <button class="db-tpl-card" data-nombre="Portafolio">
+              <div class="db-tpl-accent" data-accent="brand"></div>
+              <div class="db-tpl-watermark" data-accent="brand" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M4 17l5-5 4 4 3-2 4 4"/></svg>
+              </div>
+              <div class="icon-frame icon-frame--24">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M4 17l5-5 4 4 3-2 4 4"/></svg>
+              </div>
+              <span class="db-tpl-nombre">Portafolio</span>
+              <span class="db-tpl-hint">Muestra tu trabajo</span>
+            </button>
+          </div>
+
+          <div class="db-header-row db-header-row--sitios" id="mis-sitios">
+            <h1>Mis sitios</h1>
+            <span class="db-section-hint" id="conteoSitios"></span>
+          </div>
+
+          <div class="db-grid" id="sitiosGrid">
+            <p class="db-cargando">Cargando tus sitios…</p>
+          </div>
+        </div>
+
+        <aside class="db-cols-lateral">
+          <div class="db-promo-card">
+            <svg class="db-promo-cohete" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M32 6c8 4 12 14 12 24 0 6-2 11-4 14l-8 6-8-6c-2-3-4-8-4-14 0-10 4-20 12-24z"/>
+              <circle cx="32" cy="24" r="5"/>
+              <path d="M20 38l-7 10M44 38l7 10M27 48h10l-2 8h-6z"/>
+            </svg>
+            <p class="db-promo-titulo">Lleva tus ideas más lejos</p>
+            <p class="db-promo-texto">Con KleySites puedes crear sitios profesionales, sin complicaciones y en minutos.</p>
+            <button type="button" class="ed-btn ed-btn--primary" data-ir="plantillas">
+              Crear un nuevo sitio
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+
+          <div class="db-ayuda-card">
+            <p class="db-section-title">Recursos y ayuda</p>
+            <a class="db-ayuda-item" href="mailto:kleysite@gmail.com">
+              <div class="icon-frame icon-frame--18">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 17v.01M12 14c0-3 3-2.5 3-5.5A3 3 0 0 0 9.5 8"/></svg>
+              </div>
+              <span>
+                <span class="db-ayuda-item-titulo">Centro de ayuda</span>
+                <span class="db-ayuda-item-texto">Escríbenos y respondemos</span>
+              </span>
+            </a>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="db-footer">
+      <div class="db-footer-marca">
+        <div class="db-footer-logo">
+          <img src="/logo-kleysites.webp" alt="KleySites">
+          <span class="db-logo-text">Kley<span class="accent">Sites</span></span>
+        </div>
+        <p class="db-footer-tagline">CREA. PUBLICA. COMPARTE.</p>
+      </div>
+      <nav class="db-footer-links">
+        <a href="/privacidad.html">Privacidad</a>
+        <a href="mailto:kleysite@gmail.com">Contacto</a>
+      </nav>
+    </footer>
+
   </div>
-
-  <main class="db-main">
-    <div class="db-header-row">
-      <h2 class="db-section-title">Empezar un sitio nuevo</h2>
-      <p class="db-section-hint">Elige un punto de partida — puedes cambiar todo después.</p>
-    </div>
-
-    <div class="db-tpl-grid" id="tplGrid">
-      <button class="db-tpl-card" data-nombre="Sitio en blanco" id="tplEnBlanco">
-        <div class="db-tpl-accent" data-accent="blanco"></div>
-        <div class="icon-frame icon-frame--24">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        </div>
-        <span class="db-tpl-nombre">Página en blanco</span>
-      </button>
-      <button class="db-tpl-card" data-nombre="Clínica">
-        <div class="db-tpl-accent" data-accent="header"></div>
-        <div class="icon-frame icon-frame--24">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v7M8.5 6.5h7"/><rect x="3" y="10" width="18" height="11" rx="2"/><path d="M9 16h6"/></svg>
-        </div>
-        <span class="db-tpl-nombre">Clínica web</span>
-      </button>
-      <button class="db-tpl-card" data-nombre="Inmobiliaria">
-        <div class="db-tpl-accent" data-accent="content"></div>
-        <div class="icon-frame icon-frame--24">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
-        </div>
-        <span class="db-tpl-nombre">Inmobiliaria</span>
-      </button>
-      <button class="db-tpl-card" data-nombre="Tienda online">
-        <div class="db-tpl-accent" data-accent="footer"></div>
-        <div class="icon-frame icon-frame--24">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 4M18 2l-1.5 4"/><path d="M3.5 6h17l-1.2 12.5a2 2 0 0 1-2 1.8H6.7a2 2 0 0 1-2-1.8L3.5 6z"/><path d="M8 10a4 4 0 0 0 8 0"/></svg>
-        </div>
-        <span class="db-tpl-nombre">Tienda online</span>
-      </button>
-      <button class="db-tpl-card" data-nombre="Portafolio">
-        <div class="db-tpl-accent" data-accent="brand"></div>
-        <div class="icon-frame icon-frame--24">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M4 17l5-5 4 4 3-2 4 4"/></svg>
-        </div>
-        <span class="db-tpl-nombre">Portafolio</span>
-      </button>
-    </div>
-
-    <div class="db-header-row db-header-row--sitios">
-      <h1>Mis sitios</h1>
-      <span class="db-section-hint" id="conteoSitios"></span>
-    </div>
-
-    <div class="db-grid" id="sitiosGrid">
-      <p class="db-cargando">Cargando tus sitios…</p>
-    </div>
-  </main>
-
 </div>
 
 <script type="module" src="/src/js/theme.js"></script>
 <script type="module" src="/src/js/perfil.js"></script>
+<script type="module" src="/src/js/plan.js"></script>
+<script type="module" src="/src/js/configuracion.js"></script>
 <script type="module" src="/src/js/dashboard.js"></script>
 </body>
 </html>

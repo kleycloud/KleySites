@@ -1,0 +1,38 @@
+/*
+  promos.css
+  Panel lateral derecho: tarjeta de promoción (cohete, dibujado a mano en
+  SVG — sin depender de ningún ícono de stock) y la tarjeta de ayuda.
+*/
+
+.db-promo-card {
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--kley-ember) 30%, var(--color-panel)), var(--color-panel));
+  border: 1px solid color-mix(in srgb, var(--kley-ember) 30%, var(--color-border));
+}
+.db-promo-cohete { width: 56px; height: 56px; color: var(--color-brand-ink); margin-bottom: var(--space-3); }
+.db-promo-titulo { margin: 0 0 6px; font-family: var(--font-heading); font-weight: var(--fw-bold); font-size: 15px; color: var(--color-text); }
+.db-promo-texto { margin: 0 0 var(--space-4); font-size: 12.5px; line-height: 1.5; color: var(--color-text-dim); }
+.db-promo-card .ed-btn { width: 100%; justify-content: center; }
+
+.db-ayuda-card {
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-panel);
+}
+.db-ayuda-card .db-section-title { margin-bottom: var(--space-3); }
+
+.db-ayuda-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  padding: var(--space-2);
+  margin: 0 calc(var(--space-2) * -1);
+  border-radius: var(--radius-md);
+}
+.db-ayuda-item:hover { background: var(--color-surface); }
+.db-ayuda-item .icon-frame { color: var(--icon-rest); }
+.db-ayuda-item-titulo { display: block; font-size: 13px; font-weight: var(--fw-semibold); color: var(--color-text); }
+.db-ayuda-item-texto { display: block; font-size: 11.5px; color: var(--color-text-dim); }

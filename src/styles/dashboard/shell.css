@@ -1,0 +1,197 @@
+/*
+  shell.css
+  Estructura general del dashboard: barra lateral fija + contenido con su
+  propio scroll (para que la barra lateral nunca se mueva), topbar con
+  buscador y cuenta, y la grilla de 2 columnas (principal + panel lateral).
+*/
+
+.db-app {
+  height: 100vh;
+  display: flex;
+  background-color: var(--color-bg);
+  background-image: var(--grad-glow);
+  background-attachment: fixed;
+}
+
+/* --- Barra lateral --- */
+
+.db-sidebar {
+  flex-shrink: 0;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--space-4);
+  border-right: 1px solid var(--color-border);
+  overflow-y: auto;
+}
+
+.db-sidebar-logo { display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-2); }
+.db-sidebar-logo img { height: 24px; width: auto; display: block; }
+.db-logo-text { font-family: var(--font-heading); font-weight: var(--fw-bold); font-size: 16px; color: var(--color-text); }
+.db-logo-text .accent { color: var(--color-brand-ink); }
+
+.db-sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+
+.db-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px var(--space-3);
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: var(--fw-medium);
+  color: var(--color-text-dim);
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  box-sizing: border-box;
+  width: 100%;
+}
+.db-sidebar-item svg { flex-shrink: 0; }
+.db-sidebar-item:hover:not(:disabled) { background: var(--color-surface); color: var(--color-text); }
+.db-sidebar-item:disabled { cursor: default; opacity: 0.55; }
+.db-sidebar-item.is-active {
+  background: color-mix(in srgb, var(--color-brand-ink) 15%, transparent);
+  color: var(--color-brand-ink);
+  font-weight: var(--fw-semibold);
+}
+.db-sidebar-item .kley-menu-soon { margin-left: auto; }
+
+.db-sidebar-promo {
+  margin-top: auto;
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--kley-orange) 22%, var(--color-panel)), var(--color-panel));
+  border: 1px solid color-mix(in srgb, var(--kley-orange) 30%, var(--color-border));
+}
+.db-sidebar-promo-icono {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--kley-orange) 20%, transparent);
+  color: var(--color-brand-ink);
+  margin-bottom: var(--space-3);
+}
+.db-sidebar-promo-titulo {
+  margin: 0 0 4px;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 14px;
+  color: var(--color-text);
+}
+.db-sidebar-promo-texto {
+  margin: 0 0 var(--space-3);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-dim);
+}
+.db-sidebar-promo .ed-btn { width: 100%; justify-content: center; }
+
+/* --- Contenido: su propio scroll, para que la barra lateral no se mueva --- */
+
+.db-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.db-topbar {
+  flex-shrink: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0 var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.db-search {
+  flex: 1;
+  max-width: 380px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  height: 38px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-dim);
+}
+.db-search input {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-text);
+  font-size: 13.5px;
+}
+.db-search input:focus { outline: none; }
+.db-search input::-webkit-search-cancel-button { cursor: pointer; }
+
+.db-avatar-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: none;
+  background: none;
+  padding: 6px 8px 6px 6px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--color-text-dim);
+}
+.db-avatar-btn:hover { background: var(--color-surface); }
+
+.db-avatar-info { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.3; }
+.db-avatar-nombre { font-size: 13px; font-weight: var(--fw-semibold); color: var(--color-text); }
+.db-avatar-plan { font-size: 11px; color: var(--color-text-dim); }
+
+.db-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+/* --- Dos columnas: contenido principal + panel lateral de promos --- */
+
+.db-cols { display: grid; grid-template-columns: 1fr 300px; gap: var(--space-6); align-items: start; }
+.db-cols-principal { min-width: 0; display: flex; flex-direction: column; gap: var(--space-7); }
+.db-cols-lateral { display: flex; flex-direction: column; gap: var(--space-4); }
+
+@media (max-width: 900px) {
+  .db-sidebar { display: none; }
+  .db-cols { grid-template-columns: 1fr; }
+}
+
+.db-header-row { margin-bottom: var(--space-4); }
+.db-header-row h1 {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-extrabold);
+  font-size: 28px;
+  letter-spacing: -0.5px;
+  margin: 0;
+  color: var(--color-text);
+}
+.db-header-row--sitios { margin-top: 0; display: flex; align-items: baseline; gap: var(--space-3); }
+
+.db-section-title {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 18px;
+  margin: 0 0 4px;
+  color: var(--color-text);
+}
+.db-section-hint { font-size: 13px; color: var(--color-text-dim); margin: 0; }

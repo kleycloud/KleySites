@@ -43,3 +43,28 @@ test('al publicar con éxito se abre el modal con el enlace', async ({ sesion: p
   await page.click('#btnCerrarPublicado');
   await expect(page.locator('#modalPublicado')).toBeHidden();
 });
+
+test('al publicar, se genera y sube una miniatura real del lienzo', async ({ sesion: page }) => {
+  await page.route('**/kleysites/publish', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ publicado: true, slug: 'demo', url: 'https://demo.pages.dev' }),
+  }));
+  await page.route('https://api.cloudinary.com/**', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ secure_url: 'https://res.cloudinary.com/demo/miniatura.png' }),
+  }));
+  let cuerpoMiniatura = null;
+  await page.route('**/kleysites/sites/thumbnail', (route) => {
+    cuerpoMiniatura = route.request().postDataJSON();
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ thumbnail_url: cuerpoMiniatura.thumbnail_url }) });
+  });
+
+  await page.goto('/editor.html?site=999');
+  await page.click('.ed-widget-card[data-tipo="titulo"]');
+  await page.click('#btnPublicar');
+  await expect(page.locator('#modalPublicado')).toBeVisible();
+
+  await expect.poll(() => cuerpoMiniatura).toMatchObject({ site_id: '999', thumbnail_url: 'https://res.cloudinary.com/demo/miniatura.png' });
+});

@@ -4,14 +4,12 @@ import { json, error, conManejoDeErrores, opciones } from '../../../../../lib/re
 
 export const OPTIONS = opciones;
 
-// `avatar_url: null` (con la clave presente) borra la foto — distinto de
-// no mandar el campo, que es un pedido inválido.
 export const POST = conManejoDeErrores(async (req) => {
   const { client_id } = clienteDesdeRequest(req);
   const body = await req.json();
-  if (!('avatar_url' in body)) return error(400, 'Falta avatar_url.');
+  const nombre = String(body.nombre || '').trim();
+  if (!nombre) return error(400, 'Falta nombre.');
 
-  const avatarUrl = body.avatar_url || null;
-  await consultar('UPDATE clients SET avatar_url = $1 WHERE id = $2', [avatarUrl, client_id]);
-  return json({ avatar_url: avatarUrl });
+  await consultar('UPDATE clients SET nombre = $1 WHERE id = $2', [nombre, client_id]);
+  return json({ nombre });
 });

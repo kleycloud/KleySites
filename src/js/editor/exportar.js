@@ -22,7 +22,7 @@ function descargar(bytes, nombre) {
 
 export function initExportar() {
   const btn = document.getElementById('btnExportar');
-  const status = document.getElementById('publishStatus');
+  const status = document.getElementById('exportarStatus');
 
   btn.addEventListener('click', async () => {
     btn.disabled = true;

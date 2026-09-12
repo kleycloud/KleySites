@@ -1,0 +1,33 @@
+/*
+  footer.css
+  Pie de página del dashboard: marca + enlaces reales únicamente
+  (Privacidad ya existe, Contacto es un mailto real). Sin "Términos" ni
+  redes sociales todavía — se agregan el día que existan de verdad.
+*/
+
+.db-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-5) var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.db-footer-logo { display: flex; align-items: center; gap: var(--space-2); }
+.db-footer-logo img { height: 18px; width: auto; display: block; }
+.db-footer-logo .db-logo-text { font-size: 13px; }
+
+.db-footer-tagline {
+  margin: 4px 0 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  color: var(--color-text-dim);
+}
+
+.db-footer-links { display: flex; gap: var(--space-5); }
+.db-footer-links a { font-size: 12.5px; color: var(--color-text-dim); text-decoration: none; }
+.db-footer-links a:hover { color: var(--color-text); }
