@@ -29,6 +29,10 @@
   --zone-content:  #7B5CFF;
   --zone-footer:   #FF8A3D;
 
+  /* azul claro — plantilla "Clínica web" en el dashboard; --info/--zone-header
+     ya están tomados y se confunden con el morado de --sites-accent */
+  --kley-sky:      #38BDF8;
+
   /* iconos */
   --icon-rest:     #96969F;
   --icon-hover:    #F2F2F5;
@@ -39,7 +43,7 @@
 
   /* degradados */
   --grad-fire:  linear-gradient(135deg, #FFC94D, #FF5B1F);
-  --grad-glow:  radial-gradient(circle at 50% 120%, rgba(255,91,31,.45), transparent 70%);
+  --grad-glow:  radial-gradient(900px circle at 88% -10%, rgba(255,91,31,.18), transparent 60%);
 
   /* tipografía */
   --font-display: 'Sora', sans-serif;

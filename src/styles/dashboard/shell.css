@@ -10,6 +10,7 @@
   display: flex;
   background-color: var(--color-bg);
   background-image: var(--grad-glow);
+  background-repeat: no-repeat;
   background-attachment: fixed;
 }
 
@@ -54,11 +55,16 @@
 .db-sidebar-item svg { flex-shrink: 0; }
 .db-sidebar-item:hover:not(:disabled) { background: var(--color-surface); color: var(--color-text); }
 .db-sidebar-item:disabled { cursor: default; opacity: 0.55; }
+/* El color se concentra del lado del ícono/nombre (izquierda) y se apaga
+   hacia la derecha — resalta el contenido en vez de teñir todo el botón
+   parejo. */
 .db-sidebar-item.is-active {
-  background: color-mix(in srgb, var(--color-brand-ink) 15%, transparent);
-  color: var(--color-brand-ink);
-  font-weight: var(--fw-semibold);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--kley-ember) 55%, transparent), color-mix(in srgb, var(--void) 55%, transparent) 100%);
+  border: 1px solid color-mix(in srgb, var(--kley-amber) 60%, transparent);
+  color: #fff;
+  font-weight: var(--fw-bold);
 }
+.db-sidebar-item.is-active svg { color: #fff; stroke-width: 2.4; }
 .db-sidebar-item .kley-menu-soon { margin-left: auto; }
 
 .db-sidebar-promo {
@@ -72,8 +78,9 @@
   width: 36px; height: 36px;
   display: flex; align-items: center; justify-content: center;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--kley-orange) 20%, transparent);
-  color: var(--color-brand-ink);
+  background: var(--grad-fire);
+  color: #fff;
+  box-shadow: 0 0 16px color-mix(in srgb, var(--kley-amber) 55%, transparent);
   margin-bottom: var(--space-3);
 }
 .db-sidebar-promo-titulo {
@@ -89,7 +96,7 @@
   line-height: 1.5;
   color: var(--color-text-dim);
 }
-.db-sidebar-promo .ed-btn { width: 100%; justify-content: center; }
+.db-sidebar-promo .ed-btn { width: 100%; justify-content: center; gap: 6px; }
 
 /* --- Contenido: su propio scroll, para que la barra lateral no se mueva --- */
 
@@ -112,6 +119,11 @@
   padding: 0 var(--space-6);
   border-bottom: 1px solid var(--color-border);
 }
+
+/* Campana + cuenta van juntas — sin este contenedor, .db-topbar (que es
+   flex + space-between con 2 hijos ahora) las repartía a lo ancho en vez
+   de dejarlas pegadas una al lado de la otra. */
+.db-topbar-cuenta { display: flex; align-items: center; gap: var(--space-3); }
 
 .db-search {
   flex: 1;
@@ -137,6 +149,33 @@
 .db-search input:focus { outline: none; }
 .db-search input::-webkit-search-cancel-button { cursor: pointer; }
 
+.db-notif-btn {
+  position: relative;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--kley-orange) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--kley-orange) 12%, transparent);
+  color: var(--color-brand-ink);
+  cursor: pointer;
+}
+.db-notif-btn:hover { background: color-mix(in srgb, var(--kley-orange) 20%, transparent); }
+.db-notif-punto {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--kley-ember);
+  border: 2px solid var(--color-bg);
+}
+.db-notif-btn[hidden], .db-notif-punto[hidden] { display: none; }
+
 .db-avatar-btn {
   display: flex;
   align-items: center;
@@ -149,6 +188,24 @@
   color: var(--color-text-dim);
 }
 .db-avatar-btn:hover { background: var(--color-surface); }
+
+/* La burbuja con la inicial — gris casi transparente, inicial blanca. */
+.db-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-text-dim) 25%, transparent);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 13px;
+  overflow: hidden;
+}
+.db-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .db-avatar-info { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.3; }
 .db-avatar-nombre { font-size: 13px; font-weight: var(--fw-semibold); color: var(--color-text); }

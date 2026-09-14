@@ -1,7 +1,9 @@
 /*
   promos.css
-  Panel lateral derecho: tarjeta de promoción (cohete, dibujado a mano en
-  SVG — sin depender de ningún ícono de stock) y la tarjeta de ayuda.
+  Panel lateral derecho: tarjeta de promoción (cohete — trazo inspirado en
+  el ícono "rocket" de Lucide, copiado como SVG propio en vez de instalar
+  la librería, mismo criterio que el resto del producto) y la tarjeta de
+  ayuda.
 */
 
 .db-promo-card {

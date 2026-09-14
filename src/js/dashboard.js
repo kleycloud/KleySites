@@ -13,6 +13,7 @@ import { initSidebar, initBuscador } from './dashboard/sidebar.js';
 import { initCuenta } from './dashboard/cuenta.js';
 import { calcularStats, renderStats } from './dashboard/stats.js';
 import { tarjetaSitio, tarjetaCrear, estadoVacio } from './dashboard/sitios.js';
+import { initNotificaciones } from './dashboard/notificaciones.js';
 
 if (!localStorage.getItem('kleysites_token')) {
   window.location.href = '/';
@@ -20,6 +21,7 @@ if (!localStorage.getItem('kleysites_token')) {
 
 initAccountMenu(document.getElementById('btnCuenta'), document.getElementById('menuCuenta'));
 initSidebar();
+initNotificaciones();
 
 const grid = document.getElementById('sitiosGrid');
 const statsGrid = document.getElementById('statsGrid');
