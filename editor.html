@@ -81,7 +81,7 @@
       </button>
       <div class="ed-topbar-divider"></div>
       <button class="ed-btn ed-btn--secondary" id="btnImportar">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
         Importar
       </button>
       <button class="ed-btn ed-btn--secondary" id="btnVistaPrevia">
@@ -147,7 +147,7 @@
             <button class="kley-menu-item" data-accion="perfil">Perfil</button>
             <button class="kley-menu-item" data-accion="plan">Mi plan</button>
             <button class="kley-menu-item" data-accion="configuracion">Configuración</button>
-            <a class="kley-menu-item" href="mailto:kleysite@gmail.com">Ayuda</a>
+            <a class="kley-menu-item" href="mailto:kleysite@gmail.com" data-accion="ayuda">Ayuda</a>
             <div class="kley-menu-sep"></div>
             <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
           </div>
@@ -273,16 +273,14 @@
     <div class="ed-modal">
       <div class="ed-modal-header">
         <span class="ed-modal-title">Importar HTML</span>
-        <button class="ed-icon-btn" id="btnCerrarImportar" title="Cerrar">
-          <div class="icon-frame icon-frame--18">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </div>
-        </button>
+        <button class="ed-icon-btn ed-modal-cerrar" id="btnCerrarImportar" title="Cerrar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+      </button>
       </div>
       <p class="ed-modal-hint">Pega código HTML o JSON, o sube un archivo <code>.html</code>/<code>.json</code>. Se convierte en bloques editables dentro de la zona "<span id="modalZonaNombre">Contenido</span>".</p>
       <input type="file" id="inputArchivoHTML" accept=".html,text/html,.json,application/json" hidden>
       <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirArchivo">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
         Subir archivo .html o .json
       </button>
       <textarea id="textareaImportar" placeholder="&lt;h1&gt;Bienvenido&lt;/h1&gt;&#10;&lt;p&gt;Contenido de ejemplo…&lt;/p&gt;"></textarea>
@@ -298,11 +296,9 @@
     <div class="ed-modal">
       <div class="ed-modal-header">
         <span class="ed-modal-title">Tu perfil</span>
-        <button class="ed-icon-btn" id="btnCerrarPerfil" title="Cerrar">
-          <div class="icon-frame icon-frame--18">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </div>
-        </button>
+        <button class="ed-icon-btn ed-modal-cerrar" id="btnCerrarPerfil" title="Cerrar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+      </button>
       </div>
       <div class="kley-avatar-grande" data-avatar>?</div>
       <div class="ed-field-group" style="margin-top:0;padding-top:0;border-top:none;">
@@ -314,7 +310,7 @@
       <input type="file" id="inputAvatarArchivo" accept="image/*" hidden>
       <div class="ed-perfil-avatar-botones">
         <button type="button" class="ed-btn ed-btn--secondary" id="btnSubirAvatar">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
           Subir foto
         </button>
         <button type="button" class="ed-btn ed-btn--secondary" id="btnQuitarAvatar" hidden>
@@ -328,10 +324,8 @@
 
   <div class="ed-modal-overlay" id="modalPlan">
     <div class="ed-modal ed-modal--centrado">
-      <button class="ed-icon-btn ed-modal-cerrar-flotante" id="btnCerrarPlan" title="Cerrar">
-        <div class="icon-frame icon-frame--18">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-        </div>
+      <button class="ed-icon-btn ed-modal-cerrar ed-modal-cerrar-flotante" id="btnCerrarPlan" title="Cerrar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
       </button>
       <div class="ed-modal-icono">
         <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>
@@ -345,11 +339,9 @@
     <div class="ed-modal">
       <div class="ed-modal-header">
         <span class="ed-modal-title">Configuración</span>
-        <button class="ed-icon-btn" id="btnCerrarConfiguracion" title="Cerrar">
-          <div class="icon-frame icon-frame--18">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </div>
-        </button>
+        <button class="ed-icon-btn ed-modal-cerrar" id="btnCerrarConfiguracion" title="Cerrar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+      </button>
       </div>
       <p class="ed-modal-hint">Cómo se ve KleySites en esta pantalla.</p>
       <div class="ed-tema-opciones">
@@ -371,10 +363,8 @@
 
   <div class="ed-modal-overlay" id="modalPublicado">
     <div class="ed-modal ed-modal--centrado">
-      <button class="ed-icon-btn ed-modal-cerrar-flotante" id="btnCerrarPublicado" title="Cerrar">
-        <div class="icon-frame icon-frame--18">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-        </div>
+      <button class="ed-icon-btn ed-modal-cerrar ed-modal-cerrar-flotante" id="btnCerrarPublicado" title="Cerrar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
       </button>
       <div class="ed-modal-icono ed-modal-icono--exito">
         <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>

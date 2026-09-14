@@ -144,6 +144,17 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--c
 
 .kley-menu-sep { height: 1px; background: var(--color-border); margin: var(--space-1) 2px; }
 
+/* Reset del botón nativo (fondo/borde grises del navegador) para
+   cualquier botón que solo lleva un ícono — antes vivía en
+   editor/topbar.css, que dashboard.html nunca carga: ahí los botones de
+   cerrar de los modales se veían con el fondo blanco/gris nativo. */
+.ed-icon-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
 /*
   Marco de icono (manual de marca, sección 09 — regla no negociable).
   Ningún icono va suelto: siempre vive dentro de esta caja.
@@ -225,6 +236,18 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--c
   justify-content: space-between;
 }
 
+/* Botón de cerrar de cualquier modal: el ícono de Lucide "circle-x" ya
+   trae su propio círculo dibujado, así que va solo (sin el marco
+   .icon-frame de fondo/borde que antes se veía como una caja blanca
+   pegada en la esquina). Se resalta en rojo al pasar el mouse porque es
+   una acción de "salir". */
+.ed-modal-cerrar {
+  display: flex;
+  color: var(--icon-rest);
+  transition: color 0.15s ease;
+}
+.ed-modal-cerrar:hover { color: var(--color-error); }
+
 .ed-modal-title {
   font-family: var(--font-heading);
   font-weight: var(--fw-bold);
@@ -245,6 +268,12 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--c
   padding: 1px 5px;
   border-radius: var(--radius-sm);
 }
+
+/* separa el botón de guardar del campo de texto de arriba (nombre de
+   perfil, nombre de sitio) — sin esto quedaba pegado justo debajo del
+   input. Se define acá (no en editor/properties.css) porque .ed-field-group
+   también se usa en los modales del dashboard, que no carga ese archivo. */
+.ed-field-group input + .ed-btn { margin-top: var(--space-2); }
 
 .ed-modal-error {
   margin: 0;

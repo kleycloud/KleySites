@@ -46,3 +46,18 @@ export function mostrarAviso(mensaje, titulo = 'Aviso') {
   modal.classList.add('is-open');
   return new Promise((resolve) => { resolverPendiente = resolve; });
 }
+
+// Los enlaces "Ayuda"/"Soporte" usan href="mailto:..." para que se pueda
+// copiar el correo con clic derecho, pero un clic normal deja que el
+// navegador muestre su propio aviso de "¿abrir Mail?" — se reemplaza por
+// este mismo modal de marca, sin tocar el href.
+const CORREO_SOPORTE = 'kleysite@gmail.com';
+
+export function initAyuda() {
+  document.querySelectorAll('[data-accion="ayuda"]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      mostrarAviso(`Escríbenos a ${CORREO_SOPORTE} y te respondemos.`, 'Ayuda');
+    });
+  });
+}

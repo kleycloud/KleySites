@@ -62,12 +62,6 @@
   gap: var(--space-2);
 }
 
-.ed-icon-btn {
-  border: none;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-}
 .ed-icon-btn:hover .icon-frame {
   color: var(--icon-hover);
   background: color-mix(in srgb, var(--icon-hover) 10%, transparent);

@@ -7,6 +7,7 @@
 
 import * as api from '../api.js';
 import { initAccountMenu } from '../account-menu.js';
+import { initAyuda } from '../aviso.js';
 import { state } from './state.js';
 import { marcarEstado } from './sync.js';
 import { renderCanvas, renderPropiedades } from './render.js';
@@ -28,6 +29,7 @@ if (!localStorage.getItem('kleysites_token')) {
 }
 
 initAccountMenu(document.getElementById('btnCuentaEditor'), document.getElementById('menuCuentaEditor'));
+initAyuda();
 document.getElementById('btnVolverDashboard').addEventListener('click', () => {
   window.location.href = '/dashboard.html';
 });

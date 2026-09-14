@@ -8,7 +8,7 @@
 
 import { listarSitios, crearSitio } from './api.js';
 import { initAccountMenu, cerrarSesion } from './account-menu.js';
-import { mostrarAviso } from './aviso.js';
+import { mostrarAviso, initAyuda } from './aviso.js';
 import { initSidebar, initBuscador } from './dashboard/sidebar.js';
 import { initCuenta } from './dashboard/cuenta.js';
 import { calcularStats, renderStats } from './dashboard/stats.js';
@@ -22,6 +22,7 @@ if (!localStorage.getItem('kleysites_token')) {
 initAccountMenu(document.getElementById('btnCuenta'), document.getElementById('menuCuenta'));
 initSidebar();
 initNotificaciones();
+initAyuda();
 
 const grid = document.getElementById('sitiosGrid');
 const statsGrid = document.getElementById('statsGrid');
