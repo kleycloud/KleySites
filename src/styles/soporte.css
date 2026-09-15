@@ -1,0 +1,68 @@
+/*
+  soporte.css
+  Grilla de opciones de la página de Soporte — cada tarjeta abre Gmail con
+  el asunto ya elegido, así que "elegir una opción" hace algo real (no
+  hay mesa de ayuda con tickets todavía).
+*/
+
+.soporte-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.soporte-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-panel);
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+}
+.soporte-card:hover {
+  border-color: color-mix(in srgb, var(--color-brand-ink) 55%, transparent);
+  background: var(--color-surface);
+  transform: translateY(-1px);
+  /* .legal-main a:hover subraya cualquier enlace por defecto — acá el
+     enlace es toda la tarjeta, así que se anula ese subrayado. */
+  text-decoration: none;
+}
+
+/* El marco del ícono se "ilumina" (mismo look que .icon-frame.is-active)
+   al pasar el mouse por la tarjeta entera. */
+.soporte-card .icon-frame { margin-bottom: var(--space-1); }
+.soporte-card:hover .icon-frame {
+  color: var(--icon-active);
+  background: var(--icon-bg-active);
+  border-color: color-mix(in srgb, var(--icon-active) 30%, transparent);
+}
+
+.soporte-card-titulo {
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  font-size: 15px;
+  color: var(--color-text);
+}
+.soporte-card-texto {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-dim);
+}
+.soporte-card-flecha {
+  margin-top: auto;
+  align-self: flex-end;
+  padding-top: var(--space-2);
+  color: var(--color-brand-ink);
+  display: flex;
+}
+
+.soporte-nota {
+  margin-top: var(--space-6);
+  font-size: 13px;
+  color: var(--color-text-dim);
+}

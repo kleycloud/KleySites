@@ -60,11 +60,10 @@ test('sin foto de perfil, "Quitar foto" no se muestra', async ({ sesion: page })
   await expect(page.locator('#btnQuitarAvatar')).toBeHidden();
 });
 
-test('"Ayuda" es un enlace directo a Gmail con el correo de soporte, no un botón', async ({ sesion: page }) => {
+test('"Ayuda" abre el centro de ayuda en una pestaña nueva, no un botón', async ({ sesion: page }) => {
   await page.click('#btnCuentaEditor');
-  const enlace = page.locator('a.kley-menu-item.kley-correo-link');
-  await expect(enlace).toHaveText('kleysite@gmail.com');
-  await expect(enlace).toHaveAttribute('href', /^https:\/\/mail\.google\.com\/mail\/\?view=cm&fs=1&to=kleysite@gmail\.com$/);
+  const enlace = page.locator('a.kley-menu-item', { hasText: 'Ayuda' });
+  await expect(enlace).toHaveAttribute('href', '/ayuda.html');
   await expect(enlace).toHaveAttribute('target', '_blank');
 });
 

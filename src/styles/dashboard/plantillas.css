@@ -80,12 +80,12 @@
 .db-tpl-card .icon-frame::before {
   content: '';
   position: absolute;
-  inset: -12px;
+  inset: -8px;
   z-index: -1;
   border-radius: 50%;
   background: var(--tpl-color, transparent);
-  filter: blur(16px);
-  opacity: 0.6;
+  filter: blur(12px);
+  opacity: 0.22;
 }
 
 .db-tpl-nombre {

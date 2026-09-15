@@ -73,7 +73,7 @@ body.legal-page {
 .legal-main li { margin-bottom: var(--space-2); }
 
 .legal-main a { color: var(--color-brand-ink); text-decoration: none; }
-.legal-main a:not(.legal-back):hover { text-decoration: underline; }
+.legal-main a:not(.legal-back):not(.soporte-card):hover { text-decoration: underline; }
 
 .legal-back, .legal-back:link, .legal-back:visited, .legal-back:hover, .legal-back:active {
   display: inline-flex; align-items: center; gap: 8px;

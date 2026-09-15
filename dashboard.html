@@ -64,9 +64,9 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="15" rx="2"/><path d="M2 10h20"/></svg>
         Facturación <span class="kley-menu-soon">Próximamente</span>
       </button>
-      <a class="db-sidebar-item kley-correo-link" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=kleysite@gmail.com" target="_blank" rel="noopener" title="Escríbenos por Gmail">
+      <a class="db-sidebar-item" href="/soporte.html" target="_blank" rel="noopener" data-seleccionar title="Soporte">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>
-        kleysite@gmail.com
+        Soporte
       </a>
       <button class="db-sidebar-item" data-accion="configuracion" title="Configuración">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -112,7 +112,7 @@
             <button class="kley-menu-item" data-accion="perfil">Perfil</button>
             <button class="kley-menu-item" data-accion="plan">Mi plan</button>
             <button class="kley-menu-item" data-accion="configuracion">Configuración</button>
-            <a class="kley-menu-item kley-correo-link" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=kleysite@gmail.com" target="_blank" rel="noopener" title="Escríbenos por Gmail">kleysite@gmail.com</a>
+            <a class="kley-menu-item" href="/ayuda.html" target="_blank" rel="noopener">Ayuda</a>
             <div class="kley-menu-sep"></div>
             <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
           </div>
@@ -313,13 +313,13 @@
 
           <div class="db-ayuda-card">
             <p class="db-section-title">Recursos y ayuda</p>
-            <a class="db-ayuda-item" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=kleysite@gmail.com" target="_blank" rel="noopener" title="Escríbenos por Gmail">
+            <a class="db-ayuda-item" href="/ayuda.html" target="_blank" rel="noopener">
               <div class="icon-frame icon-frame--18">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 17v.01M12 14c0-3 3-2.5 3-5.5A3 3 0 0 0 9.5 8"/></svg>
               </div>
               <span>
                 <span class="db-ayuda-item-titulo">Centro de ayuda</span>
-                <span class="db-ayuda-item-texto">kleysite@gmail.com</span>
+                <span class="db-ayuda-item-texto">Preguntas frecuentes</span>
               </span>
             </a>
           </div>
@@ -338,9 +338,21 @@
       <nav class="db-footer-links">
         <a href="/terminos.html">Términos</a>
         <a href="/privacidad.html">Privacidad</a>
-        <a class="kley-correo-link" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=kleysite@gmail.com" target="_blank" rel="noopener" title="Escríbenos por Gmail">kleysite@gmail.com</a>
+        <button type="button" data-accion="contacto">Contacto</button>
       </nav>
     </footer>
+
+    <div class="ed-modal-overlay" id="modalContacto">
+      <div class="ed-modal">
+        <div class="ed-modal-header">
+          <span class="ed-modal-title">Contacto</span>
+          <button class="ed-icon-btn ed-modal-cerrar" id="btnCerrarContacto" title="Cerrar">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+          </button>
+        </div>
+        <p class="ed-modal-hint">¿Tienes una pregunta, una idea o encontraste un error? Escríbenos directo a <a class="kley-correo-link" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=kleysite@gmail.com" target="_blank" rel="noopener" title="Escríbenos por Gmail">kleysite@gmail.com</a> y te respondemos.</p>
+      </div>
+    </div>
 
   </div>
 </div>

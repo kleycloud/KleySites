@@ -7,11 +7,15 @@
 */
 
 export function initSidebar() {
-  const botones = document.querySelectorAll('.db-sidebar-item[data-ir]');
+  // "Soporte" no hace scroll a ninguna sección (abre una pestaña nueva),
+  // pero igual se marca como seleccionado — data-seleccionar lo suma al
+  // mismo grupo sin forzar el scrollIntoView que sí necesitan las anclas.
+  const botones = document.querySelectorAll('.db-sidebar-item[data-ir], .db-sidebar-item[data-seleccionar]');
   botones.forEach((btn) => {
     btn.addEventListener('click', () => {
-      const destino = document.getElementById(btn.dataset.ir);
-      destino?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (btn.dataset.ir) {
+        document.getElementById(btn.dataset.ir)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
       botones.forEach((b) => b.classList.toggle('is-active', b === btn));
     });
   });

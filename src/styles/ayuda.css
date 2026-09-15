@@ -1,0 +1,46 @@
+/*
+  ayuda.css
+  Acordeón de preguntas frecuentes — usa <details>/<summary> nativos del
+  navegador, así que no hace falta JS para abrir/cerrar cada pregunta.
+*/
+
+.ayuda-faq { margin-top: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+
+.ayuda-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-panel);
+  overflow: hidden;
+}
+
+.ayuda-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  font-size: 14.5px;
+  color: var(--color-text);
+  cursor: pointer;
+  list-style: none;
+}
+.ayuda-item summary::-webkit-details-marker { display: none; }
+.ayuda-item summary:hover { background: var(--color-surface); }
+
+.ayuda-item summary svg {
+  flex-shrink: 0;
+  color: var(--color-text-dim);
+  transition: transform 0.15s ease;
+}
+.ayuda-item[open] summary svg { transform: rotate(180deg); }
+
+.ayuda-item-respuesta {
+  padding: 0 var(--space-5) var(--space-5);
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--color-text-dim);
+}
+.ayuda-item-respuesta a { color: var(--color-brand-ink); text-decoration: none; }
+.ayuda-item-respuesta a:hover { text-decoration: underline; }

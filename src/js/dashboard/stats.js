@@ -47,9 +47,9 @@ function tarjeta({ icono, label, valor, delta, tono }) {
 
 export function renderStats(cont, stats) {
   cont.innerHTML = [
-    tarjeta({ icono: ICONOS.sitios, label: 'Sitios creados', valor: stats.sitiosCreados, delta: stats.sitiosCreadosDelta }),
-    tarjeta({ icono: ICONOS.paginas, label: 'Páginas totales', valor: stats.paginasTotales }),
-    tarjeta({ icono: ICONOS.publicados, label: 'Sitios publicados', valor: stats.sitiosPublicados }),
+    tarjeta({ icono: ICONOS.sitios, label: 'Sitios creados', valor: stats.sitiosCreados, delta: stats.sitiosCreadosDelta, tono: 'sitios' }),
+    tarjeta({ icono: ICONOS.paginas, label: 'Páginas totales', valor: stats.paginasTotales, tono: 'paginas' }),
+    tarjeta({ icono: ICONOS.publicados, label: 'Sitios publicados', valor: stats.sitiosPublicados, tono: 'publicados' }),
     tarjeta({ icono: ICONOS.plan, label: 'Plan actual', valor: stats.plan, tono: 'marca' }),
   ].join('');
 }
