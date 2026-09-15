@@ -1,0 +1,16 @@
+{
+  "name": "kleysites-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-05-03",
+  "compatibility_flags": ["nodejs_compat"],
+  "account_id": "d40e3ebbcf83dc157d80684283e695eb",
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "67906fa0845c4fc3b60db144cc5eca6a"
+    }
+  ],
+  "vars": {
+    "KLEYSITES_FRONTEND_ORIGIN": "https://kleysites.pages.dev"
+  }
+}

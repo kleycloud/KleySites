@@ -1,0 +1,15 @@
+# Copiar a .dev.vars (gitignored) para desarrollo local con `npm run dev`
+# (wrangler dev). En producción estos mismos valores se cargan con
+# `wrangler secret put <NOMBRE>` — ver el README de esta carpeta.
+KLEYSITES_JWT_SECRET=un-secreto-largo-y-aleatorio
+GOOGLE_CLIENT_ID_WEB=
+CLOUDFLARE_ACCOUNT_ID=
+CLOUDFLARE_API_TOKEN=
+KLEYSITES_FRONTEND_ORIGIN=http://localhost:5173
+# En producción: https://kleysites.pages.dev
+
+# La conexión a Neon no se lee de acá — la maneja el binding de Hyperdrive
+# (wrangler.jsonc). Para levantar `wrangler dev` contra Neon real hace
+# falta, además, exportar esta variable de entorno del propio shell (no
+# funciona puesta en .dev.vars):
+# CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE=postgresql://usuario:password@host/neondb?sslmode=require

@@ -7,9 +7,9 @@ Powered by [KleyCloud](https://kleyderproject.cloud).
 
 - **Frontend**: HTML + CSS + JS puro (ES Modules), sin frameworks pesados
 - **Build tool**: [Vite](https://vitejs.dev)
-- **Backend**: Next.js (API routes) en `server/` + Neon (PostgreSQL) — ver [server/README.md](server/README.md)
+- **Backend**: Cloudflare Workers (Hono) en `server/` + Neon (PostgreSQL, vía Hyperdrive) — ver [server/README.md](server/README.md)
 - **Hosting frontend**: Cloudflare Pages (`kleysites.pages.dev`)
-- **Hosting backend**: Vercel (`kleysites-api.vercel.app`)
+- **Hosting backend**: Cloudflare Workers (`kleysites-api.testadsj.workers.dev`)
 - **Publicación de sitios de clientes**: el frontend genera el sitio completo (`src/js/render/`, el único renderizador: lienzo, vista previa, ZIP y publicado salen del mismo código) y el backend lo despliega con Wrangler a su propio proyecto de Cloudflare Pages. **Exportar** descarga esos mismos archivos como ZIP para publicarlos a mano en cualquier hosting.
 - **Formato de intercambio**: [docs/formato-kleysites.md](docs/formato-kleysites.md) — el JSON que exporta e importa el editor (sirve para pedirle una página a Claude y editarla en KleySites)
 
@@ -25,7 +25,7 @@ Powered by [KleyCloud](https://kleyderproject.cloud).
 │       ├── auth.js           # login/registro (passwordless + Google) en index.html
 │       └── editor/           # lógica del editor visual, un archivo por responsabilidad
 ├── tests/                   # Playwright, mockea el backend con page.route()
-├── server/                  # backend (Next.js) — ver server/README.md
+├── server/                  # backend (Cloudflare Workers) — ver server/README.md
 └── vite.config.js
 ```
 
@@ -52,9 +52,9 @@ Ninguno de los dos (frontend ni backend) tiene integración git automática toda
 
 ```bash
 # Frontend -> Cloudflare Pages
-VITE_API_BASE=https://kleysites-api.vercel.app/api npm run build
+npm run build
 npx wrangler pages deploy dist --project-name=kleysites
 
-# Backend -> Vercel
-cd server && vercel deploy --prod
+# Backend -> Cloudflare Workers
+cd server && npm run deploy
 ```
