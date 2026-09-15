@@ -137,6 +137,13 @@
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text-dim);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+/* Sin esto, hacer clic en el campo no daba ninguna señal visible de que
+   ya se podía escribir — el cursor parpadeante solo no bastaba. */
+.db-search:focus-within {
+  border-color: var(--color-brand-ink);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-ink) 15%, transparent);
 }
 .db-search input {
   width: 100%;
@@ -144,6 +151,7 @@
   background: none;
   padding: 0;
   color: var(--color-text);
+  caret-color: var(--color-brand-ink);
   font-size: 13.5px;
 }
 .db-search input:focus { outline: none; }

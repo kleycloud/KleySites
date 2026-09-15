@@ -144,6 +144,13 @@ input:focus, textarea:focus, select:focus { outline: none; border-color: var(--c
 
 .kley-menu-sep { height: 1px; background: var(--color-border); margin: var(--space-1) 2px; }
 
+/* Enlaces que muestran el correo de soporte tal cual (Soporte, Ayuda,
+   Contacto) — subrayado al pasar el mouse, para que se note que es un
+   enlace de verdad y no solo una etiqueta. */
+.kley-correo-link:hover { text-decoration: underline; }
+/* "Centro de ayuda": el título no es el correo, solo la línea de abajo. */
+.db-ayuda-item:hover .db-ayuda-item-texto { text-decoration: underline; }
+
 /* Reset del botón nativo (fondo/borde grises del navegador) para
    cualquier botón que solo lleva un ícono — antes vivía en
    editor/topbar.css, que dashboard.html nunca carga: ahí los botones de
