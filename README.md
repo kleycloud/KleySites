@@ -3,6 +3,11 @@
 Builder visual de páginas web open source — crea y publica tu sitio sin complicaciones.
 Powered by [KleyCloud](https://kleyderproject.cloud).
 
+Copyright (C) 2026 KleyCloud. Licenciado bajo [GNU AGPL v3](LICENSE): podés ver, correr,
+modificar y redistribuir el código libremente. Si corrés una versión modificada como
+servicio en red (por ejemplo, tu propio "website builder" hosteado), tenés que publicar
+el código de tus cambios bajo la misma licencia.
+
 ## Stack
 
 - **Frontend**: HTML + CSS + JS puro (ES Modules), sin frameworks pesados
@@ -44,6 +49,9 @@ npm test          # Playwright (no necesita el backend corriendo)
 ```
 
 Backend: ver [server/README.md](server/README.md).
+
+¿Querés contribuir o correr el proyecto completo con tu propia infraestructura
+(base de datos, backend, login con Google)? Ver [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Deploy
 

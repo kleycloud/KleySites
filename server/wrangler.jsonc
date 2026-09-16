@@ -3,7 +3,6 @@
   "main": "src/index.js",
   "compatibility_date": "2026-05-03",
   "compatibility_flags": ["nodejs_compat"],
-  "account_id": "d40e3ebbcf83dc157d80684283e695eb",
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",

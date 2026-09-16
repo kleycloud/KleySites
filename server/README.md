@@ -28,6 +28,12 @@ hace falta además exportar en el shell (no funciona puesto en
 export CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgresql://..."
 ```
 
+`wrangler.jsonc` no trae `account_id` a propósito (para no dejarlo fijo
+en un archivo público) — tanto `npm run dev` como `npm run deploy`
+necesitan `CLOUDFLARE_ACCOUNT_ID` como variable real del shell (no
+alcanza con tenerlo en `.dev.vars`, por la misma razón que el punto
+anterior): `export CLOUDFLARE_ACCOUNT_ID="..."`.
+
 En la raíz del repo, para que el frontend local hable con este backend
 local en vez del de producción:
 
@@ -48,6 +54,7 @@ es una variable de entorno del Worker — es el binding de Hyperdrive
 
 ```
 cd server
+export CLOUDFLARE_ACCOUNT_ID="..."   # ver nota arriba
 npm run deploy
 ```
 

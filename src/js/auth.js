@@ -88,7 +88,7 @@ function initGoogleButton() {
   if (!contenedor) return;
 
   google.accounts.id.initialize({
-    client_id: '26646131722-r6qdviik8qm17cn5smt0b2gqh47qjb30.apps.googleusercontent.com',
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '26646131722-r6qdviik8qm17cn5smt0b2gqh47qjb30.apps.googleusercontent.com',
     callback: handleGoogleSignIn
   });
   google.accounts.id.renderButton(contenedor, {

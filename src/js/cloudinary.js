@@ -1,8 +1,8 @@
 // Subida directa a Cloudinary desde el navegador (preset sin firmar) —
 // la usan tanto la foto de perfil (perfil.js) como el favicon del sitio
 // (editor/ajustes.js). El backend nunca ve el archivo, solo la URL final.
-const CLOUD_NAME = 'aup5guac';
-const UPLOAD_PRESET = 'kleysites_uploads';
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'aup5guac';
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'kleysites_uploads';
 
 // `carpeta` organiza lo subido por cliente dentro de la misma cuenta de
 // Cloudinary (p. ej. "clientes/42/perfil") — no es aislamiento de
