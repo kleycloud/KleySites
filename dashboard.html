@@ -52,7 +52,7 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5-8 4.5-8-4.5z"/><path d="M4 12l8 4.5 8-4.5"/><path d="M4 16.5l8 4.5 8-4.5"/></svg>
         Mis sitios
       </button>
-      <button class="db-sidebar-item" data-ir="plantillas" title="Plantillas">
+      <button class="db-sidebar-item" id="navPlantillas" data-ir="plantillas" title="Plantillas">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="7" rx="1"/><rect x="3" y="14" width="8" height="7" rx="1"/><rect x="13" y="14" width="8" height="7" rx="1"/></svg>
         Plantillas
       </button>
@@ -64,7 +64,7 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="15" rx="2"/><path d="M2 10h20"/></svg>
         Facturación <span class="kley-menu-soon">Próximamente</span>
       </button>
-      <a class="db-sidebar-item" href="/soporte.html" target="_blank" rel="noopener" data-seleccionar title="Soporte">
+      <a class="db-sidebar-item" href="/soporte.html" data-seleccionar title="Soporte">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>
         Soporte
       </a>
@@ -112,7 +112,7 @@
             <button class="kley-menu-item" data-accion="perfil">Perfil</button>
             <button class="kley-menu-item" data-accion="plan">Mi plan</button>
             <button class="kley-menu-item" data-accion="configuracion">Configuración</button>
-            <a class="kley-menu-item" href="/ayuda.html" target="_blank" rel="noopener">Ayuda</a>
+            <a class="kley-menu-item" href="/ayuda.html">Ayuda</a>
             <div class="kley-menu-sep"></div>
             <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
           </div>
@@ -151,15 +151,34 @@
     </div>
 
     <div class="ed-modal-overlay" id="modalPlan">
-      <div class="ed-modal ed-modal--centrado">
+      <div class="ed-modal ed-modal--centrado ed-modal--planes">
         <button class="ed-icon-btn ed-modal-cerrar ed-modal-cerrar-flotante" id="btnCerrarPlan" title="Cerrar">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
       </button>
-        <div class="ed-modal-icono">
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>
+        <h3 class="ed-modal-headline">Elige tu plan</h3>
+        <div class="db-planes-grid">
+          <div class="db-plan-card" data-plan-card="gratis">
+            <span class="db-plan-badge" data-badge="gratis" hidden>Tu plan actual</span>
+            <p class="db-plan-nombre">Gratis</p>
+            <p class="db-plan-precio">$0</p>
+            <ul class="db-plan-features">
+              <li>1 sitio publicado</li>
+              <li>Editor visual completo</li>
+              <li>Plantillas para empezar</li>
+            </ul>
+          </div>
+          <div class="db-plan-card db-plan-card--pro" data-plan-card="pro">
+            <span class="db-plan-badge" data-badge="pro" hidden>Tu plan actual</span>
+            <p class="db-plan-nombre">Pro</p>
+            <p class="db-plan-precio">A tu medida</p>
+            <ul class="db-plan-features">
+              <li>Sitios ilimitados</li>
+              <li>Sin la marca de KleySites</li>
+              <li>Soporte prioritario</li>
+            </ul>
+            <a class="ed-btn ed-btn--primary" id="btnPasarAPro" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=kleysite@gmail.com&amp;su=Quiero%20pasar%20a%20Pro" target="_blank" rel="noopener">Pasar a Pro</a>
+          </div>
         </div>
-        <h3 class="ed-modal-headline" id="planTitulo">Plan Gratis</h3>
-        <p class="ed-modal-descripcion" id="planDescripcion"></p>
       </div>
     </div>
 
@@ -305,15 +324,15 @@
             </svg>
             <p class="db-promo-titulo">Lleva tus ideas más lejos</p>
             <p class="db-promo-texto">Con KleySites puedes crear sitios profesionales, sin complicaciones y en minutos.</p>
-            <button type="button" class="ed-btn ed-btn--primary" data-ir="plantillas">
-              Crear un nuevo sitio
+            <button type="button" class="ed-btn ed-btn--primary" id="btnCatalogoPlantillas">
+              Catálogo de plantillas
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </button>
           </div>
 
           <div class="db-ayuda-card">
             <p class="db-section-title">Recursos y ayuda</p>
-            <a class="db-ayuda-item" href="/ayuda.html" target="_blank" rel="noopener">
+            <a class="db-ayuda-item" href="/ayuda.html">
               <div class="icon-frame icon-frame--18">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 17v.01M12 14c0-3 3-2.5 3-5.5A3 3 0 0 0 9.5 8"/></svg>
               </div>

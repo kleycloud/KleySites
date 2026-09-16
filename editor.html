@@ -147,7 +147,7 @@
             <button class="kley-menu-item" data-accion="perfil">Perfil</button>
             <button class="kley-menu-item" data-accion="plan">Mi plan</button>
             <button class="kley-menu-item" data-accion="configuracion">Configuración</button>
-            <a class="kley-menu-item" href="/ayuda.html" target="_blank" rel="noopener">Ayuda</a>
+            <a class="kley-menu-item" href="/ayuda.html">Ayuda</a>
             <div class="kley-menu-sep"></div>
             <button class="kley-menu-item kley-menu-item--danger" data-accion="cerrar-sesion">Cerrar sesión</button>
           </div>
@@ -323,15 +323,34 @@
   </div>
 
   <div class="ed-modal-overlay" id="modalPlan">
-    <div class="ed-modal ed-modal--centrado">
+    <div class="ed-modal ed-modal--centrado ed-modal--planes">
       <button class="ed-icon-btn ed-modal-cerrar ed-modal-cerrar-flotante" id="btnCerrarPlan" title="Cerrar">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
       </button>
-      <div class="ed-modal-icono">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>
+      <h3 class="ed-modal-headline">Elige tu plan</h3>
+      <div class="db-planes-grid">
+        <div class="db-plan-card" data-plan-card="gratis">
+          <span class="db-plan-badge" data-badge="gratis" hidden>Tu plan actual</span>
+          <p class="db-plan-nombre">Gratis</p>
+          <p class="db-plan-precio">$0</p>
+          <ul class="db-plan-features">
+            <li>1 sitio publicado</li>
+            <li>Editor visual completo</li>
+            <li>Plantillas para empezar</li>
+          </ul>
+        </div>
+        <div class="db-plan-card db-plan-card--pro" data-plan-card="pro">
+          <span class="db-plan-badge" data-badge="pro" hidden>Tu plan actual</span>
+          <p class="db-plan-nombre">Pro</p>
+          <p class="db-plan-precio">A tu medida</p>
+          <ul class="db-plan-features">
+            <li>Sitios ilimitados</li>
+            <li>Sin la marca de KleySites</li>
+            <li>Soporte prioritario</li>
+          </ul>
+          <a class="ed-btn ed-btn--primary" id="btnPasarAPro" href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=kleysite@gmail.com&amp;su=Quiero%20pasar%20a%20Pro" target="_blank" rel="noopener">Pasar a Pro</a>
+        </div>
       </div>
-      <h3 class="ed-modal-headline" id="planTitulo">Plan Gratis</h3>
-      <p class="ed-modal-descripcion" id="planDescripcion"></p>
     </div>
   </div>
 

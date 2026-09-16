@@ -60,11 +60,11 @@ test('sin foto de perfil, "Quitar foto" no se muestra', async ({ sesion: page })
   await expect(page.locator('#btnQuitarAvatar')).toBeHidden();
 });
 
-test('"Ayuda" abre el centro de ayuda en una pestaña nueva, no un botón', async ({ sesion: page }) => {
+test('"Ayuda" es un enlace directo al centro de ayuda, no un botón', async ({ sesion: page }) => {
   await page.click('#btnCuentaEditor');
   const enlace = page.locator('a.kley-menu-item', { hasText: 'Ayuda' });
   await expect(enlace).toHaveAttribute('href', '/ayuda.html');
-  await expect(enlace).toHaveAttribute('target', '_blank');
+  await expect(enlace).not.toHaveAttribute('target', '_blank');
 });
 
 test('"Mi plan" muestra el plan actual del cliente', async ({ sesion: page }) => {
@@ -80,7 +80,9 @@ test('"Mi plan" muestra el plan actual del cliente', async ({ sesion: page }) =>
   await page.click('#btnCuentaEditor');
   await page.click('[data-accion="plan"]');
   await expect(page.locator('#modalPlan')).toBeVisible();
-  await expect(page.locator('#planTitulo')).toHaveText('Plan Pro');
+  await expect(page.locator('[data-badge="pro"]')).toBeVisible();
+  await expect(page.locator('[data-badge="gratis"]')).toBeHidden();
+  await expect(page.locator('#btnPasarAPro')).toBeHidden();
 
   await page.click('#btnCerrarPlan');
   await expect(page.locator('#modalPlan')).toBeHidden();

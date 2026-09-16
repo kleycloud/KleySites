@@ -142,6 +142,13 @@ document.getElementById('tplGrid').addEventListener('click', (e) => {
   if (card) crearDesdePlantilla(card);
 });
 
+// El botón "Catálogo de plantillas" del panel de promo hace lo mismo que
+// el ítem "Plantillas" del sidebar — dispara ese, en vez de duplicar el
+// scroll y el marcado de activo acá.
+document.getElementById('btnCatalogoPlantillas')?.addEventListener('click', () => {
+  document.getElementById('navPlantillas').click();
+});
+
 // --- Modal "límite de plan" (distinto del aviso genérico: este sí tiene
 // ícono y encabezado propios, para el momento exacto en que se le pide
 // al cliente pasar a Pro) ---

@@ -29,7 +29,7 @@
   <main class="legal-main" style="max-width: 900px;">
     <a href="/" class="legal-back" id="legalVolver">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
-      <span id="legalVolverTexto">Ir al inicio</span>
+      Volver
     </a>
 
     <h1>¿En qué podemos ayudarte?</h1>
@@ -90,15 +90,17 @@
   </footer>
 
   <script>
-    // Esta página siempre se abre en una pestaña nueva (target="_blank"),
-    // así que history.back() no tiene a dónde volver — se usa el
-    // referrer directo en vez de rebotar por "/" (que redirige sola al
-    // dashboard si hay sesión, con el parpadeo de login de por medio).
+    // El href="/" es el destino por defecto (llega alguien de fuera, ej.
+    // un buscador). Si en cambio vino desde el dashboard/editor (mismo
+    // origen), "Volver" debe regresar ahí — no a la pantalla de login,
+    // que rebota de vuelta al dashboard y se siente como un error.
     (function () {
+      var link = document.getElementById('legalVolver');
       if (document.referrer && document.referrer.indexOf(window.location.origin) === 0) {
-        var link = document.getElementById('legalVolver');
-        link.href = document.referrer;
-        document.getElementById('legalVolverTexto').textContent = 'Volver';
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          history.back();
+        });
       }
     })();
   </script>
