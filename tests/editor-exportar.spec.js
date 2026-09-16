@@ -17,7 +17,12 @@ test('Exportar descarga un ZIP con el sitio completo, y el HTML lleva los estilo
 
   const archivos = unzipSync(readFileSync(await descarga.path()));
   const nombres = Object.keys(archivos).sort();
-  expect(nombres).toEqual(['LEEME.txt', 'index.html', 'kleysites.json', 'manifest.json']);
+  expect(nombres).toEqual(['LEEME.txt', 'index.html', 'kleysites.json', 'manifest.json', 'robots.txt', 'sitemap.xml']);
+
+  const sitemap = strFromU8(archivos['sitemap.xml']);
+  expect(sitemap).toContain('<loc>https://mi-sitio-nuevo.pages.dev/</loc>');
+  const robots = strFromU8(archivos['robots.txt']);
+  expect(robots).toContain('Sitemap: https://mi-sitio-nuevo.pages.dev/sitemap.xml');
 
   const html = strFromU8(archivos['index.html']);
   expect(html).toContain('Título exportado');

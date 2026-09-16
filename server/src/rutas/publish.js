@@ -9,7 +9,7 @@ const app = new Hono();
 // El frontend manda el sitio ya generado (los mismos archivos que
 // Exportar); acá solo se valida y se despliega. Nada de binarios: el
 // favicon y las imágenes son URLs externas dentro del HTML.
-const NOMBRE_VALIDO = /^[A-Za-z0-9-]+\.(html|json|txt)$/;
+const NOMBRE_VALIDO = /^[A-Za-z0-9-]+\.(html|json|txt|xml)$/;
 const MAX_ARCHIVOS = 50;
 const MAX_BYTES = 5 * 1024 * 1024;
 

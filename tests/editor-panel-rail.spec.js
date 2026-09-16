@@ -36,7 +36,7 @@ test('una plantilla inserta una sección con sus bloques adentro', async ({ sesi
   await page.click('.ed-rail-item[data-panel="plantillas"]');
   await expect(page.locator('.ed-tpl-item')).toHaveCount(3);
 
-  await page.click('.ed-tpl-item >> nth=0'); // "Encabezado con título y botón"
+  await page.click('.ed-tpl-item >> nth=0'); // "Hero con título y botón"
 
   const seccion = page.locator('[data-zone-blocks="contenido"] > .ed-block.ed-contenedor');
   await expect(seccion).toHaveCount(1);

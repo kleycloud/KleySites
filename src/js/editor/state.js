@@ -16,7 +16,7 @@ export { sanearHTML, ICONOS, ZONAS };
 // que ningún llamador futuro tenga que acordarse de hacerlo por su cuenta.
 const CAMPOS_HTML = new Set(['contenido.html']);
 
-export const ETIQUETAS_ZONA = { encabezado: 'Encabezado', contenido: 'Contenido', pie: 'Pie de página' };
+export const ETIQUETAS_ZONA = { encabezado: 'Header', hero: 'Hero', contenido: 'Contenido', pie: 'Footer' };
 
 export const CONTENEDORES = new Set(['seccion', 'columnas']);
 
@@ -133,7 +133,7 @@ export const CAMPOS = Object.fromEntries(CATALOGO_BLOQUES.map((b) => [b.tipo, b.
 export const PLANTILLAS = [
   {
     id: 'hero',
-    nombre: 'Encabezado con título y botón',
+    nombre: 'Hero con título y botón',
     hijos: [
       { tipo: 'titulo', contenido: { texto: 'Bienvenido a tu sitio', nivel: 'h1' } },
       { tipo: 'texto', contenido: { html: 'Cuéntale a tus visitantes de qué se trata en una frase.' } },

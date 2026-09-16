@@ -98,5 +98,6 @@ export async function publicarArchivos(env, slug, archivos) {
 function contentTypeDe(nombre) {
   if (nombre.endsWith('.html')) return 'text/html';
   if (nombre.endsWith('.json')) return 'application/json';
+  if (nombre.endsWith('.xml')) return 'application/xml';
   return 'text/plain';
 }

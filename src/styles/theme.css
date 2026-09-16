@@ -26,6 +26,7 @@
 
   /* --- Zonas del lienzo del editor (única excepción al monocromo) --- */
   --color-zone-header: var(--zone-header);
+  --color-zone-hero: var(--zone-hero);
   --color-zone-content: var(--zone-content);
   --color-zone-footer: var(--zone-footer);
 

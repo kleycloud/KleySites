@@ -8,13 +8,17 @@ test('tiene botón para volver al dashboard', async ({ sesion: page }) => {
   await expect(page.locator('#btnVolverDashboard')).toBeVisible();
 });
 
-test('se puede insertar un bloque en cada una de las tres zonas', async ({ sesion: page }) => {
+test('se puede insertar un bloque en cada una de las cuatro zonas', async ({ sesion: page }) => {
   await page.click('.ed-widget-card[data-tipo="texto"]'); // cae en "contenido" por defecto
   await expect(page.locator('[data-zone-blocks="contenido"] .ed-block')).toHaveCount(1);
 
   await page.click('[data-zona="encabezado"]');
   await page.click('.ed-widget-card[data-tipo="imagen"]');
   await expect(page.locator('[data-zone-blocks="encabezado"] .ed-block')).toHaveCount(1);
+
+  await page.click('[data-zona="hero"]');
+  await page.click('.ed-widget-card[data-tipo="titulo"]');
+  await expect(page.locator('[data-zone-blocks="hero"] .ed-block')).toHaveCount(1);
 
   await page.click('[data-zona="pie"]');
   await page.click('.ed-widget-card[data-tipo="boton"]');

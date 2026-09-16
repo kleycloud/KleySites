@@ -14,6 +14,7 @@ import { getSitioActual } from './ajustes.js';
 import { generarDocumento } from '../render/documento.js';
 import { generarManifest } from '../render/manifest.js';
 import { aArbolPorZona } from '../render/arbol.js';
+import { generarRobotsTxt, generarSitemapXml } from '../render/seo.js';
 
 const LEEME = `Este es tu sitio exportado desde KleySites.
 
@@ -23,6 +24,9 @@ const LEEME = `Este es tu sitio exportado desde KleySites.
 - manifest.json permite instalar el sitio como app en el celular.
 - kleysites.json es el proyecto en formato KleySites: puedes volver a
   importarlo en el editor (Importar > subir archivo) para seguir editándolo.
+- robots.txt y sitemap.xml están armados para el dominio que te da
+  Publicar (<tu-sitio>.pages.dev). Si subes esta carpeta a otro hosting
+  con otro dominio, edita la URL adentro de esos dos archivos.
 `;
 
 export async function obtenerPlan() {
@@ -75,12 +79,17 @@ export async function construirArchivosSitio() {
     paginasJSON.push({ nombre: p.nombre, slug, zonas: aArbolPorZona(bloques) });
   }
 
+  const slugSitio = sitio.slug || slugificar(nombreSitio) || 'sitio';
+  const dominio = `https://${slugSitio}.pages.dev`;
+
   archivos.push({ nombre: 'manifest.json', contenido: generarManifest({ nombre: nombreSitio, faviconUrl: sitio.favicon_url }) });
   archivos.push({
     nombre: 'kleysites.json',
     contenido: JSON.stringify({ version: 1, sitio: { nombre: nombreSitio }, paginas: paginasJSON }, null, 2),
   });
+  archivos.push({ nombre: 'robots.txt', contenido: generarRobotsTxt(dominio) });
+  archivos.push({ nombre: 'sitemap.xml', contenido: generarSitemapXml(dominio, paginasJSON) });
   archivos.push({ nombre: 'LEEME.txt', contenido: LEEME });
 
-  return { archivos, slug: sitio.slug || slugificar(nombreSitio) || 'sitio' };
+  return { archivos, slug: slugSitio };
 }

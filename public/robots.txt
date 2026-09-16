@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard.html
+Disallow: /editor.html
+
+Sitemap: https://kleysites.pages.dev/sitemap.xml

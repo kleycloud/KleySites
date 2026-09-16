@@ -5,20 +5,35 @@
   de un estado — manual sección 09, "Color por zona del editor".
 */
 
+/* El "tablero" alrededor del lienzo — igual que el pasteboard gris de
+   Photoshop/Illustrator o el fondo de Canva: un gris neutro fijo, sin
+   importar el tema de la app, para que la página blanca resalte con
+   contraste real. En modo claro, --color-bg (#F7F7FA) quedaba casi del
+   mismo tono que el blanco del lienzo — se perdía la separación. */
 .ed-canvas-wrap {
   flex: 1;
   min-width: 0;
   overflow-y: auto;
-  background: var(--color-bg);
-  padding: var(--space-6);
+  background: #DEDEE3;
+  padding: var(--space-7) var(--space-6);
 }
 
+/* El lienzo es blanco siempre, sin importar el tema de la app — el modo
+   oscuro es solo el "chrome" del editor (paneles, riel, topbar). El
+   sitio publicado nunca hereda ese tema, así que editar sobre un fondo
+   oscuro escondería problemas de contraste reales (texto oscuro
+   invisible) que recién aparecerían al publicar. Mismo criterio que
+   Webflow/Wix/Canva/Figma.
+   La sombra es en capas (una suave y amplia + una fina pegada al borde)
+   para que se vea como una hoja flotando, no un simple recuadro plano. */
 .ed-page {
   max-width: 900px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: max-width 0.15s ease;
 }
 
@@ -36,6 +51,7 @@
 }
 
 .ed-zone--header { --zone-color: var(--color-zone-header); min-height: 90px; }
+.ed-zone--hero { --zone-color: var(--color-zone-hero); min-height: 200px; }
 .ed-zone--content { --zone-color: var(--color-zone-content); min-height: 320px; }
 .ed-zone--footer { --zone-color: var(--color-zone-footer); min-height: 90px; }
 

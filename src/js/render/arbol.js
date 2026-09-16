@@ -1,7 +1,7 @@
 // Helpers puros sobre la lista plana de bloques ({ id, parent_id, zona,
 // orden }). Sirven igual con ids locales del editor o ids remotos de Neon:
 // solo importa que `parent_id` apunte al `id` del mismo conjunto.
-export const ZONAS = ['encabezado', 'contenido', 'pie'];
+export const ZONAS = ['encabezado', 'hero', 'contenido', 'pie'];
 
 export function ordenar(lista) {
   return [...lista].sort((a, z) => (a.orden || 0) - (z.orden || 0));

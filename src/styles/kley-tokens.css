@@ -24,8 +24,9 @@
   --error:         #FF8080;
   --info:          #4D6BFF;
 
-  /* zonas del lienzo del editor: encabezado azul, contenido morado, pie naranja */
+  /* zonas del lienzo del editor: encabezado azul, portada rosa, contenido morado, pie naranja */
   --zone-header:   #4D6BFF;
+  --zone-hero:     #EC4899;
   --zone-content:  #7B5CFF;
   --zone-footer:   #FF8A3D;
 

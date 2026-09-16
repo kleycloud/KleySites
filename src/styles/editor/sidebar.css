@@ -6,7 +6,7 @@
 
 .ed-rail {
   flex-shrink: 0;
-  width: 56px;
+  width: 72px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,13 +16,33 @@
   background: var(--color-panel);
 }
 
+/* Cada ícono lleva su nombre debajo — sin esto no había forma de saber
+   qué significa cada uno sin pasar el mouse y esperar el tooltip. */
 .ed-rail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
   cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
 }
 .ed-rail-item:hover .icon-frame:not(.is-active) {
   color: var(--icon-hover);
   background: color-mix(in srgb, var(--icon-hover) 10%, transparent);
 }
+
+.ed-rail-label {
+  font-size: 10px;
+  font-weight: var(--fw-medium);
+  color: var(--icon-rest);
+  text-align: center;
+  line-height: 1.2;
+}
+.ed-rail-item:hover .ed-rail-label { color: var(--icon-hover); }
+.ed-rail-item.is-active .ed-rail-label { color: var(--icon-active); font-weight: var(--fw-semibold); }
 
 .ed-rail-bottom {
   margin-top: auto;

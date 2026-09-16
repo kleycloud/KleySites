@@ -13,7 +13,9 @@ const TITULOS_PANEL = { bloques: 'Bloques', capas: 'Capas', plantillas: 'Plantil
 
 function mostrarPanel(nombre) {
   document.querySelectorAll('.ed-rail-item[data-panel]').forEach((el) => {
-    el.querySelector('.icon-frame').classList.toggle('is-active', el.dataset.panel === nombre);
+    const activo = el.dataset.panel === nombre;
+    el.querySelector('.icon-frame').classList.toggle('is-active', activo);
+    el.classList.toggle('is-active', activo);
   });
   document.querySelectorAll('.ed-panel-content').forEach((el) => {
     el.classList.toggle('is-active', el.dataset.panelContent === nombre);

@@ -11,7 +11,7 @@ import { fuentesUsadas, urlGoogleFonts } from './fuentes.js';
 
 const BADGE_HTML = '<a href="https://kleysites.pages.dev" target="_blank" rel="noopener" style="position:fixed;bottom:12px;right:12px;background:#0b0b0f;color:#fff;font:12px system-ui,sans-serif;padding:6px 10px;border-radius:8px;text-decoration:none;opacity:.85;z-index:9999;">Hecho con KleySites</a>';
 
-const CSS_BASE = `*{box-sizing:border-box}body{margin:0;font-family:'Inter',system-ui,sans-serif;line-height:1.5;color:#1a1a1a;background:#fff}img{max-width:100%;height:auto}h1,h2,h3,h4{margin:0 0 .5em;line-height:1.2}p{margin:0 0 1em}header,main,footer{display:flex;flex-direction:column;gap:16px;padding:24px}main{min-height:40vh}`;
+const CSS_BASE = `*{box-sizing:border-box}body{margin:0;font-family:'Inter',system-ui,sans-serif;line-height:1.5;color:#1a1a1a;background:#fff}img{max-width:100%;height:auto}h1,h2,h3,h4{margin:0 0 .5em;line-height:1.2}p{margin:0 0 1em}header,main,footer,#hero{display:flex;flex-direction:column;gap:16px;padding:24px}main{min-height:40vh}`;
 
 function renderArbol(bloques, b) {
   const hijos = hijosDe(bloques, b.id).map((h) => renderArbol(bloques, h)).join('\n');
@@ -41,6 +41,7 @@ ${head}
 </head>
 <body>
 <header>${renderZona(bloques, 'encabezado')}</header>
+<section id="hero">${renderZona(bloques, 'hero')}</section>
 <main>${renderZona(bloques, 'contenido')}</main>
 <footer>${renderZona(bloques, 'pie')}</footer>
 ${badge ? BADGE_HTML : ''}

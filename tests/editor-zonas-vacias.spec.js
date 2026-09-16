@@ -1,12 +1,13 @@
 import { test, expect } from './fixtures.js';
 
 const ZONAS = [
-  { zona: 'encabezado', nombre: 'Encabezado', texto: 'Añade tu logo, menú y elementos principales', color: 'rgb(77, 107, 255)' },
+  { zona: 'encabezado', nombre: 'Header', texto: 'Añade tu logo, menú y elementos principales', color: 'rgb(77, 107, 255)' },
+  { zona: 'hero', nombre: 'Hero', texto: 'Destaca tu mensaje principal con una imagen o botón que llame la atención', color: 'rgb(236, 72, 153)' },
   { zona: 'contenido', nombre: 'Contenido', texto: 'Escribe o empieza a dar vida a tu página o sitio web', color: 'rgb(123, 92, 255)' },
-  { zona: 'pie', nombre: 'Pie de página', texto: 'Incluye tu información legal, datos de contacto y enlaces de navegación', color: 'rgb(255, 138, 61)' },
+  { zona: 'pie', nombre: 'Footer', texto: 'Incluye tu información legal, datos de contacto y enlaces de navegación', color: 'rgb(255, 138, 61)' },
 ];
 
-test('un lienzo vacío muestra las tres zonas con su ícono, nombre y descripción en su color', async ({ sesion: page }) => {
+test('un lienzo vacío muestra las cuatro zonas con su ícono, nombre y descripción en su color', async ({ sesion: page }) => {
   await page.goto('/editor.html?site=999');
 
   for (const z of ZONAS) {
@@ -24,5 +25,6 @@ test('al insertar un bloque desaparece el estado vacío de esa zona nada más', 
 
   await expect(page.locator('[data-zone-blocks="contenido"] .ed-zone-empty')).toHaveCount(0);
   await expect(page.locator('[data-zone-blocks="encabezado"] .ed-zone-empty')).toBeVisible();
+  await expect(page.locator('[data-zone-blocks="hero"] .ed-zone-empty')).toBeVisible();
   await expect(page.locator('[data-zone-blocks="pie"] .ed-zone-empty')).toBeVisible();
 });
