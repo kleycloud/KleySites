@@ -31,8 +31,10 @@
   <link rel="stylesheet" href="/src/styles/editor/shell.css">
   <link rel="stylesheet" href="/src/styles/editor/topbar.css">
   <link rel="stylesheet" href="/src/styles/editor/sidebar.css">
+  <link rel="stylesheet" href="/src/styles/editor/bloques-panel.css">
   <link rel="stylesheet" href="/src/styles/editor/canvas.css">
   <link rel="stylesheet" href="/src/styles/editor/properties.css">
+  <link rel="stylesheet" href="/src/styles/editor/controles.css">
   <link rel="stylesheet" href="/src/styles/editor/modal.css">
 </head>
 <body>
@@ -168,7 +170,11 @@
       </div>
 
       <div class="ed-panel-content is-active" data-panel-content="bloques">
-        <div class="ed-widget-grid"></div>
+        <div class="ed-widget-buscar">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="inputBuscarBloques" placeholder="Buscar bloques…" autocomplete="off">
+        </div>
+        <div class="ed-widget-catalogo" id="widgetCatalogo"></div>
       </div>
 
       <div class="ed-panel-content" data-panel-content="capas">

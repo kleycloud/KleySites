@@ -10,7 +10,7 @@
 */
 
 import {
-  PESOS, ALINEACIONES, SOMBRAS, TRANSFORMACIONES, DECORACIONES, ESTILOS_BORDE, AJUSTES_FONDO,
+  PESOS, ALINEACIONES, SOMBRAS, TRANSFORMACIONES, DECORACIONES, ESTILOS_BORDE, AJUSTES_FONDO, ANIMACIONES,
 } from '../../render/css.js';
 import { FUENTES } from '../../render/fuentes.js';
 
@@ -35,8 +35,16 @@ export const FONDO = {
   id: 'fondo', titulo: 'Fondo',
   campos: [
     { key: 'estilos.fondo', label: 'Color de fondo', control: 'color', placeholder: 'transparente' },
-    { key: 'estilos.fondo_imagen', label: 'Imagen de fondo', control: 'texto', placeholder: 'https://…' },
+    { key: 'estilos.fondo_imagen', label: 'Imagen de fondo', control: 'imagen' },
     { key: 'estilos.fondo_ajuste', label: 'Cómo se acomoda la imagen', control: 'select', opciones: claves(AJUSTES_FONDO) },
+  ],
+};
+
+// Pestaña "Avanzado": vale para todos los tipos.
+export const AVANZADO = {
+  id: 'avanzado', titulo: 'Animación de entrada',
+  campos: [
+    { key: 'estilos.animacion', label: 'Cómo aparece al cargar la página', control: 'select', opciones: claves(ANIMACIONES) },
   ],
 };
 

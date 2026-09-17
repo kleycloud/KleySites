@@ -5,16 +5,17 @@
 */
 
 import { renderBloque } from './bloques.js';
-import { hijosDe, raicesDeZona } from './arbol.js';
+import { hijosVisibles, raicesDeZona } from './arbol.js';
 import { escapeHTML } from './sanear.js';
 import { fuentesUsadas, urlGoogleFonts } from './fuentes.js';
 
 const BADGE_HTML = '<a href="https://kleysites.pages.dev" target="_blank" rel="noopener" style="position:fixed;bottom:12px;right:12px;background:#0b0b0f;color:#fff;font:12px system-ui,sans-serif;padding:6px 10px;border-radius:8px;text-decoration:none;opacity:.85;z-index:9999;">Hecho con KleySites</a>';
 
-const CSS_BASE = `*{box-sizing:border-box}body{margin:0;font-family:'Inter',system-ui,sans-serif;line-height:1.5;color:#1a1a1a;background:#fff}img{max-width:100%;height:auto}h1,h2,h3,h4{margin:0 0 .5em;line-height:1.2}p{margin:0 0 1em}header,main,footer,#hero{display:flex;flex-direction:column;gap:16px;padding:24px}main{min-height:40vh}`;
+// Los @keyframes son los mismos de canvas.css (estilos.animacion).
+const CSS_BASE = `*{box-sizing:border-box}body{margin:0;font-family:'Inter',system-ui,sans-serif;line-height:1.5;color:#1a1a1a;background:#fff}img{max-width:100%;height:auto}h1,h2,h3,h4{margin:0 0 .5em;line-height:1.2}p{margin:0 0 1em}header,main,footer,#hero{display:flex;flex-direction:column;gap:16px;padding:24px}main{min-height:40vh}@keyframes kley-aparecer{from{opacity:0}to{opacity:1}}@keyframes kley-subir{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}@keyframes kley-bajar{from{opacity:0;transform:translateY(-24px)}to{opacity:1;transform:none}}@keyframes kley-crecer{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}`;
 
 function renderArbol(bloques, b) {
-  const hijos = hijosDe(bloques, b.id).map((h) => renderArbol(bloques, h)).join('\n');
+  const hijos = hijosVisibles(bloques, b).map((h) => renderArbol(bloques, h)).join('\n');
   return renderBloque(b, hijos);
 }
 

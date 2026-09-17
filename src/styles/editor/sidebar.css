@@ -1,7 +1,8 @@
 /*
   sidebar.css
-  Riel de navegación (iconos de sección) + panel de bloques
-  (biblioteca de widgets), manual sección 09.
+  Riel de navegación (iconos de sección) + paneles Capas, Plantillas,
+  Páginas y Tienda, manual sección 09. El panel Bloques va en
+  bloques-panel.css.
 */
 
 .ed-rail {
@@ -105,7 +106,7 @@ html[data-theme="light"] .ed-theme-toggle .icon-frame.icon-moon { display: flex;
 
 .ed-panel-content { display: none; padding: var(--space-4); }
 .ed-panel-content.is-active { display: block; }
-/* El panel de Bloques ya trae su propio padding en .ed-widget-grid. */
+/* El panel de Bloques ya trae su propio padding en buscador y catálogo. */
 .ed-panel-content[data-panel-content="bloques"] { padding: 0; }
 
 .ed-panel-hint {
@@ -126,44 +127,6 @@ html[data-theme="light"] .ed-theme-toggle .icon-frame.icon-moon { display: flex;
   font-weight: var(--fw-semibold);
   font-size: 14px;
   color: var(--color-text);
-}
-
-.ed-widget-grid {
-  padding: var(--space-4);
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
-}
-
-.ed-widget-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 11px;
-  padding: 16px 10px 14px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg);
-  cursor: pointer;
-}
-.ed-widget-card:hover { border-color: color-mix(in srgb, var(--icon-active) 50%, transparent); }
-
-.ed-widget-card.is-selected {
-  border-color: color-mix(in srgb, var(--icon-active) 50%, transparent);
-  background: color-mix(in srgb, var(--icon-active) 6%, transparent);
-}
-.ed-widget-card.is-selected .icon-frame {
-  color: var(--icon-active);
-  background: var(--icon-bg-active);
-  border-color: color-mix(in srgb, var(--icon-active) 40%, transparent);
-}
-
-.ed-widget-label {
-  font-size: 12px;
-  font-weight: var(--fw-medium);
-  color: var(--color-text);
-  text-align: center;
-  line-height: 1.3;
 }
 
 /* --- Capas: árbol de bloques de la página --- */
@@ -195,6 +158,9 @@ html[data-theme="light"] .ed-theme-toggle .icon-frame.icon-moon { display: flex;
   background: var(--icon-bg-active);
   color: var(--icon-active);
 }
+
+.ed-capa-fila.is-oculta { color: var(--color-text-dim); }
+.ed-capa-nota { font-size: 11px; color: var(--color-text-dim); }
 
 .ed-capa-vacio {
   font-size: 12px;

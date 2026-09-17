@@ -29,6 +29,23 @@ test('una etiqueta <script> escrita en el campo de texto no se ejecuta ni queda 
   expect(html).toContain('<b>hola</b>');
 });
 
+test('el bloque de código HTML nunca ejecuta scripts ni manejadores de eventos', async ({ sesion: page }) => {
+  page.on('dialog', (dialog) => dialog.dismiss());
+
+  await page.click('.ed-widget-card[data-tipo="html"]');
+  const textarea = page.locator('#propertiesBody textarea[data-campo="contenido.html"]');
+  await textarea.fill('<h3>Hola</h3><script>window.__xss = true;</script><img src="x" onerror="window.__xss = true"><iframe src="https://ejemplo.test"></iframe><a href="javascript:window.__xss=true">ir</a>');
+  await page.waitForTimeout(200);
+
+  expect(await page.evaluate(() => window.__xss === true)).toBe(false);
+  const html = await page.locator('[data-zone-blocks="contenido"] .ed-block').innerHTML();
+  expect(html).toContain('<h3>Hola</h3>');
+  expect(html).not.toContain('<script');
+  expect(html).not.toContain('onerror');
+  expect(html).not.toContain('<iframe');
+  expect(html).not.toContain('javascript:');
+});
+
 test('un atributo onerror en una etiqueta permitida se elimina', async ({ sesion: page }) => {
   page.on('dialog', (dialog) => dialog.dismiss());
 

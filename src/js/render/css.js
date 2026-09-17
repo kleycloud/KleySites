@@ -24,6 +24,11 @@ export const DIRECCIONES = { fila: 'row', columna: 'column' };
 export const ALINEAR_H = { inicio: 'flex-start', centro: 'center', fin: 'flex-end', espaciado: 'space-between' };
 export const ALINEAR_V = { inicio: 'flex-start', centro: 'center', fin: 'flex-end', estirar: 'stretch' };
 export const PROPORCIONES = { auto: '', '16:9': '16 / 9', '4:3': '4 / 3', '1:1': '1 / 1' };
+export const ALTURAS = { auto: '', media: '50vh', pantalla: '100vh' };
+export const VERTICALES = { inicio: 'flex-start', centro: 'center', fin: 'flex-end' };
+// Nombres de @keyframes: viven en canvas.css (lienzo) y en CSS_BASE de
+// documento.js (publicado), los dos con la misma definición.
+export const ANIMACIONES = { ninguna: '', aparecer: 'kley-aparecer', subir: 'kley-subir', bajar: 'kley-bajar', crecer: 'kley-crecer' };
 
 const LADOS = ['arriba', 'derecha', 'abajo', 'izquierda'];
 const LADOS_CSS = ['top', 'right', 'bottom', 'left'];
@@ -50,10 +55,15 @@ function tipografia(e, out) {
   if (ALINEACIONES[e.alineacion]) out.push(`text-align:${ALINEACIONES[e.alineacion]}`);
 }
 
+// `fondo_tipo` (color|imagen|video) decide qué se ve; el color queda
+// siempre como base debajo de la imagen o el video. El video no es CSS:
+// lo pinta capasFondoHTML (bloques.js) como capa absoluta.
 function fondo(e, out) {
   if (e.fondo) out.push(`background-color:${e.fondo}`);
-  if (e.fondo_imagen) {
-    out.push(`background-image:url("${e.fondo_imagen.replace(/"/g, '')}")`, 'background-position:center');
+  const imagenActiva = e.fondo_imagen && (!e.fondo_tipo || e.fondo_tipo === 'imagen');
+  if (imagenActiva) {
+    // Comillas simples: el CSS termina dentro de style="…" (comillas dobles).
+    out.push(`background-image:url('${e.fondo_imagen.replace(/['"()]/g, '')}')`, 'background-position:center');
     const ajuste = AJUSTES_FONDO[e.fondo_ajuste] || 'cover';
     out.push(`background-size:${ajuste}`, `background-repeat:${e.fondo_ajuste === 'repetir' ? 'repeat' : 'no-repeat'}`);
   }
@@ -88,6 +98,7 @@ function efectos(e, out) {
   if (!vacio(e.filtro_gris) && Number(e.filtro_gris) > 0) filtros.push(`grayscale(${e.filtro_gris}%)`);
   if (!vacio(e.filtro_desenfoque) && Number(e.filtro_desenfoque) > 0) filtros.push(`blur(${px(e.filtro_desenfoque)})`);
   if (filtros.length) out.push(`filter:${filtros.join(' ')}`);
+  if (ANIMACIONES[e.animacion]) out.push(`animation:${ANIMACIONES[e.animacion]} .6s ease both`);
 }
 
 function tamano(e, out) {
@@ -116,6 +127,12 @@ function layout(e, out, tipo) {
   if (!vacio(e.gap)) out.push(`gap:${px(e.gap)}`);
   if (ALINEAR_H[e.alinear_h]) out.push(`justify-content:${ALINEAR_H[e.alinear_h]}`);
   if (ALINEAR_V[e.alinear_v]) out.push(`align-items:${ALINEAR_V[e.alinear_v]}`);
+  if (ALTURAS[e.altura_min]) out.push(`min-height:${ALTURAS[e.altura_min]}`);
+  // Solo tiene sentido apilado en columna: en fila o en grilla se ignora.
+  const enColumna = vacio(e.columnas_n) && e.direccion !== 'fila';
+  if (enColumna && VERTICALES[e.contenido_vertical]) {
+    out.push('display:flex', 'flex-direction:column', `justify-content:${VERTICALES[e.contenido_vertical]}`);
+  }
 }
 
 export function estilosACSS(estilos, tipo) {

@@ -15,6 +15,27 @@ export function raicesDeZona(bloques, zona) {
   return ordenar(bloques.filter((b) => b.zona === zona && b.parent_id == null));
 }
 
+// Una sección "hero" puede apagar partes de sí misma con los interruptores
+// mostrar_*. El rol de cada hijo se deduce de su tipo (sin metadatos
+// nuevos), y apagar solo OCULTA: el hijo sigue en el árbol con sus
+// ediciones. Un interruptor ausente cuenta como encendido; solo 'no'
+// apaga.
+const INTERRUPTOR_POR_TIPO = { titulo: 'mostrar_titulo', texto: 'mostrar_descripcion', boton: 'mostrar_botones' };
+
+export function esHero(b) {
+  return !!b && b.tipo === 'seccion' && (b.contenido || {}).tipo_seccion === 'hero';
+}
+
+export function hijoOculto(padre, hijo) {
+  if (!esHero(padre)) return false;
+  const clave = INTERRUPTOR_POR_TIPO[hijo.tipo];
+  return !!clave && padre.contenido[clave] === 'no';
+}
+
+export function hijosVisibles(bloques, padre) {
+  return hijosDe(bloques, padre.id).filter((h) => !hijoOculto(padre, h));
+}
+
 // Lista plana -> árbol anidado [{ tipo, contenido, estilos, hijos? }] por
 // zona. Es el formato KleySites v1 (docs/formato-kleysites.md).
 function nodoDe(bloques, b) {

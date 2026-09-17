@@ -1,0 +1,196 @@
+/*
+  controles.css
+  Controles del panel de propiedades: grupos colapsables, 4 lados, color,
+  rango, interruptor, segmentado, selector de imagen, lista de filas.
+*/
+
+/* --- Controles del panel (grupos, 4 lados, color, rango) --- */
+
+.ed-prop-contenido { padding-top: var(--space-2); }
+
+.ed-prop-grupo {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+.ed-prop-grupo > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+.ed-prop-grupo > summary::-webkit-details-marker { display: none; }
+.ed-prop-grupo > summary::after {
+  content: '';
+  width: 6px; height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease;
+}
+.ed-prop-grupo[open] > summary::after { transform: rotate(45deg); }
+
+.ed-prop-campo input, .ed-prop-campo select, .ed-prop-campo textarea { padding: 8px 10px; font-size: 13px; }
+.ed-prop-campo input[type="number"] { -moz-appearance: textfield; }
+
+.ed-prop-sufijo { font-size: 10.5px; color: var(--color-text-dim); font-family: var(--font-mono); }
+
+.ed-lados { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.ed-lado { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.ed-lado i { font-style: normal; font-size: 10px; color: var(--color-text-dim); line-height: 1; }
+.ed-lado input { padding: 6px 4px; text-align: center; font-size: 12px; }
+.ed-lado input::-webkit-outer-spin-button, .ed-lado input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.ed-lado--todos input { border-color: var(--color-border-soft); }
+
+.ed-color { display: flex; gap: 6px; align-items: center; }
+.ed-color input[type="color"] {
+  flex-shrink: 0;
+  width: 34px; height: 34px;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: var(--color-surface);
+}
+.ed-color input[type="text"] { font-family: var(--font-mono); font-size: 12px; }
+
+.ed-prop-campo input[type="range"] { padding: 0; height: 24px; accent-color: var(--color-brand-ink); cursor: pointer; }
+
+/* Interruptor tipo switch: el texto a la izquierda, la palanca a la
+   derecha (el <input> va primero en el markup, `order` lo pasa al final). */
+.ed-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  margin: 10px 0 4px;
+  font-size: 13px;
+  color: var(--color-text);
+}
+.ed-toggle input {
+  appearance: none;
+  -webkit-appearance: none;
+  order: 2;
+  flex-shrink: 0;
+  width: 34px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-border-soft);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.ed-toggle input::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease;
+}
+.ed-toggle input:checked { background: var(--color-brand-ink); }
+.ed-toggle input:checked::after { transform: translateX(14px); }
+
+/* --- Segmentado / botones con ícono --- */
+
+.ed-segmentado {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+.ed-segmentado button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  border: none;
+  background: none;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: var(--fw-medium);
+  color: var(--color-text-dim);
+  cursor: pointer;
+}
+.ed-segmentado button:hover { color: var(--color-text); }
+.ed-segmentado button.is-active {
+  background: var(--color-panel);
+  color: var(--color-brand-ink);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Imagen: vista previa + subir/quitar + URL --- */
+
+.ed-imagen { display: flex; flex-direction: column; gap: var(--space-2); }
+.ed-imagen-preview {
+  box-sizing: border-box;
+  height: 96px;
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--color-border);
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-dim);
+  overflow: hidden;
+}
+.ed-imagen-preview img { width: 100%; height: 100%; object-fit: cover; }
+.ed-imagen-acciones { display: flex; gap: var(--space-2); }
+.ed-imagen-acciones .ed-btn { flex: 1; justify-content: center; padding: 6px 10px; font-size: 12px; }
+.ed-imagen input[type="text"] { margin: 0; }
+.ed-imagen-error { margin: 0; font-size: 12px; color: var(--color-error); }
+
+/* --- Lista: filas repetidas --- */
+
+.ed-lista { display: flex; flex-direction: column; gap: var(--space-2); }
+.ed-lista-fila {
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.ed-lista-fila label { margin-top: 6px; }
+.ed-lista-fila-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--color-text-dim);
+}
+.ed-lista-quitar { color: var(--color-text-dim); }
+.ed-lista-quitar:hover { color: var(--color-error); }
+.ed-lista-vacia { margin: 0; font-size: 12px; color: var(--color-text-dim); }
+.ed-lista-agregar { justify-content: center; padding: 7px 10px; font-size: 12px; }
+
+.ed-favicon-row { display: flex; align-items: center; gap: var(--space-3); }
+
+.ed-favicon-preview {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--icon-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-dim);
+  overflow: hidden;
+}
+.ed-favicon-preview img { width: 100%; height: 100%; object-fit: cover; }

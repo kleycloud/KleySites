@@ -16,6 +16,7 @@ editor con todo editable — al final hay un prompt listo para pegar.
       "nombre": "Inicio",
       "zonas": {
         "encabezado": [ /* nodos */ ],
+        "hero":       [ /* nodos */ ],
         "contenido":  [ /* nodos */ ],
         "pie":        [ /* nodos */ ]
       }
@@ -58,8 +59,17 @@ primera) entra al lienzo; las demás se crean si no existen y se agregan.
 | `galeria` | `imagenes` (URLs separadas por salto de línea `\n`) |
 | `formulario` | `titulo`, `boton` |
 | `mapa` | `src` (URL de inserción de Google Maps) |
-| `seccion` | — (contenedor vertical; usa `hijos`) |
+| `testimonial` | `texto`, `autor`, `cargo`, `foto` (URL) |
+| `precio` | `titulo`, `precio`, `periodo`, `caracteristicas` (lista JSON `[{"texto"}]`), `boton`, `href` |
+| `faq` | `items` (lista JSON `[{"pregunta","respuesta"}]`; se publica con `<details>`) |
+| `producto` | `nombre`, `precio`, `imagen` (URL), `descripcion`, `boton`, `href` |
+| `redes` | `items` (lista JSON `[{"red","url"}]`, red ∈ `facebook instagram x youtube tiktok linkedin whatsapp correo web`), `tamano` (px) |
+| `html` | `html` (HTML libre: encabezados, imágenes, tablas, `style`; **nunca** `script iframe object embed form` ni `on*`) |
+| `seccion` | contenedor vertical; usa `hijos`. Opcional: `tipo_seccion` (`libre` \| `hero`). Si es `hero`: `mostrar_titulo`, `mostrar_descripcion`, `mostrar_botones` (`si` \| `no`; ocultan a los hijos `titulo`/`texto`/`boton` sin borrarlos) |
 | `columnas` | — (contenedor horizontal; usa `hijos`) |
+
+Las "listas JSON" son un **string** con un array serializado (así el
+modelo sigue siendo texto por clave): `"items": "[{\"pregunta\":\"…\",\"respuesta\":\"…\"}]"`.
 
 ## Estilos
 
@@ -92,23 +102,40 @@ Los números van sin unidad (se asumen px) salvo donde se indica. Los
 | Contenedor | `direccion` (`fila columna`), `columnas_n` (1–6), `gap`, `alinear_h` (`inicio centro fin espaciado`), `alinear_v` (`inicio centro fin estirar`) | |
 | Galería | `galeria_columnas` (1–6), `galeria_gap`, `galeria_alto` | número |
 | Video/Mapa | `proporcion` | `auto 16:9 4:3 1:1` |
+| Sección hero | `fondo_tipo` | `color imagen video` (decide qué fondo se ve) |
+| | `fondo_video` | URL .mp4 (capa de video silenciada en bucle) |
+| | `overlay` | 0–100 (capa oscura sobre imagen/video) |
+| | `altura_min` | `auto media pantalla` (auto, 50vh, 100vh) |
+| | `contenido_vertical` | `inicio centro fin` |
+| Avanzado | `animacion` | `ninguna aparecer subir bajar crecer` (al cargar la página, solo CSS) |
 
 ## Prompt para Claude
 
 > Genera una página web en **formato KleySites v1**: un único JSON con
-> `{"version":1,"paginas":[{"nombre":"Inicio","zonas":{"encabezado":[],"contenido":[],"pie":[]}}]}`.
+> `{"version":1,"paginas":[{"nombre":"Inicio","zonas":{"encabezado":[],"hero":[],"contenido":[],"pie":[]}}]}`.
 > Cada nodo es `{"tipo","contenido","estilos","hijos"}`. Tipos permitidos:
 > titulo (texto, nivel h1-h6), texto (html con b/i/u/a/p/br/ul/ol/li), imagen
 > (src, alt), boton (texto, href), video (src), icono (nombre, tamano),
 > separador, espaciador (alto), galeria (imagenes con URLs separadas por \n),
-> formulario (titulo, boton), mapa (src), seccion y columnas (contenedores,
-> usan hijos). Estilos permitidos (números en px sin unidad, colores #rrggbb):
+> formulario (titulo, boton), mapa (src), testimonial (texto, autor, cargo,
+> foto), precio (titulo, precio, periodo, caracteristicas = string JSON de
+> [{"texto"}], boton, href), faq (items = string JSON de
+> [{"pregunta","respuesta"}]), producto (nombre, precio, imagen, descripcion,
+> boton, href), redes (items = string JSON de [{"red","url"}] con red en
+> facebook|instagram|x|youtube|tiktok|linkedin|whatsapp|correo|web),
+> html (html sin script/iframe), seccion y columnas (contenedores, usan
+> hijos). Una seccion con contenido.tipo_seccion="hero" es la portada: pon
+> adentro un titulo, un texto y un boton, y usa estilos fondo_tipo
+> (color|imagen|video), fondo_imagen, overlay (0-100), altura_min
+> (auto|media|pantalla) y contenido_vertical (inicio|centro|fin).
+> Estilos permitidos (números en px sin unidad, colores #rrggbb):
 > fuente, tamano, peso (normal|medio|semibold|negrita|extra), interlineado,
 > espaciado_letras, transformacion, alineacion (izquierda|centro|derecha),
 > color, fondo, fondo_imagen, padding_arriba/derecha/abajo/izquierda,
 > margen_*, borde, borde_estilo, borde_color, radio, sombra
 > (sutil|media|fuerte), opacidad, ancho, alto, ancho_max, ajuste, direccion,
 > columnas_n, gap, alinear_h, alinear_v, galeria_columnas, galeria_gap,
-> proporcion. Pon el logo/menú en `encabezado`, la información legal y de
-> contacto en `pie`. Responde solo con el JSON, sin explicaciones.
+> proporcion, animacion (aparecer|subir|bajar|crecer). Pon el logo/menú en
+> `encabezado`, la portada en `hero`, la información legal y de contacto en
+> `pie`. Responde solo con el JSON, sin explicaciones.
 > La página es sobre: ___

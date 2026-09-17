@@ -6,6 +6,7 @@ test('Exportar descarga un ZIP con el sitio completo, y el HTML lleva los estilo
   await page.goto('/editor.html?site=999');
   await page.click('.ed-widget-card[data-tipo="titulo"]');
   await page.fill('#propertiesBody input[data-campo="contenido.texto"]', 'Título exportado');
+  await page.click('#propertiesBody [data-tab="estilo"]');
   await page.fill('#propertiesBody input[data-campo="estilos.color"]', '#ff0000');
 
   await page.click('.ed-rail-item[data-panel="ajustes"]');

@@ -9,7 +9,8 @@
 import {
   AJUSTES_IMAGEN, DIRECCIONES, ALINEAR_H, ALINEAR_V, PROPORCIONES, ESTILOS_BORDE,
 } from '../../render/css.js';
-import { TIPOGRAFIA, FONDO, ESPACIADO, BORDE, EFECTOS, TAMANO } from './grupos.js';
+import { TIPOGRAFIA, FONDO, ESPACIADO, BORDE, EFECTOS, TAMANO, AVANZADO } from './grupos.js';
+import { CAMPOS } from '../state.js';
 
 const claves = (obj) => Object.keys(obj);
 
@@ -70,6 +71,16 @@ const MEDIOS = {
   campos: [{ key: 'estilos.proporcion', label: 'Forma del video', control: 'select', opciones: claves(PROPORCIONES) }],
 };
 
+const REDES = {
+  id: 'redes', titulo: 'Íconos',
+  campos: [
+    { key: 'estilos.color', label: 'Color', control: 'color', placeholder: 'heredado' },
+    { key: 'estilos.alinear_h', label: 'Alineación', control: 'select', opciones: ['', ...claves(ALINEAR_H)] },
+  ],
+};
+
+const TARJETA = [TIPOGRAFIA, FONDO, ESPACIADO, BORDE, EFECTOS, TAMANO];
+
 const GRUPOS_POR_TIPO = {
   texto: [TIPOGRAFIA, FONDO, ESPACIADO, BORDE, EFECTOS, TAMANO],
   titulo: [TIPOGRAFIA, FONDO, ESPACIADO, BORDE, EFECTOS, TAMANO],
@@ -84,6 +95,12 @@ const GRUPOS_POR_TIPO = {
   formulario: [TIPOGRAFIA, FONDO, ESPACIADO, BORDE, EFECTOS, TAMANO],
   seccion: [CONTENEDOR, FONDO, ESPACIADO, BORDE, EFECTOS, TAMANO, TIPOGRAFIA],
   columnas: [CONTENEDOR, FONDO, ESPACIADO, BORDE, EFECTOS, TAMANO, TIPOGRAFIA],
+  testimonial: TARJETA,
+  precio: TARJETA,
+  faq: TARJETA,
+  producto: TARJETA,
+  redes: [REDES, ESPACIADO, EFECTOS],
+  html: [FONDO, ESPACIADO, BORDE, EFECTOS, TAMANO],
 };
 
 export function gruposParaTipo(tipo) {
@@ -91,10 +108,13 @@ export function gruposParaTipo(tipo) {
 }
 
 // Todas las claves de `estilos` que el producto conoce — el importador
-// descarta cualquier otra.
+// descarta cualquier otra. Incluye las que el catálogo muestra en la
+// pestaña Contenido (composición del hero) y las de Avanzado.
 export function clavesDeEstiloConocidas() {
   const claves = new Set();
-  Object.values(GRUPOS_POR_TIPO).flat().forEach((g) => g.campos.forEach((c) => {
+  const camposContenido = Object.values(CAMPOS).flat().filter((c) => c.key && c.key.startsWith('estilos.'));
+  const grupos = [...Object.values(GRUPOS_POR_TIPO).flat(), AVANZADO, { campos: camposContenido }];
+  grupos.forEach((g) => g.campos.forEach((c) => {
     if (c.key) claves.add(c.key.replace('estilos.', ''));
     if (c.control === 'lados') ['arriba', 'derecha', 'abajo', 'izquierda'].forEach((l) => claves.add(`${c.prefijo}_${l}`));
     if (c.control === 'esquinas') ['radio', 'radio_sup_izq', 'radio_sup_der', 'radio_inf_der', 'radio_inf_izq'].forEach((k) => claves.add(k));

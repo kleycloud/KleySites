@@ -4,11 +4,25 @@ test.beforeEach(async ({ sesion: page }) => {
   await page.goto('/editor.html?site=999');
 });
 
+test('el panel tiene tres pestañas y arranca en Contenido', async ({ sesion: page }) => {
+  await page.click('.ed-widget-card[data-tipo="texto"]');
+  await expect(page.locator('#propertiesBody .ed-prop-tab')).toHaveCount(3);
+  await expect(page.locator('#propertiesBody .ed-prop-tab.is-active')).toHaveText('Contenido');
+  await expect(page.locator('#propertiesBody textarea[data-campo="contenido.html"]')).toBeVisible();
+  await expect(page.locator('#propertiesBody .ed-prop-grupo')).toHaveCount(0);
+
+  await page.click('#propertiesBody [data-tab="avanzado"]');
+  await expect(page.locator('#propertiesBody [data-accion="eliminar"]')).toBeVisible();
+  await expect(page.locator('#propertiesBody textarea[data-campo="contenido.html"]')).toHaveCount(0);
+});
+
 test('cada tipo de bloque ve solo los grupos de propiedades que le corresponden', async ({ sesion: page }) => {
   await page.click('.ed-widget-card[data-tipo="texto"]');
+  await page.click('#propertiesBody [data-tab="estilo"]');
   await expect(page.locator('#propertiesBody .ed-prop-grupo[data-grupo="tipografia"]')).toBeVisible();
   await expect(page.locator('#propertiesBody .ed-prop-grupo[data-grupo="imagen"]')).toHaveCount(0);
 
+  // La pestaña activa se recuerda al cambiar de bloque.
   await page.click('.ed-widget-card[data-tipo="imagen"]');
   await expect(page.locator('#propertiesBody .ed-prop-grupo[data-grupo="imagen"]')).toBeVisible();
   await expect(page.locator('#propertiesBody .ed-prop-grupo[data-grupo="tipografia"]')).toHaveCount(0);
@@ -19,6 +33,7 @@ test('cada tipo de bloque ve solo los grupos de propiedades que le corresponden'
 
 test('relleno, opacidad y color se reflejan en el lienzo al instante', async ({ sesion: page }) => {
   await page.click('.ed-widget-card[data-tipo="texto"]');
+  await page.click('#propertiesBody [data-tab="estilo"]');
   const bloque = page.locator('[data-zone-blocks="contenido"] .ed-editable');
 
   await page.fill('#propertiesBody [data-campo-todos="padding"]', '24');
@@ -36,6 +51,7 @@ test('relleno, opacidad y color se reflejan en el lienzo al instante', async ({ 
 
 test('los estilos de un contenedor se aplican a la sección en el lienzo', async ({ sesion: page }) => {
   await page.click('.ed-widget-card[data-tipo="seccion"]');
+  await page.click('#propertiesBody [data-tab="estilo"]');
   await page.fill('#propertiesBody input[data-campo="estilos.fondo"]', '#00ff00');
   await expect(page.locator('[data-zone-blocks="contenido"] .ed-contenedor')).toHaveCSS('background-color', 'rgb(0, 255, 0)');
 });

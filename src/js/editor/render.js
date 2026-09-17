@@ -8,9 +8,9 @@
 */
 
 import { state, ZONAS, ETIQUETAS_ZONA, CONTENEDORES, ETIQUETAS } from './state.js';
-import { renderBloque } from '../render/bloques.js';
+import { renderBloque, capasFondoHTML, CONTENEDOR_CON_CAPAS } from '../render/bloques.js';
 import { estilosACSS } from '../render/css.js';
-import { hijosDe, raicesDeZona } from '../render/arbol.js';
+import { hijosVisibles, hijoOculto, raicesDeZona } from '../render/arbol.js';
 import { zonaVaciaHTML } from './zonas.js';
 
 export { renderPropiedades } from './propiedades/panel.js';
@@ -21,7 +21,7 @@ const MANIJA = `<span class="ed-drag-handle" draggable="true" title="Arrastrar p
 
 function renderNodo(b) {
   const esContenedor = CONTENEDORES.has(b.tipo);
-  const hijos = hijosDe(state.blocks, b.id).map(renderNodo).join('');
+  const hijos = hijosVisibles(state.blocks, b).map(renderNodo).join('');
 
   let interior;
   if (esContenedor) {
@@ -36,9 +36,15 @@ function renderNodo(b) {
 
   // El contenedor no tiene elemento propio en el lienzo (los hijos deben
   // ser hijos directos del wrapper para el drag & drop), así que su
-  // estilo va en el wrapper.
-  const estilo = esContenedor ? ` style="${estilosACSS(b.estilos, b.tipo)}"` : '';
-  return `<div class="${clases.join(' ')}" data-block-id="${b.id}"${estilo}>${MANIJA}${interior}</div>`;
+  // estilo y sus capas de fondo (video/overlay) van en el wrapper. Las
+  // capas no llevan .ed-block, por eso el drag & drop las ignora.
+  let estilo = '';
+  let capas = '';
+  if (esContenedor) {
+    capas = capasFondoHTML(b.estilos, { lienzo: true });
+    estilo = ` style="${capas ? `${CONTENEDOR_CON_CAPAS};` : ''}${estilosACSS(b.estilos, b.tipo)}"`;
+  }
+  return `<div class="${clases.join(' ')}" data-block-id="${b.id}"${estilo}>${MANIJA}${capas}${interior}</div>`;
 }
 
 function renderZonaBloques(zona) {
@@ -65,12 +71,18 @@ export function actualizarEstadosVisuales() {
 
 // --- Panel de Capas: el mismo árbol de bloques, en forma de lista ---
 
+// Los hijos apagados por un interruptor del hero siguen listados,
+// atenuados y seleccionables: no se borraron, solo no se ven.
 function filasCapas(parentId, zona, profundidad) {
+  const padre = parentId == null ? null : state.blocks.find((b) => b.id === parentId);
   return state.blocks
     .filter((b) => b.zona === zona && b.parent_id === parentId)
     .sort((a, z) => a.orden - z.orden)
-    .map((b) => `<div class="ed-capa-fila" data-block-id="${b.id}" style="padding-left:${profundidad * 14}px">${ETIQUETAS[b.tipo]}</div>`
-      + filasCapas(b.id, zona, profundidad + 1))
+    .map((b) => {
+      const oculto = hijoOculto(padre, b);
+      return `<div class="ed-capa-fila${oculto ? ' is-oculta' : ''}" data-block-id="${b.id}" style="padding-left:${profundidad * 14}px">${ETIQUETAS[b.tipo]}${oculto ? ' <span class="ed-capa-nota">(oculto)</span>' : ''}</div>`
+        + filasCapas(b.id, zona, profundidad + 1);
+    })
     .join('');
 }
 

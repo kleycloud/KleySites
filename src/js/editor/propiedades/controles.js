@@ -7,6 +7,8 @@
 
 import { leerCampo } from '../state.js';
 import { escapeHTML } from '../../render/sanear.js';
+import { imagen } from './controles-imagen.js';
+import { lista } from './controles-lista.js';
 
 const LADOS = [['arriba', '↑'], ['derecha', '→'], ['abajo', '↓'], ['izquierda', '←']];
 const ESQUINAS = [['sup_izq', '↖'], ['sup_der', '↗'], ['inf_der', '↘'], ['inf_izq', '↙']];
@@ -58,7 +60,7 @@ function rango(b, c) {
 }
 
 function toggle(b, c) {
-  const activo = leerCampo(b, c.key) === 'si';
+  const activo = (leerCampo(b, c.key) || c.inicial || '') === 'si';
   return `<label class="ed-toggle"><input type="checkbox" data-campo="${c.key}"${activo ? ' checked' : ''}> ${c.label}</label>`;
 }
 
@@ -78,9 +80,28 @@ function esquinas(b, c) {
     <div class="ed-lados"><span class="ed-lado ed-lado--todos"><i>▣</i><input type="number" min="0" data-campo="estilos.radio" value="${escapeHTML(leerCampo(b, 'estilos.radio'))}" placeholder="0"></span>${inputs}</div>`;
 }
 
-const CONTROLES = { textarea, text: texto, texto, numero, select, color, rango, toggle, lados, esquinas };
+// Botones en línea, uno activo, que escriben una sola clave. Cada opción es
+// un string o { valor, etiqueta, icono } (icono = paths SVG, para
+// "botones_icono"). El clic vive en eventos.js y vuelve a pintar el panel,
+// porque suele mostrar u ocultar otros controles.
+function segmentado(b, c) {
+  const actual = leerCampo(b, c.key) || c.inicial || '';
+  const botones = c.opciones.map((o) => {
+    const op = typeof o === 'string' ? { valor: o, etiqueta: etiqueta(o) } : o;
+    const cuerpo = op.icono
+      ? `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${op.icono}</svg>`
+      : op.etiqueta;
+    return `<button type="button" data-valor="${op.valor}" class="${op.valor === actual ? 'is-active' : ''}"${op.icono ? ` title="${op.etiqueta}"` : ''}>${cuerpo}</button>`;
+  }).join('');
+  return `<label>${c.label}</label><div class="ed-segmentado" data-segmento="${c.key}">${botones}</div>`;
+}
 
+const CONTROLES = { textarea, text: texto, texto, numero, select, color, rango, toggle, lados, esquinas, segmentado, botones_icono: segmentado, imagen, lista };
+
+// `campo.visible(bloque)` permite que un control dependa de otro (los
+// sub-controles del tipo de fondo, la composición solo si es hero).
 export function controlHTML(bloque, campo) {
+  if (campo.visible && !campo.visible(bloque)) return '';
   const fn = CONTROLES[campo.control || campo.type] || texto;
   return `<div class="ed-prop-campo">${fn(bloque, campo)}</div>`;
 }

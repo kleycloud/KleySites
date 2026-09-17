@@ -7,6 +7,7 @@ test.beforeEach(async ({ sesion: page }) => {
 test('cambiar fuente, peso y sombra se refleja en el lienzo', async ({ sesion: page }) => {
   await page.click('.ed-widget-card[data-tipo="titulo"]');
   await page.click('[data-zone-blocks="contenido"] .ed-block');
+  await page.click('#propertiesBody [data-tab="estilo"]');
 
   await page.selectOption('#propertiesBody select[data-campo="estilos.fuente"]', 'Georgia');
   await page.fill('#propertiesBody input[data-campo="estilos.tamano"]', '40');
@@ -28,6 +29,7 @@ test('borde solo aparece cuando el ancho está definido', async ({ sesion: page 
   const boton = page.locator('[data-zone-blocks="contenido"] .ed-preview-btn');
   await expect(boton).toHaveCSS('border-style', 'none');
 
+  await page.click('#propertiesBody [data-tab="estilo"]');
   await page.fill('#propertiesBody input[data-campo="estilos.borde"]', '2');
   await page.fill('#propertiesBody input[data-campo="estilos.borde_color"]', '#ff0000');
   await page.fill('#propertiesBody input[data-campo="estilos.radio"]', '12');

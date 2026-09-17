@@ -7,7 +7,9 @@
 
 import { state } from '../state.js';
 import { actualizarCampo, eliminarBloqueSeleccionado } from '../bloques.js';
-import { marcarGrupo } from './panel.js';
+import { marcarGrupo, marcarPestana, renderPropiedades } from './panel.js';
+import { initControlImagen, refrescarPreviewImagen } from './controles-imagen.js';
+import { initControlLista } from './controles-lista.js';
 
 const LADOS = ['arriba', 'derecha', 'abajo', 'izquierda'];
 
@@ -43,7 +45,9 @@ export function initPropiedades(cont) {
     const campo = el.dataset.campo;
     if (!campo) return;
 
-    if (el.type === 'checkbox') { escribir(campo, el.checked ? 'si' : ''); return; }
+    // 'si'/'no' explícitos: ausente significa "el valor por defecto del
+    // control" (c.inicial), que no es lo mismo que apagado.
+    if (el.type === 'checkbox') { escribir(campo, el.checked ? 'si' : 'no'); return; }
 
     if (el.type === 'range') {
       const etiqueta = cont.querySelector(`[data-rango-valor="${campo}"]`);
@@ -53,8 +57,13 @@ export function initPropiedades(cont) {
       const picker = cont.querySelector(`[data-color-para="${campo}"]`);
       if (picker) picker.value = el.value;
     }
+    const imagen = el.closest('[data-imagen]');
+    if (imagen) refrescarPreviewImagen(imagen, el.value);
     escribir(campo, el.value);
   });
+
+  initControlImagen(cont, escribir, renderPropiedades);
+  initControlLista(cont, escribir, renderPropiedades);
 
   cont.addEventListener('toggle', (e) => {
     const grupo = e.target.closest('.ed-prop-grupo');
@@ -62,6 +71,16 @@ export function initPropiedades(cont) {
   }, true);
 
   cont.addEventListener('click', (e) => {
+    const tab = e.target.closest('[data-tab]');
+    if (tab) { marcarPestana(tab.dataset.tab); renderPropiedades(); return; }
+
+    const segmento = e.target.closest('[data-segmento] [data-valor]');
+    if (segmento) {
+      escribir(segmento.closest('[data-segmento]').dataset.segmento, segmento.dataset.valor);
+      renderPropiedades();
+      return;
+    }
+
     if (e.target.closest('[data-accion="eliminar"]')) eliminarBloqueSeleccionado();
   });
 }

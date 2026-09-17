@@ -8,7 +8,7 @@
   catálogo se descarta entero; una clave de estilo desconocida se ignora.
 */
 
-import { sanearHTML, ETIQUETAS } from '../state.js';
+import { ETIQUETAS, escribirCampo } from '../state.js';
 import { ZONAS } from '../../render/arbol.js';
 import { clavesDeEstiloConocidas } from '../propiedades/por-tipo.js';
 
@@ -33,9 +33,10 @@ export function sanearEstilos(estilos) {
 
 function sanearNodo(n) {
   if (!n || typeof n !== 'object' || !TIPOS_VALIDOS.has(n.tipo)) return null;
-  const contenido = { ...(n.contenido || {}) };
-  if (n.tipo === 'texto' && typeof contenido.html === 'string') contenido.html = sanearHTML(contenido.html);
-  const nodo = { tipo: n.tipo, contenido, estilos: sanearEstilos(n.estilos) };
+  // Pasar cada clave por escribirCampo aplica el mismo saneo que el panel
+  // (texto.html estricto, html.html amplio) sin repetir la regla acá.
+  const nodo = { tipo: n.tipo, contenido: {}, estilos: sanearEstilos(n.estilos) };
+  Object.entries(n.contenido || {}).forEach(([k, v]) => escribirCampo(nodo, `contenido.${k}`, v));
   if (Array.isArray(n.hijos)) {
     const hijos = n.hijos.map(sanearNodo).filter(Boolean);
     if (hijos.length) nodo.hijos = hijos;

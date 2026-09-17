@@ -24,6 +24,7 @@ test('un JSON KleySites conserva los estilos de cada bloque', async ({ sesion: p
   await expect(h2).toHaveCSS('padding-top', '20px');
 
   await page.click('[data-zone-blocks="contenido"] .ed-block');
+  await page.click('#propertiesBody [data-tab="estilo"]');
   await expect(page.locator('#propertiesBody input[data-campo="estilos.color"]')).toHaveValue('#ff0000');
 });
 
@@ -42,6 +43,7 @@ test('HTML con <style> y clases entra con sus estilos reales, editables', async 
   await expect(h1).toHaveCSS('text-align', 'center');
 
   await page.click('[data-zone-blocks="contenido"] h1');
+  await page.click('#propertiesBody [data-tab="estilo"]');
   await expect(page.locator('#propertiesBody select[data-campo="estilos.alineacion"]')).toHaveValue('centro');
 });
 

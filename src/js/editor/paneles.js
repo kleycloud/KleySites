@@ -6,8 +6,57 @@
   topbar. Cada acción real (crear/seleccionar bloque) vive en bloques.js.
 */
 
-import { PLANTILLAS, CATALOGO_BLOQUES } from './state.js';
+import { PLANTILLAS, CATALOGO_BLOQUES, CATEGORIAS, BLOQUES_PROXIMAMENTE } from './state.js';
 import { crearBloque, insertarPlantilla, seleccionarBloque } from './bloques.js';
+
+// Para que "titulo" encuentre "Título": sin acentos y en minúsculas.
+const normalizar = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+function tarjetaHTML(b, proximamente) {
+  const extra = proximamente ? ' data-proximamente="1" aria-disabled="true" title="Todavía no existe"' : '';
+  return `
+    <div class="ed-widget-card" data-tipo="${b.tipo}" data-nombre="${normalizar(b.etiqueta)}"${extra}>
+      <div class="icon-frame icon-frame--20">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${b.icono}</svg>
+      </div>
+      <span class="ed-widget-label">${b.etiqueta}</span>
+      ${proximamente ? '<span class="ed-widget-soon">Próximamente</span>' : ''}
+    </div>`;
+}
+
+// Una categoría colapsable por CATEGORIAS; los "Próximamente" van al final
+// de la suya, deshabilitados. Una categoría sin nada no se pinta.
+function renderCatalogo() {
+  const cont = document.getElementById('widgetCatalogo');
+  cont.innerHTML = CATEGORIAS.map((cat) => {
+    const tarjetas = [
+      ...CATALOGO_BLOQUES.filter((b) => b.categoria === cat.id).map((b) => tarjetaHTML(b, false)),
+      ...BLOQUES_PROXIMAMENTE.filter((b) => b.categoria === cat.id).map((b) => tarjetaHTML(b, true)),
+    ];
+    if (!tarjetas.length) return '';
+    return `
+      <details class="ed-widget-categoria" data-categoria="${cat.id}" open>
+        <summary>${cat.nombre}</summary>
+        <div class="ed-widget-grid">${tarjetas.join('')}</div>
+      </details>`;
+  }).join('');
+}
+
+function initBuscadorBloques() {
+  const input = document.getElementById('inputBuscarBloques');
+  const cont = document.getElementById('widgetCatalogo');
+  input.addEventListener('input', () => {
+    const q = normalizar(input.value.trim());
+    cont.querySelectorAll('.ed-widget-card').forEach((card) => {
+      card.hidden = q.length > 0 && !card.dataset.nombre.includes(q);
+    });
+    cont.querySelectorAll('.ed-widget-categoria').forEach((cat) => {
+      const hayVisibles = [...cat.querySelectorAll('.ed-widget-card')].some((c) => !c.hidden);
+      cat.hidden = !hayVisibles;
+      if (q) cat.open = true; // buscando, nada queda escondido en una categoría cerrada
+    });
+  });
+}
 
 const TITULOS_PANEL = { bloques: 'Bloques', capas: 'Capas', plantillas: 'Plantillas', paginas: 'Páginas', ajustes: 'Ajustes', tienda: 'Tienda' };
 
@@ -40,18 +89,12 @@ function initVistaDispositivo() {
 }
 
 export function initPaneles() {
-  const widgetGrid = document.querySelector('.ed-widget-grid');
-  widgetGrid.innerHTML = CATALOGO_BLOQUES.map((b) => `
-    <div class="ed-widget-card" data-tipo="${b.tipo}">
-      <div class="icon-frame icon-frame--22">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${b.icono}</svg>
-      </div>
-      <span class="ed-widget-label">${b.etiqueta}</span>
-    </div>`).join('');
+  renderCatalogo();
+  initBuscadorBloques();
 
-  widgetGrid.addEventListener('click', (e) => {
+  document.getElementById('widgetCatalogo').addEventListener('click', (e) => {
     const card = e.target.closest('.ed-widget-card');
-    if (!card) return;
+    if (!card || card.dataset.proximamente) return;
     crearBloque(card.dataset.tipo);
   });
 

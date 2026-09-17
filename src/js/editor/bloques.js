@@ -102,7 +102,8 @@ export function insertarPlantilla(id) {
   const zona = state.zonaActiva;
   const hermanos = state.blocks.filter((b) => b.parent_id === null && b.zona === zona);
   const seccion = {
-    id: state.nextId++, remoteId: null, tipo: 'seccion', contenido: {}, estilos: {},
+    id: state.nextId++, remoteId: null, tipo: 'seccion',
+    contenido: { ...(plantilla.seccion || {}) }, estilos: { ...(plantilla.estilos || {}) },
     zona, parent_id: null, orden: hermanos.length,
   };
   state.blocks.push(seccion);
